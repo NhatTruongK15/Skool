@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "503460286217",
+    "project_id": "clown-3264c",
+    "storage_bucket": "clown-3264c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:503460286217:android:06ec65158c505fcd5c8dd8",
+        "android_client_info": {
+          "package_name": "com.example.clown"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "503460286217-3doooqf6n62vu0nt59ju0fsqbbal9cmd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBIJWg-mEw6WpGN8uIOgryEOQE4aBH2zME"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "503460286217-3doooqf6n62vu0nt59ju0fsqbbal9cmd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
