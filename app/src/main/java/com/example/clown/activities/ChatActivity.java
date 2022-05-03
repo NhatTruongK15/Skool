@@ -1,14 +1,31 @@
 package com.example.clown.activities;
 
+import static android.os.Environment.DIRECTORY_DOWNLOADS;
+
+import android.annotation.SuppressLint;
+import android.app.DownloadManager;
+import android.content.Context;
+import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.OpenableColumns;
+import android.text.method.LinkMovementMethod;
 import android.util.Base64;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContract;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.example.clown.adapter.ChatAdapter;
 import com.example.clown.databinding.ActivityChatBinding;
@@ -19,17 +36,26 @@ import com.example.clown.network.APIService;
 import com.example.clown.utilities.Constants;
 import com.example.clown.utilities.PreferenceManager;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FileDownloadTask;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -42,6 +68,7 @@ import java.util.Objects;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import androidx.activity.result.contract.ActivityResultContracts;
 
 public class ChatActivity extends BaseActivity {
     private ActivityChatBinding binding;
@@ -52,6 +79,7 @@ public class ChatActivity extends BaseActivity {
     private FirebaseFirestore database;
     private String conversationId = null;
     private boolean isReceiverAvailable = false;
+    private String encodedImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +108,7 @@ public class ChatActivity extends BaseActivity {
         message.put(Constants.KEY_RECEIVER_ID, receiverUser.id);
         message.put(Constants.KEY_MESSAGE, binding.inputMessage.getText().toString());
         message.put(Constants.KEY_TIMESTAMP, new Date());
+        message.put(Constants.KEY_MESSAGE_IMAGE,binding.inputMessage.getText().toString());
         database.collection(Constants.KEY_COLLECTION_CHAT).add(message);
         if (conversationId != null) {
             updateConversation(binding.inputMessage.getText().toString());
@@ -116,6 +145,10 @@ public class ChatActivity extends BaseActivity {
             }
         }
         binding.inputMessage.setText(null);
+        if(finame!=null&&fileuri!=null){
+            SendFileToDatabase();
+        }
+        finame=null;
     }
 
     private void showToast(String message)
@@ -261,6 +294,18 @@ public class ChatActivity extends BaseActivity {
     private void setListener() {
         binding.imageBack.setOnClickListener(v -> onBackPressed());
         binding.layoutSend.setOnClickListener(v -> sendMessage());
+        activityResultLauncher=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+            @Override
+            public void onActivityResult(ActivityResult result) {
+                fileuri= result.getData().getData();
+                finame=getFileName(fileuri);
+                String link=finame;
+                binding.inputMessage.setText(finame);
+
+            }
+        });
+        binding.layoutFile.setOnClickListener(v -> pickFile());
+
     }
 
     private String getReadableDateTime(Date date) {
@@ -312,5 +357,78 @@ public class ChatActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         listenAvailabilityOfReceiver();
+    }
+
+    String finame;
+    Uri fileuri;
+    ActivityResultLauncher<Intent> activityResultLauncher;
+    ImageView imageView;
+    public void pickFile(){
+        int i=0;
+
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        intent.setType("*/*");
+        activityResultLauncher.launch(intent);
+        //startActivityForResult(Intent.createChooser(intent, "Select Picture"), 1);
+    }
+
+    @Override
+    public void onActivityResult(final int requestCode, final int resultCode, @Nullable final Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            if (requestCode == 1 && data != null) {
+                fileuri = data.getData();
+                finame=getFileName(fileuri);
+            }
+        }
+    }
+    @SuppressLint("Range")
+    public String getFileName(Uri uri) {
+        String result = null;
+        if (uri.getScheme().equals("content")) {
+            Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+            try {
+                if (cursor != null && cursor.moveToFirst()) {
+                    result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                }
+            } finally {
+                cursor.close();
+            }
+        }
+        if (result == null) {
+            result = uri.getPath();
+            int cut = result.lastIndexOf('/');
+            if (cut != -1) {
+                result = result.substring(cut + 1);
+            }
+        }
+        return result;
+    }
+    private void SendFileToDatabase() {
+        while(fileuri==null){
+            return;
+        }
+        FirebaseStorage firebaseStorage=FirebaseStorage.getInstance("gs://clown-3264c.appspot.com/");
+        StorageReference storageReference=firebaseStorage.getReference(finame);
+        storageReference.putFile(fileuri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                if(task.isSuccessful()){
+                    Toast.makeText(getApplicationContext(), "Success upload", Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    Toast.makeText(getApplicationContext(), "Fail upload", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+    String selectedMessage;
+    private void downloadFile(Context context, String fileName, String fileExtension, String destinationDirectory, String url) {
+        DownloadManager downloadManager=(DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+        Uri uri=Uri.parse(url);
+        DownloadManager.Request request=new DownloadManager.Request(uri);
+        request.setDestinationInExternalFilesDir(context,destinationDirectory,fileName+fileExtension);
+        downloadManager.enqueue(request);
     }
 }
