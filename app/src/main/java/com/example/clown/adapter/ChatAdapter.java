@@ -101,6 +101,7 @@ public class ChatAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 binding.imgMessage.setMinimumHeight(800);
                 binding.imgMessage.setMinimumWidth(800);
                 binding.imgMessage.setImageBitmap(chatMessage.message_img);
+                binding.textMessage.setText(null);
                 chatMessage.message_img=null;
             }
             else{
@@ -129,6 +130,7 @@ public class ChatAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 binding.imgMessage.setMinimumHeight(800);
                 binding.imgMessage.setMinimumWidth(800);
                 binding.imgMessage.setImageBitmap(chatMessage.message_img);
+                binding.textMessage.setText(null);
                 chatMessage.message_img=null;
             }
             else{
