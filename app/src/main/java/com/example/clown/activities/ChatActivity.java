@@ -54,8 +54,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -102,13 +105,45 @@ public class ChatActivity extends BaseActivity {
         database = FirebaseFirestore.getInstance();
     }
 
+    private String encodeImageFromUri(Uri fileuri){
+        try {
+            InputStream inputStream = getContentResolver().openInputStream(fileuri);
+            Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+            //encodedImage = encodeImage(bitmap);
+            return encodeImage(bitmap);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    private Bitmap getBitmapFromEncodeString(String encodeImage) {
+        if(encodeImage != null)
+        {
+            byte[] bytes = Base64.decode(encodeImage, Base64.DEFAULT);
+            return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+        } else
+        {
+            return null;
+        }
+    }
+
+
     private void sendMessage() {
         HashMap<String, Object> message = new HashMap<>();
         message.put(Constants.KEY_SENDER_ID, preferenceManager.getString(Constants.KEY_USER_ID));
         message.put(Constants.KEY_RECEIVER_ID, receiverUser.id);
         message.put(Constants.KEY_MESSAGE, binding.inputMessage.getText().toString());
         message.put(Constants.KEY_TIMESTAMP, new Date());
-        message.put(Constants.KEY_MESSAGE_IMAGE,binding.inputMessage.getText().toString());
+        if(fileuri!=null){
+            encodedImage= encodeImageFromUri(fileuri);
+        }
+        if(encodedImage!=null){
+            message.put(Constants.KEY_MESSAGE_IMAGE,encodedImage);
+            binding.inputMessage.setText(encodedImage);
+        }
+        else{
+
+        }
         database.collection(Constants.KEY_COLLECTION_CHAT).add(message);
         if (conversationId != null) {
             updateConversation(binding.inputMessage.getText().toString());
@@ -135,7 +170,7 @@ public class ChatActivity extends BaseActivity {
                 data.put(Constants.KEY_NAME, preferenceManager.getString(Constants.KEY_NAME));
                 data.put(Constants.KEY_FCM_TOKEN, preferenceManager.getString(Constants.KEY_FCM_TOKEN));
                 data.put(Constants.KEY_MESSAGE, binding.inputMessage.getText().toString());
-
+                data.put(Constants.KEY_MESSAGE_IMAGE, encodedImage);
                 JSONObject body = new JSONObject();
                 body.put(Constants.REMOTE_MSG_DATA,data);
                 body.put(Constants.REMOTE_MSG_REGISTRATION_IDS, tokens);
@@ -144,11 +179,15 @@ public class ChatActivity extends BaseActivity {
                 showToast(exception.getMessage());
             }
         }
+
         binding.inputMessage.setText(null);
-        if(finame!=null&&fileuri!=null){
-            SendFileToDatabase();
-        }
+
+//        if(finame!=null&&fileuri!=null){
+//            SendFileToDatabase();
+//        }
+        encodedImage=null;
         finame=null;
+        fileuri=null;
     }
 
     private void showToast(String message)
@@ -253,6 +292,7 @@ public class ChatActivity extends BaseActivity {
                     chatMessage.senderId = documentChange.getDocument().getString(Constants.KEY_SENDER_ID);
                     chatMessage.receiverId = documentChange.getDocument().getString(Constants.KEY_RECEIVER_ID);
                     chatMessage.message = documentChange.getDocument().getString(Constants.KEY_MESSAGE);
+                    chatMessage.message_img=getBitmapFromEncodeString( documentChange.getDocument().getString(Constants.KEY_MESSAGE_IMAGE));
                     chatMessage.dateTime = getReadableDateTime(documentChange.getDocument().getDate(Constants.KEY_TIMESTAMP));
                     chatMessage.dateObject = documentChange.getDocument().getDate(Constants.KEY_TIMESTAMP);
                     chatMessages.add(chatMessage);
@@ -273,18 +313,7 @@ public class ChatActivity extends BaseActivity {
         }
     });
 
-    private Bitmap getBitmapFromEncodeString(String encodeImage) {
-        if(encodeImage != null)
-        {
-            byte[] bytes = Base64.decode(encodeImage, Base64.DEFAULT);
-            return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-        } else
-        {
-            return null;
-        }
 
-
-    }
 
     private void loadReceiverDetails() {
         receiverUser = (User) getIntent().getSerializableExtra(Constants.KEY_USER);
@@ -299,8 +328,7 @@ public class ChatActivity extends BaseActivity {
             public void onActivityResult(ActivityResult result) {
                 fileuri= result.getData().getData();
                 finame=getFileName(fileuri);
-                String link=finame;
-                binding.inputMessage.setText(finame);
+                //binding.inputMessage.setText(finame);
 
             }
         });
@@ -363,6 +391,17 @@ public class ChatActivity extends BaseActivity {
     Uri fileuri;
     ActivityResultLauncher<Intent> activityResultLauncher;
     ImageView imageView;
+
+    private String encodeImage(Bitmap bitmap){
+        int previewWidth = 150;
+        int previewHeight = bitmap.getHeight() * previewWidth / bitmap.getWidth();
+        Bitmap previewBitmap = Bitmap.createScaledBitmap(bitmap, previewWidth, previewHeight, false);
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        previewBitmap.compress(Bitmap.CompressFormat.JPEG,50,byteArrayOutputStream);
+        byte[] bytes = byteArrayOutputStream.toByteArray();
+        return Base64.encodeToString(bytes, Base64.DEFAULT);
+    }
+
     public void pickFile(){
         int i=0;
 

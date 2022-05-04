@@ -2,11 +2,14 @@ package com.example.clown.adapter;
 
 import android.graphics.Bitmap;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.clown.R;
 import com.example.clown.databinding.ItemContainerReceivedMessageBinding;
 import com.example.clown.databinding.ItemContainerSentMessageBinding;
 import com.example.clown.models.ChatMessage;
@@ -92,6 +95,17 @@ public class ChatAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder> 
         void setData(ChatMessage chatMessage)
         {
             binding.textMessage.setText(chatMessage.message);
+            if(chatMessage.message_img!=null){
+                binding.textMessage.setVisibility(View.INVISIBLE);
+                binding.messContainer.setMinimumHeight(810);
+                binding.imgMessage.setMinimumHeight(800);
+                binding.imgMessage.setMinimumWidth(800);
+                binding.imgMessage.setImageBitmap(chatMessage.message_img);
+                chatMessage.message_img=null;
+            }
+            else{
+                binding.textMessage.setVisibility(View.VISIBLE);
+            }
             binding.textDateTime.setText(chatMessage.dateTime);
         }
     }
@@ -109,6 +123,17 @@ public class ChatAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder> 
         void setData(ChatMessage chatMessage, Bitmap receiverProfileImage)
         {
             binding.textMessage.setText(chatMessage.message);
+            if(chatMessage.message_img!=null){
+                binding.textMessage.setVisibility(View.INVISIBLE);
+                binding.messContainer.setMinimumHeight(810);
+                binding.imgMessage.setMinimumHeight(800);
+                binding.imgMessage.setMinimumWidth(800);
+                binding.imgMessage.setImageBitmap(chatMessage.message_img);
+                chatMessage.message_img=null;
+            }
+            else{
+                binding.textMessage.setVisibility(View.VISIBLE);
+            }
             binding.textDateTime.setText(chatMessage.dateTime);
             if(receiverProfileImage!=null)
             {
