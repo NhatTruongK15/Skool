@@ -1,5 +1,9 @@
 package com.example.clown.adapter;
 
+import static com.example.clown.utilities.Constants.HD_RES_860;
+
+import com.example.clown.utilities.Constants;
+
 import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -97,9 +101,9 @@ public class ChatAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder> 
             binding.textMessage.setText(chatMessage.message);
             if(chatMessage.message_img!=null){
                 binding.textMessage.setVisibility(View.INVISIBLE);
-                binding.messContainer.setMinimumHeight(810);
-                binding.imgMessage.setMinimumHeight(800);
-                binding.imgMessage.setMinimumWidth(800);
+                binding.messContainer.setMinimumHeight(HD_RES_860+10);
+                binding.imgMessage.setMinimumHeight(HD_RES_860);
+                binding.imgMessage.setMinimumWidth(HD_RES_860);
                 binding.imgMessage.setImageBitmap(chatMessage.message_img);
                 binding.textMessage.setText(null);
                 chatMessage.message_img=null;

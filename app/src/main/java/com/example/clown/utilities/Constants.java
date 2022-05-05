@@ -19,6 +19,7 @@ public class Constants {
     public static final String KEY_MESSAGE ="message";
     public static final String KEY_MESSAGE_IMAGE ="message_image";
 
+    public static final int HD_RES_860= 860;
     public static final String KEY_TIMESTAMP="timestamp";
     public static final String KEY_COLLECTION_CONVERSATIONS="conversations";
     public static final String KEY_SENDER_NAME="senderName";
