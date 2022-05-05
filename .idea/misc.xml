@@ -21,6 +21,8 @@
         <entry key="..\:/Users/84962/AndroidStudioProjects/Clown/app/src/main/res/layout/item_container_recent_conversation.xml" value="0.2572463768115942" />
         <entry key="..\:/Users/84962/AndroidStudioProjects/Clown/app/src/main/res/layout/item_container_sent_message.xml" value="0.22826086956521738" />
         <entry key="..\:/Users/84962/AndroidStudioProjects/Clown/app/src/main/res/layout/item_container_user.xml" value="0.22826086956521738" />
+        <entry key="..\:/github/Skool/app/src/main/res/drawable/background_chat_img_2_input.xml" value="0.124" />
+        <entry key="..\:/github/Skool/app/src/main/res/drawable/background_chat_img_input.xml" value="0.124" />
         <entry key="..\:/github/Skool/app/src/main/res/drawable/background_chat_input.xml" value="0.124" />
         <entry key="..\:/github/Skool/app/src/main/res/drawable/background_content_bottom.xml" value="0.124" />
         <entry key="..\:/github/Skool/app/src/main/res/drawable/background_content_top.xml" value="0.124" />
@@ -44,7 +46,7 @@
         <entry key="..\:/github/Skool/app/src/main/res/layout/item_container_received_message.xml" value="0.536" />
         <entry key="..\:/github/Skool/app/src/main/res/layout/item_container_recent_conversation.xml" value="0.176" />
         <entry key="..\:/github/Skool/app/src/main/res/layout/item_container_sent_image.xml" value="0.2" />
-        <entry key="..\:/github/Skool/app/src/main/res/layout/item_container_sent_message.xml" value="0.536" />
+        <entry key="..\:/github/Skool/app/src/main/res/layout/item_container_sent_message.xml" value="0.264" />
         <entry key="..\:/github/Skool/app/src/main/res/layout/item_container_user.xml" value="0.11302083333333333" />
       </map>
     </option>

@@ -98,25 +98,28 @@ public class ChatAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         void setData(ChatMessage chatMessage)
         {
-            binding.textMessage.setText(chatMessage.message);
-            if(chatMessage==null){
-                binding.textMessage.setVisibility(View.INVISIBLE);
+            if(chatMessage.message==null){
+                return;
             }
             else{
                 binding.textMessage.setVisibility(View.VISIBLE);
             }
-
             if(chatMessage.message_img!=null){
                 binding.textMessage.setVisibility(View.INVISIBLE);
-                binding.messContainer.setMinimumHeight(PIC_HOLDER+10);
-                binding.imgMessage.setMinimumHeight(PIC_HOLDER);
+                binding.imgMessage.setMaxHeight(PIC_HOLDER);
                 binding.imgMessage.setMinimumWidth(PIC_HOLDER);
                 binding.imgMessage.setImageBitmap(chatMessage.message_img);
                 binding.textMessage.setText(null);
                 chatMessage.message_img=null;
             }
             else{
+                binding.textMessage.setText(chatMessage.message);
                 binding.textMessage.setVisibility(View.VISIBLE);
+                binding.messContainer.setMinimumHeight(0+5);
+                binding.imgMessage.setMinimumHeight(0);
+                binding.imgMessage.setMinimumWidth(0);
+                binding.imgMessage.setMaxHeight(0);
+                binding.imgMessage.setMaxWidth(0);
             }
             binding.textDateTime.setText(chatMessage.dateTime);
         }
@@ -134,18 +137,30 @@ public class ChatAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         void setData(ChatMessage chatMessage, Bitmap receiverProfileImage)
         {
-            binding.textMessage.setText(chatMessage.message);
+            if(chatMessage.message==null){
+                return;
+            }
+            else{
+                binding.textMessage.setVisibility(View.VISIBLE);
+            }
             if(chatMessage.message_img!=null){
+                binding.textMessage.setText(null);
                 binding.textMessage.setVisibility(View.INVISIBLE);
-                binding.messContainer.setMinimumHeight(810);
-                binding.imgMessage.setMinimumHeight(800);
-                binding.imgMessage.setMinimumWidth(800);
+                binding.imgMessage.setMaxHeight(PIC_HOLDER);
+                binding.imgMessage.setMinimumWidth(PIC_HOLDER);
                 binding.imgMessage.setImageBitmap(chatMessage.message_img);
                 binding.textMessage.setText(null);
                 chatMessage.message_img=null;
             }
             else{
+                binding.textMessage.setText(chatMessage.message);
+                binding.messContainer.setVisibility(View.VISIBLE);
                 binding.textMessage.setVisibility(View.VISIBLE);
+                binding.messContainer.setMinimumHeight(0+5);
+                binding.imgMessage.setMinimumHeight(0);
+                binding.imgMessage.setMinimumWidth(0);
+                binding.imgMessage.setMaxHeight(0);
+                binding.imgMessage.setMaxWidth(0);
             }
             binding.textDateTime.setText(chatMessage.dateTime);
             if(receiverProfileImage!=null)

@@ -113,6 +113,9 @@ public class ChatActivity extends BaseActivity {
         database = FirebaseFirestore.getInstance();
     }
 
+
+
+
     private String encodeImageFromUri(Uri fileuri){
         try {
             InputStream inputStream = getContentResolver().openInputStream(fileuri);
@@ -134,7 +137,6 @@ public class ChatActivity extends BaseActivity {
             return null;
         }
     }
-
     private String encodeImage(Bitmap bitmap){
         int previewWidth = HD_RES;
         int previewHeight = bitmap.getHeight() * previewWidth / bitmap.getWidth();
@@ -144,10 +146,8 @@ public class ChatActivity extends BaseActivity {
         byte[] bytes = byteArrayOutputStream.toByteArray();
         return Base64.encodeToString(bytes, Base64.DEFAULT);
     }
-
     private static final float PREFERRED_WIDTH = HD_RES;
     private static final float PREFERRED_HEIGHT = HD_RES;
-
     public static Bitmap resizeBitmap(Bitmap bitmap) {
         int width = bitmap.getWidth();
         int height = bitmap.getHeight();
@@ -162,7 +162,12 @@ public class ChatActivity extends BaseActivity {
         return resizedBitmap;
     }
 
+
+
     private void sendMessage() {
+        if( binding.inputMessage.getText().toString().isEmpty()&&finame==null){
+            return;
+        }
         HashMap<String, Object> message = new HashMap<>();
         message.put(Constants.KEY_SENDER_ID, preferenceManager.getString(Constants.KEY_USER_ID));
         message.put(Constants.KEY_RECEIVER_ID, receiverUser.id);
@@ -178,6 +183,7 @@ public class ChatActivity extends BaseActivity {
         else{
 
         }
+
         database.collection(Constants.KEY_COLLECTION_CHAT).add(message);
         if (conversationId != null) {
             updateConversation(binding.inputMessage.getText().toString());
@@ -213,7 +219,6 @@ public class ChatActivity extends BaseActivity {
                 showToast(exception.getMessage());
             }
         }
-
         binding.inputMessage.setText(null);
 
 //        if(finame!=null&&fileuri!=null){
@@ -363,7 +368,6 @@ public class ChatActivity extends BaseActivity {
                 fileuri= result.getData().getData();
                 finame=getFileName(fileuri);
                 //binding.inputMessage.setText(finame);
-
             }
         });
         binding.layoutFile.setOnClickListener(v -> pickFile());
