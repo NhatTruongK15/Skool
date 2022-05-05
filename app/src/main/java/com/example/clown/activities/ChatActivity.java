@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory;
 
 import android.os.Bundle;
 import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -95,9 +96,8 @@ public class ChatActivity extends BaseActivity {
             conversation.put(Constants.KEY_TIMESTAMP, new Date());
             addConversation(conversation);
         }
-        if(!isReceiverAvailable)
-        {
-            try{
+        if (!isReceiverAvailable) {
+            try {
                 JSONArray tokens = new JSONArray();
                 tokens.put(receiverUser.token);
 
@@ -108,93 +108,88 @@ public class ChatActivity extends BaseActivity {
                 data.put(Constants.KEY_MESSAGE, binding.inputMessage.getText().toString());
 
                 JSONObject body = new JSONObject();
-                body.put(Constants.REMOTE_MSG_DATA,data);
+                body.put(Constants.REMOTE_MSG_DATA, data);
                 body.put(Constants.REMOTE_MSG_REGISTRATION_IDS, tokens);
-            }catch(Exception exception)
-            {
+
+                sendNotification(body.toString());
+            } catch (Exception exception) {
                 showToast(exception.getMessage());
             }
         }
         binding.inputMessage.setText(null);
     }
 
-    private void showToast(String message)
-    {
+    private void showToast(String message) {
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }
 
-    private void sendNotification(String messageBody)
-    {
+    private void sendNotification(String messageBody) {
         APIClient.getClient().create(APIService.class).sendMessage(
                 Constants.getRemoteMsgHeader(),
                 messageBody
         ).enqueue(new Callback<String>() {
             @Override
-            public void onResponse(@NonNull Call<String> call,@NonNull Response<String> response) {
-                if(response.isSuccessful())
-                {
-                    try{
-                        if(response.body() != null)
-                        {
+            public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response) {
+                if (response.isSuccessful()) {
+                    try {
+                        if (response.body() != null) {
                             JSONObject responseJSON = new JSONObject(response.body());
-                            JSONArray results = responseJSON.getJSONArray("result");
-                            if(responseJSON.getInt("failure") == 1)
-                            {
+                            JSONArray results = responseJSON.getJSONArray("results");
+                            if (responseJSON.getInt("failure") == 1) {
                                 JSONObject error = (JSONObject) results.get(0);
                                 showToast(error.getString("error"));
                                 return;
                             }
+                            showToast("success");
+                            Log.d("test","success");
+
                         }
 
-                    }catch (JSONException e)
-                    {
+                    } catch (JSONException e) {
                         e.printStackTrace();
+                        Log.d("test","success maybe");
+
                     }
-                    showToast("Error: " + response.code());
                 }
+                else
+                    showToast("Error: " + response.code());
             }
 
             @Override
-            public void onFailure(@NonNull Call<String> call,@NonNull Throwable t) {
-                    showToast(t.getMessage());
+            public void onFailure(@NonNull Call<String> call, @NonNull Throwable t) {
+                showToast(t.getMessage());
             }
         });
     }
 
-    private void listenAvailabilityOfReceiver()
-    {
+    private void listenAvailabilityOfReceiver() {
         database.collection(Constants.KEY_COLLECTION_USERS).document(
                 receiverUser.id
-        ).addSnapshotListener(ChatActivity.this,(value, error) -> {
-            if(error != null)
-            {
+        ).addSnapshotListener(ChatActivity.this, (value, error) -> {
+            if (error != null) {
                 return;
             }
-            if(value != null)
-            {
-                if(value.getLong(Constants.KEY_AVAILABILITY) != null )
-                {
+            if (value != null) {
+                if (value.getLong(Constants.KEY_AVAILABILITY) != null) {
                     int availability = Objects.requireNonNull(
                             value.getLong(Constants.KEY_AVAILABILITY)
                     ).intValue();
                     isReceiverAvailable = availability == 1;
                 }
                 receiverUser.token = value.getString(Constants.KEY_FCM_TOKEN);
-                if(receiverUser.image ==  null)
-                {
+                if (receiverUser.image == null) {
                     receiverUser.image = value.getString(Constants.KEY_IMAGE);
                     chatAdapter.setReceiverProfileImage(getBitmapFromEncodeString(receiverUser.image));
                     chatAdapter.notifyItemRangeChanged(0, chatMessages.size());
                 }
             }
-            if(isReceiverAvailable)
-            {
+            if (isReceiverAvailable) {
                 binding.textAvailability.setVisibility(View.VISIBLE);
-            }else{
+            } else {
                 binding.textAvailability.setVisibility(View.GONE);
             }
+        });
 
-        } );
     }
 
     private void listenMessages() {
@@ -241,12 +236,10 @@ public class ChatActivity extends BaseActivity {
     });
 
     private Bitmap getBitmapFromEncodeString(String encodeImage) {
-        if(encodeImage != null)
-        {
+        if (encodeImage != null) {
             byte[] bytes = Base64.decode(encodeImage, Base64.DEFAULT);
             return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-        } else
-        {
+        } else {
             return null;
         }
 
