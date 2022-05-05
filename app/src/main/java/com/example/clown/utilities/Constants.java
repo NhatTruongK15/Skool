@@ -33,7 +33,12 @@ public class Constants {
     public static final String REMOTE_MSG_DATA="data";
     public static final String REMOTE_MSG_REGISTRATION_IDS="registration_ids";
 
+    public static final int HD_RES_860=860;
+    public static final int HD_RES=1080;
+    public static final int PIC_HOLDER=300;
+
     public static HashMap<String, String> remoteMsgHeader = null;
+
     public static HashMap<String, String> getRemoteMsgHeader(){
         if(remoteMsgHeader ==  null)
         {

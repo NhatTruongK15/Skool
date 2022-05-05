@@ -2,6 +2,10 @@ package com.example.clown.activities;
 
 import static android.os.Environment.DIRECTORY_DOWNLOADS;
 
+import static com.example.clown.utilities.Constants.HD_RES;
+import static com.example.clown.utilities.Constants.HD_RES_860;
+import static com.example.clown.utilities.Constants.PIC_HOLDER;
+
 import android.annotation.SuppressLint;
 import android.app.DownloadManager;
 import android.content.Context;
@@ -10,11 +14,14 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
+
+import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
 import android.text.method.LinkMovementMethod;
 import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -59,6 +66,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -109,7 +117,6 @@ public class ChatActivity extends BaseActivity {
         try {
             InputStream inputStream = getContentResolver().openInputStream(fileuri);
             Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-            //encodedImage = encodeImage(bitmap);
             return encodeImage(bitmap);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -121,12 +128,39 @@ public class ChatActivity extends BaseActivity {
         {
             byte[] bytes = Base64.decode(encodeImage, Base64.DEFAULT);
             return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-        } else
+        }
+        else
         {
             return null;
         }
     }
 
+    private String encodeImage(Bitmap bitmap){
+        int previewWidth = HD_RES;
+        int previewHeight = bitmap.getHeight() * previewWidth / bitmap.getWidth();
+        Bitmap previewBitmap = Bitmap.createScaledBitmap(resizeBitmap(bitmap), previewWidth, previewHeight, false);
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        previewBitmap.compress(Bitmap.CompressFormat.JPEG,95,byteArrayOutputStream);
+        byte[] bytes = byteArrayOutputStream.toByteArray();
+        return Base64.encodeToString(bytes, Base64.DEFAULT);
+    }
+
+    private static final float PREFERRED_WIDTH = HD_RES;
+    private static final float PREFERRED_HEIGHT = HD_RES;
+
+    public static Bitmap resizeBitmap(Bitmap bitmap) {
+        int width = bitmap.getWidth();
+        int height = bitmap.getHeight();
+        float scaleWidth = PREFERRED_WIDTH / width;
+        float scaleHeight = PREFERRED_HEIGHT / height;
+
+        Matrix matrix = new Matrix();
+        matrix.postScale(scaleWidth, scaleHeight);
+        Bitmap resizedBitmap = Bitmap.createBitmap(
+                bitmap, 0, 0, width, height, matrix, false);
+        bitmap.recycle();
+        return resizedBitmap;
+    }
 
     private void sendMessage() {
         HashMap<String, Object> message = new HashMap<>();
@@ -195,40 +229,40 @@ public class ChatActivity extends BaseActivity {
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }
 
-    private void sendNotification(String messageBody)
-    {
+    private void sendNotification(String messageBody) {
         APIClient.getClient().create(APIService.class).sendMessage(
                 Constants.getRemoteMsgHeader(),
                 messageBody
         ).enqueue(new Callback<String>() {
             @Override
-            public void onResponse(@NonNull Call<String> call,@NonNull Response<String> response) {
-                if(response.isSuccessful())
-                {
-                    try{
-                        if(response.body() != null)
-                        {
+            public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response) {
+                if (response.isSuccessful()) {
+                    try {
+                        if (response.body() != null) {
                             JSONObject responseJSON = new JSONObject(response.body());
-                            JSONArray results = responseJSON.getJSONArray("result");
-                            if(responseJSON.getInt("failure") == 1)
-                            {
+                            JSONArray results = responseJSON.getJSONArray("results");
+                            if (responseJSON.getInt("failure") == 1) {
                                 JSONObject error = (JSONObject) results.get(0);
                                 showToast(error.getString("error"));
                                 return;
                             }
+                            showToast("success");
+                            Log.d("test","success");
+
                         }
 
-                    }catch (JSONException e)
-                    {
+                    } catch (JSONException e) {
                         e.printStackTrace();
+                        Log.d("test","success maybe");
                     }
-                    showToast("Error: " + response.code());
                 }
+                else
+                    showToast("Error: " + response.code());
             }
 
             @Override
-            public void onFailure(@NonNull Call<String> call,@NonNull Throwable t) {
-                    showToast(t.getMessage());
+            public void onFailure(@NonNull Call<String> call, @NonNull Throwable t) {
+                showToast(t.getMessage());
             }
         });
     }
@@ -392,15 +426,7 @@ public class ChatActivity extends BaseActivity {
     ActivityResultLauncher<Intent> activityResultLauncher;
     ImageView imageView;
 
-    private String encodeImage(Bitmap bitmap){
-        int previewWidth = 150;
-        int previewHeight = bitmap.getHeight() * previewWidth / bitmap.getWidth();
-        Bitmap previewBitmap = Bitmap.createScaledBitmap(bitmap, previewWidth, previewHeight, false);
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        previewBitmap.compress(Bitmap.CompressFormat.JPEG,50,byteArrayOutputStream);
-        byte[] bytes = byteArrayOutputStream.toByteArray();
-        return Base64.encodeToString(bytes, Base64.DEFAULT);
-    }
+
 
     public void pickFile(){
         int i=0;
