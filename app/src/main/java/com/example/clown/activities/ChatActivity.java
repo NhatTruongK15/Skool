@@ -95,6 +95,7 @@ public class ChatActivity extends BaseActivity {
             conversation.put(Constants.KEY_LAST_MESSAGE, binding.inputMessage.getText().toString());
             conversation.put(Constants.KEY_TIMESTAMP, new Date());
             addConversation(conversation);
+
         }
         if (!isReceiverAvailable) {
             try {
