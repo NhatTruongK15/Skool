@@ -143,7 +143,6 @@ public class ChatActivity extends BaseActivity {
                             }
                             showToast("success");
                             Log.d("test","success");
-
                         }
 
                     } catch (JSONException e) {
