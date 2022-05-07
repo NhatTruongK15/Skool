@@ -1,7 +1,5 @@
 package com.example.clown.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -45,7 +43,7 @@ public class UsersActivity extends BaseActivity implements UserListener {
                 .get()
                 .addOnCompleteListener(task -> {
                     loading(false);
-                    String currentUserId = preferenceManager.getString(Constants.KEY_USER_ID);
+                    String currentUserId = preferenceManager.getString(Constants.KEY_DOCUMENT_REFERENCE_ID);
                     if(task.isSuccessful() && task.getResult() != null)
                     {
                         List<User> users = new ArrayList<>();

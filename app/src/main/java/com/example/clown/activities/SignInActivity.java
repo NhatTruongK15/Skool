@@ -10,7 +10,6 @@ import android.util.Patterns;
 import android.view.View;
 import android.widget.Toast;
 
-import com.example.clown.R;
 import com.example.clown.databinding.ActivitySignInBinding;
 import com.example.clown.utilities.Constants;
 import com.example.clown.utilities.PreferenceManager;
@@ -21,9 +20,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-
-import java.util.HashMap;
-import java.util.regex.Pattern;
 
 public class SignInActivity extends AppCompatActivity {
     private ActivitySignInBinding binding;
@@ -76,14 +72,14 @@ public class SignInActivity extends AppCompatActivity {
                             FirebaseUser user = auth.getCurrentUser();
 
                             database.collection(Constants.KEY_COLLECTION_USERS)
-                                    .whereEqualTo(Constants.KEY_EMAIL, binding.inputEmail.getText().toString())
+                                    .whereEqualTo(Constants.KEY_USER_ID, auth.getCurrentUser().getUid())
                                     /*.whereEqualTo(Constants.KEY_PASSWORD, binding.inputPassword.getText().toString())*/
                                     .get()
                                     .addOnCompleteListener(querySnapshotTask -> {
                                         if (querySnapshotTask.isSuccessful() && querySnapshotTask.getResult() != null && querySnapshotTask.getResult().getDocuments().size() > 0) {
                                             DocumentSnapshot documentSnapshot = querySnapshotTask.getResult().getDocuments().get(0);
                                             preferenceManager.putBoolean(Constants.KEY_IS_SIGNED_IN, true);
-                                            preferenceManager.putString(Constants.KEY_USER_ID, documentSnapshot.getId());
+                                            preferenceManager.putString(Constants.KEY_DOCUMENT_REFERENCE_ID, documentSnapshot.getId());                                            preferenceManager.putString(Constants.KEY_USER_ID, documentSnapshot.getString(Constants.KEY_USER_ID));
                                             preferenceManager.putString(Constants.KEY_NAME, documentSnapshot.getString(Constants.KEY_NAME));
                                             preferenceManager.putString(Constants.KEY_IMAGE, documentSnapshot.getString(Constants.KEY_IMAGE));
                                             Intent intent = new Intent(getApplicationContext(), MainActivity.class);

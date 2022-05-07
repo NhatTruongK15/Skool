@@ -1,46 +1,23 @@
 package com.example.clown.activities;
 
 
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.util.Base64;
 import android.view.View;
-import android.widget.Toast;
-
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.clown.R;
 import com.example.clown.adapter.GroupChatAdapter;
-import com.example.clown.adapter.RecentConversationAdapter;
-import com.example.clown.adapter.UsersAdapter;
 import com.example.clown.adapter.UsersGCAdapter;
 import com.example.clown.databinding.ActivityGroupChatBinding;
-import com.example.clown.databinding.ActivityMainBinding;
-import com.example.clown.listeners.ConversationListener;
 import com.example.clown.listeners.GroupChatListener;
 import com.example.clown.listeners.UserGCListener;
-import com.example.clown.listeners.UserListener;
-import com.example.clown.models.ChatMessage;
 import com.example.clown.models.User;
 import com.example.clown.utilities.Constants;
 import com.example.clown.utilities.PreferenceManager;
-import com.google.firebase.firestore.DocumentChange;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 public class GroupChatActivity extends BaseActivity implements GroupChatListener, UserGCListener {
@@ -91,7 +68,7 @@ public class GroupChatActivity extends BaseActivity implements GroupChatListener
                 .get()
                 .addOnCompleteListener(task -> {
                     loading(false);
-                        String currentUserId = preferenceManager.getString(Constants.KEY_USER_ID);
+                        String currentUserId = preferenceManager.getString(Constants.KEY_DOCUMENT_REFERENCE_ID);
                     if(task.isSuccessful() && task.getResult() != null)
                     {
                         for(QueryDocumentSnapshot queryDocumentSnapshot: task.getResult()){

@@ -3,7 +3,6 @@ package com.example.clown.firebase;
 import static android.app.PendingIntent.FLAG_IMMUTABLE;
 import static android.app.PendingIntent.FLAG_UPDATE_CURRENT;
 
-import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -36,7 +35,7 @@ public class MessagingService extends FirebaseMessagingService {
         super.onMessageReceived(message);
 
         User user = new User();
-        user.id = message.getData().get(Constants.KEY_USER_ID);
+        user.id = message.getData().get(Constants.KEY_DOCUMENT_REFERENCE_ID);
         user.name = message.getData().get(Constants.KEY_NAME);
         user.token = message.getData().get(Constants.KEY_FCM_TOKEN);
 
