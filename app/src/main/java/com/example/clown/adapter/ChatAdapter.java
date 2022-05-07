@@ -102,6 +102,7 @@ public class ChatAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder> 
             binding.textDateTime.setText(chatMessage.dateTime);
             binding.imgMessage.setImageBitmap(chatMessage.message_img);
 
+
         }
     }
 
