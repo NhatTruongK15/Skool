@@ -35,6 +35,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.example.clown.adapter.ChatAdapter;
+import com.example.clown.adapter.UsersAdapter;
 import com.example.clown.databinding.ActivityChatBinding;
 import com.example.clown.models.ChatMessage;
 import com.example.clown.models.User;
@@ -51,6 +52,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
@@ -102,6 +104,7 @@ public class ChatActivity extends BaseActivity {
         init();
         listenMessages();
     }
+
 
     private void init() {
         preferenceManager = new PreferenceManager(getApplicationContext());
@@ -178,10 +181,9 @@ public class ChatActivity extends BaseActivity {
         }
         if(encodedImage!=null){
             message.put(Constants.KEY_MESSAGE_IMAGE,encodedImage);
-            binding.inputMessage.setText(encodedImage);
         }
         else{
-
+            message.put(Constants.KEY_MESSAGE_IMAGE,"");
         }
 
         database.collection(Constants.KEY_COLLECTION_CHAT).add(message);
