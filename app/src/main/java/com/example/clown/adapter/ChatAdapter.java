@@ -5,9 +5,13 @@ import static com.example.clown.utilities.Constants.HD_RES_860;
 import static com.example.clown.utilities.Constants.PIC_HOLDER;
 
 import android.graphics.Bitmap;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.MediaController;
+import android.widget.Toast;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
@@ -37,6 +41,7 @@ public class ChatAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder> 
         this.chatMessages = chatMessages;
         this.senderId = senderId;
         this.receiverProfileImage = receiverProfileImage;
+
     }
 
     @NonNull
@@ -103,6 +108,32 @@ public class ChatAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder> 
             binding.imgMessage.setImageBitmap(chatMessage.message_img);
 
 
+            chatMessage.mediaController=new MediaController(itemView.getContext());
+            chatMessage.mediaController.setAnchorView(binding.vidMessage);
+            binding.vidMessage.setMediaController(chatMessage.mediaController);
+
+            // implement on completion listener on video view
+            binding.vidMessage.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mp) {
+                    Toast.makeText(itemView.getContext(), "Thank You...!!!", Toast.LENGTH_SHORT).show();
+                }
+            });
+            binding.vidMessage.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+                @Override
+                public boolean onError(MediaPlayer mp, int what, int extra) {
+                    Toast.makeText(itemView.getContext(), "Oops An Error Occur While Playing Video...!!!", Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+            });
+            if(chatMessage.videoPath!=null){
+                if(chatMessage.videoPath.compareTo("")!=0){
+                    binding.vidMessage.setVideoURI(Uri.parse(chatMessage.videoPath));
+
+                }
+            }
+
+
         }
     }
 
@@ -121,6 +152,30 @@ public class ChatAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder> 
             binding.textMessage.setText(chatMessage.message);
             binding.textDateTime.setText(chatMessage.dateTime);
             binding.imgMessage.setImageBitmap(chatMessage.message_img);
+
+            chatMessage.mediaController=new MediaController(itemView.getContext());
+            chatMessage.mediaController.setAnchorView(binding.vidMessage);
+            binding.vidMessage.setMediaController(chatMessage.mediaController);
+            binding.vidMessage.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mp) {
+                    Toast.makeText(itemView.getContext(), "Thank You...!!!", Toast.LENGTH_SHORT).show();
+                }
+            });
+            binding.vidMessage.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+                @Override
+                public boolean onError(MediaPlayer mp, int what, int extra) {
+                    Toast.makeText(itemView.getContext(), "Oops An Error Occur While Playing Video...!!!", Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+            });
+
+            if(chatMessage.videoPath!=null){
+                if(chatMessage.videoPath.compareTo("")!=0){
+                    binding.vidMessage.setVideoURI(Uri.parse(chatMessage.videoPath));
+                }
+            }
+
             if(receiverProfileImage!=null)
             {
                 binding.imageProfile.setImageBitmap(receiverProfileImage);

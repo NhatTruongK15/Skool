@@ -18,6 +18,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.OpenableColumns;
 import android.text.method.LinkMovementMethod;
 import android.util.Base64;
@@ -56,6 +58,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
@@ -117,7 +120,27 @@ public class ChatActivity extends BaseActivity {
     }
 
 
+    public String filetype(String file){
+        return file.substring(file.lastIndexOf("."));
+    }
 
+    public String checkFileType(String file) {
+        String result = "";
+        switch (filetype(file)) {
+            case ".mp4":
+            case ".mkv":
+                result = "vid";
+                break;
+            case ".png":
+            case ".jpg":
+            case ".jpeg":
+                result = "img";
+                break;
+            default:
+                break;
+        }
+        return result;
+    }
 
     private String encodeImageFromUri(Uri fileuri){
         try {
@@ -129,6 +152,7 @@ public class ChatActivity extends BaseActivity {
             return null;
         }
     }
+
     private Bitmap getBitmapFromEncodeString(String encodeImage) {
         if(encodeImage != null)
         {
@@ -165,19 +189,123 @@ public class ChatActivity extends BaseActivity {
         return resizedBitmap;
     }
 
+    public String filelink="";
+    String finame;
+    Uri fileuri;
+    ActivityResultLauncher<Intent> activityResultLauncher;
+
+    public void pickFile(){
+        int i=0;
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        intent.setType("*/*");
+        activityResultLauncher.launch(intent);
+        //startActivityForResult(Intent.createChooser(intent, "Select Picture"), 1);
+    }
+    @SuppressLint("Range")
+    public String getFileName(Uri uri) {
+        String result = null;
+        if (uri.getScheme().equals("content")) {
+            Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+            try {
+                if (cursor != null && cursor.moveToFirst()) {
+                    result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                }
+            } finally {
+                cursor.close();
+            }
+        }
+        if (result == null) {
+            result = uri.getPath();
+            int cut = result.lastIndexOf('/');
+            if (cut != -1) {
+                result = result.substring(cut + 1);
+            }
+        }
+        return result;
+    }
+    private void SendFileToDatabase(Uri  fileuri,String finame) {
+        StorageReference storageReference = FirebaseStorage.getInstance().getReference(finame);
+        storageReference.putFile(fileuri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                getLinkDownload(finame);
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                showToast("failed sml ");
+
+            }
+        });
+
+    }
+
+    private void downloadFile(Context context, String fileName, String fileExtension, String destinationDirectory, String url) {
+        DownloadManager downloadManager=(DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+        Uri uri=Uri.parse(url);
+        DownloadManager.Request request=new DownloadManager.Request(uri);
+        request.setDestinationInExternalFilesDir(context,destinationDirectory,fileName+fileExtension);
+        downloadManager.enqueue(request);
+    }
+
+    public Boolean isUploadingFile=false;
+
+    private void loading(Boolean isLoading)
+    {
+        if(isLoading){
+            binding.progressBar.setVisibility(View.VISIBLE);
+        }else
+        {
+            binding.progressBar.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    public void getLinkDownload(String finame){
+        StorageReference storageReference = FirebaseStorage.getInstance().getReference(finame);
+        storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                filelink = uri.toString();
+                loading(false);
+                isUploadingFile=false;
+                showToast("upload success");
+
+            }
+        });
+    }
 
 
     private void sendMessage() {
-        if( binding.inputMessage.getText().toString().isEmpty()&&finame==null){
+        if( (binding.inputMessage.getText().toString().isEmpty()&&finame==null)||isUploadingFile==true){
             return;
         }
+        if(fileuri!=null) {
+            if (checkFileType(finame).compareTo("vid") == 0) {
+                loading(true);
+                getLinkDownload(finame);
+            }
+            if (checkFileType(finame).compareTo("img") == 0) {
+                filelink=null;
+                encodedImage = encodeImageFromUri(fileuri);
+            }
+
+        }
         HashMap<String, Object> message = new HashMap<>();
+
         message.put(Constants.KEY_SENDER_ID, preferenceManager.getString(Constants.KEY_USER_ID));
         message.put(Constants.KEY_RECEIVER_ID, receiverUser.id);
         message.put(Constants.KEY_MESSAGE, binding.inputMessage.getText().toString());
         message.put(Constants.KEY_TIMESTAMP, new Date());
-        if(fileuri!=null){
-            encodedImage= encodeImageFromUri(fileuri);
+
+        if(filelink!=null){
+            message.put(Constants.KEY_MESSAGE_VIDEO,filelink);
+            message.put(Constants.KEY_MESSAGE_IMAGE,"");
+
+        }
+        else{
+            message.put(Constants.KEY_MESSAGE_VIDEO,"");
         }
         if(encodedImage!=null){
             message.put(Constants.KEY_MESSAGE_IMAGE,encodedImage);
@@ -185,6 +313,8 @@ public class ChatActivity extends BaseActivity {
         else{
             message.put(Constants.KEY_MESSAGE_IMAGE,"");
         }
+
+
 
         database.collection(Constants.KEY_COLLECTION_CHAT).add(message);
         if (conversationId != null) {
@@ -213,6 +343,8 @@ public class ChatActivity extends BaseActivity {
                 data.put(Constants.KEY_FCM_TOKEN, preferenceManager.getString(Constants.KEY_FCM_TOKEN));
                 data.put(Constants.KEY_MESSAGE, binding.inputMessage.getText().toString());
                 data.put(Constants.KEY_MESSAGE_IMAGE, encodedImage);
+                    data.put(Constants.KEY_MESSAGE_VIDEO,filelink);
+
                 JSONObject body = new JSONObject();
                 body.put(Constants.REMOTE_MSG_DATA,data);
                 body.put(Constants.REMOTE_MSG_REGISTRATION_IDS, tokens);
@@ -223,12 +355,10 @@ public class ChatActivity extends BaseActivity {
         }
         binding.inputMessage.setText(null);
 
-//        if(finame!=null&&fileuri!=null){
-//            SendFileToDatabase();
-//        }
         encodedImage=null;
         finame=null;
         fileuri=null;
+        filelink=null;
     }
 
     private void showToast(String message)
@@ -348,7 +478,7 @@ public class ChatActivity extends BaseActivity {
             }
             binding.chatRecyclerView.setVisibility(View.VISIBLE);
         }
-        binding.progressBar.setVisibility(View.GONE);
+        binding.progressBar.setVisibility(View.INVISIBLE);
         if (conversationId == null) {
             checkConversation();
         }
@@ -364,12 +494,21 @@ public class ChatActivity extends BaseActivity {
     private void setListener() {
         binding.imageBack.setOnClickListener(v -> onBackPressed());
         binding.layoutSend.setOnClickListener(v -> sendMessage());
+
+
         activityResultLauncher=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
             @Override
             public void onActivityResult(ActivityResult result) {
                 fileuri= result.getData().getData();
                 finame=getFileName(fileuri);
-                //binding.inputMessage.setText(finame);
+                if (checkFileType(finame).compareTo("img") == 0) {
+                    return;
+                }
+                loading(true);
+                isUploadingFile=true;
+                SendFileToDatabase(fileuri,finame);
+
+//                binding.inputMessage.setText(finame);
             }
         });
         binding.layoutFile.setOnClickListener(v -> pickFile());
@@ -427,79 +566,4 @@ public class ChatActivity extends BaseActivity {
         listenAvailabilityOfReceiver();
     }
 
-    String finame;
-    Uri fileuri;
-    ActivityResultLauncher<Intent> activityResultLauncher;
-    ImageView imageView;
-
-
-
-    public void pickFile(){
-        int i=0;
-
-        Intent intent = new Intent();
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        intent.setType("*/*");
-        activityResultLauncher.launch(intent);
-        //startActivityForResult(Intent.createChooser(intent, "Select Picture"), 1);
-    }
-
-    @Override
-    public void onActivityResult(final int requestCode, final int resultCode, @Nullable final Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            if (requestCode == 1 && data != null) {
-                fileuri = data.getData();
-                finame=getFileName(fileuri);
-            }
-        }
-    }
-    @SuppressLint("Range")
-    public String getFileName(Uri uri) {
-        String result = null;
-        if (uri.getScheme().equals("content")) {
-            Cursor cursor = getContentResolver().query(uri, null, null, null, null);
-            try {
-                if (cursor != null && cursor.moveToFirst()) {
-                    result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
-                }
-            } finally {
-                cursor.close();
-            }
-        }
-        if (result == null) {
-            result = uri.getPath();
-            int cut = result.lastIndexOf('/');
-            if (cut != -1) {
-                result = result.substring(cut + 1);
-            }
-        }
-        return result;
-    }
-    private void SendFileToDatabase() {
-        while(fileuri==null){
-            return;
-        }
-        FirebaseStorage firebaseStorage=FirebaseStorage.getInstance("gs://clown-3264c.appspot.com/");
-        StorageReference storageReference=firebaseStorage.getReference(finame);
-        storageReference.putFile(fileuri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                if(task.isSuccessful()){
-                    Toast.makeText(getApplicationContext(), "Success upload", Toast.LENGTH_SHORT).show();
-                }
-                else{
-                    Toast.makeText(getApplicationContext(), "Fail upload", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-    }
-    String selectedMessage;
-    private void downloadFile(Context context, String fileName, String fileExtension, String destinationDirectory, String url) {
-        DownloadManager downloadManager=(DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
-        Uri uri=Uri.parse(url);
-        DownloadManager.Request request=new DownloadManager.Request(uri);
-        request.setDestinationInExternalFilesDir(context,destinationDirectory,fileName+fileExtension);
-        downloadManager.enqueue(request);
-    }
 }
