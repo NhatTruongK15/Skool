@@ -42,6 +42,18 @@
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/Skool/app/src/main/res/layout/item_container_sent_message.xml" value="0.275" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/Skool/app/src/main/res/layout/item_container_user.xml" value="0.275" />
         <entry key="..\:/Users/ASUS/AndroidStudioProjects/Skool/app/src/main/res/layout/item_conteainer_add_group_member.xml" value="0.4" />
+        <entry key="..\:/Users/Admin/Documents/GitHub/Skool/app/src/main/res/drawable/background_dialog.xml" value="0.2855" />
+        <entry key="..\:/Users/Admin/Documents/GitHub/Skool/app/src/main/res/drawable/background_dialog_titile.xml" value="0.2855" />
+        <entry key="..\:/Users/Admin/Documents/GitHub/Skool/app/src/main/res/drawable/background_search.xml" value="0.2855" />
+        <entry key="..\:/Users/Admin/Documents/GitHub/Skool/app/src/main/res/drawable/background_sent_message.xml" value="0.2855" />
+        <entry key="..\:/Users/Admin/Documents/GitHub/Skool/app/src/main/res/drawable/ic_add.xml" value="0.2855" />
+        <entry key="..\:/Users/Admin/Documents/GitHub/Skool/app/src/main/res/drawable/ic_back.xml" value="0.2855" />
+        <entry key="..\:/Users/Admin/Documents/GitHub/Skool/app/src/main/res/drawable/ic_info.xml" value="0.2855" />
+        <entry key="..\:/Users/Admin/Documents/GitHub/Skool/app/src/main/res/drawable/ic_launcher_background.xml" value="0.2855" />
+        <entry key="..\:/Users/Admin/Documents/GitHub/Skool/app/src/main/res/layout/activity_main.xml" value="0.38697916666666665" />
+        <entry key="..\:/Users/Admin/Documents/GitHub/Skool/app/src/main/res/layout/activity_sign_in.xml" value="0.38697916666666665" />
+        <entry key="..\:/Users/Admin/Documents/GitHub/Skool/app/src/main/res/layout/activity_sign_up.xml" value="0.33" />
+        <entry key="..\:/Users/Admin/Documents/GitHub/Skool/app/src/main/res/layout/applying_verification_code_dialog.xml" value="0.25" />
       </map>
     </option>
   </component>

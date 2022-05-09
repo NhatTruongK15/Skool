@@ -10,6 +10,7 @@
     android:scrollbars="none"
     tools:context=".activities.SignUpActivity">
     <LinearLayout
+        android:id="@+id/signUpLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
@@ -44,94 +45,174 @@
                 android:textSize="@dimen/_10ssp"/>
         </FrameLayout>
 
-        <EditText
-            android:id="@+id/inputName"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_45sdp"
-            android:layout_marginTop="@dimen/_20sdp"
-            android:background="@drawable/background_input"
-            android:hint="@string/name"
-            android:imeOptions="actionNext"
-            android:importantForAutofill="no"
-            android:inputType="text"
-            android:paddingStart="@dimen/_16sdp"
-            android:paddingEnd="@dimen/_16sdp"
-            android:textColor="@color/primary_text"
-            android:textSize="@dimen/_13ssp"/>
-        <EditText
-            android:id="@+id/inputEmail"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_45sdp"
-            android:layout_marginTop="@dimen/_16sdp"
-            android:background="@drawable/background_input"
-            android:hint="@string/email"
-            android:imeOptions="actionNext"
-            android:importantForAutofill="no"
-            android:inputType="textEmailAddress"
-            android:paddingStart="@dimen/_16sdp"
-            android:paddingEnd="@dimen/_16sdp"
-            android:textColor="@color/primary_text"
-            android:textSize="@dimen/_13ssp"/>
-        <EditText
-            android:id="@+id/inputPassword"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_45sdp"
-            android:layout_marginTop="@dimen/_16sdp"
-            android:background="@drawable/background_input"
-            android:hint="@string/password"
-            android:imeOptions="actionNext"
-            android:importantForAutofill="no"
-            android:inputType="textPassword"
-            android:paddingStart="@dimen/_16sdp"
-            android:paddingEnd="@dimen/_16sdp"
-            android:textColor="@color/primary_text"
-            android:textSize="@dimen/_13ssp"/>
-        <EditText
-            android:id="@+id/inputConfirmPassword"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_45sdp"
-            android:layout_marginTop="@dimen/_16sdp"
-            android:background="@drawable/background_input"
-            android:hint="@string/confirm_password"
-            android:imeOptions="actionDone"
-            android:importantForAutofill="no"
-            android:inputType="textPassword"
-            android:paddingStart="@dimen/_16sdp"
-            android:paddingEnd="@dimen/_16sdp"
-            android:textColor="@color/primary_text"
-            android:textSize="@dimen/_13ssp"/>
-        <FrameLayout
+       <LinearLayout
+           android:id="@+id/userInfoLayout"
+           android:visibility="visible"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:gravity="center_horizontal"
+           android:orientation="vertical">
+           <EditText
+               android:id="@+id/inputName"
+               android:layout_width="match_parent"
+               android:layout_height="@dimen/_45sdp"
+               android:layout_marginTop="@dimen/_10sdp"
+               android:background="@drawable/background_input"
+               android:hint="@string/name"
+               android:imeOptions="actionNext"
+               android:importantForAutofill="no"
+               android:inputType="text"
+               android:paddingStart="@dimen/_16sdp"
+               android:paddingEnd="@dimen/_16sdp"
+               android:textColor="@color/primary_text"
+               android:textSize="@dimen/_13ssp"/>
+
+           <EditText
+               android:id="@+id/inputPhoneNumb"
+               android:layout_width="match_parent"
+               android:layout_height="@dimen/_45sdp"
+               android:layout_marginTop="@dimen/_16sdp"
+               android:background="@drawable/background_input"
+               android:hint="Phone number"
+               android:imeOptions="actionNext"
+               android:importantForAutofill="no"
+               android:inputType="textPhonetic"
+               android:paddingStart="@dimen/_16sdp"
+               android:paddingEnd="@dimen/_16sdp"
+               android:textColor="@color/primary_text"
+               android:textSize="@dimen/_13ssp"/>
+
+           <EditText
+               android:id="@+id/inputEmail"
+               android:layout_width="match_parent"
+               android:layout_height="@dimen/_45sdp"
+               android:layout_marginTop="@dimen/_16sdp"
+               android:background="@drawable/background_input"
+               android:hint="@string/email"
+               android:imeOptions="actionNext"
+               android:importantForAutofill="no"
+               android:inputType="textEmailAddress"
+               android:paddingStart="@dimen/_16sdp"
+               android:paddingEnd="@dimen/_16sdp"
+               android:textColor="@color/primary_text"
+               android:textSize="@dimen/_13ssp"/>
+
+           <EditText
+               android:id="@+id/inputPassword"
+               android:layout_width="match_parent"
+               android:layout_height="@dimen/_45sdp"
+               android:layout_marginTop="@dimen/_16sdp"
+               android:background="@drawable/background_input"
+               android:hint="@string/password"
+               android:imeOptions="actionNext"
+               android:importantForAutofill="no"
+               android:inputType="textPassword"
+               android:paddingStart="@dimen/_16sdp"
+               android:paddingEnd="@dimen/_16sdp"
+               android:textColor="@color/primary_text"
+               android:textSize="@dimen/_13ssp"/>
+           <EditText
+               android:id="@+id/inputConfirmPassword"
+               android:layout_width="match_parent"
+               android:layout_height="@dimen/_45sdp"
+               android:layout_marginTop="@dimen/_16sdp"
+               android:background="@drawable/background_input"
+               android:hint="@string/confirm_password"
+               android:imeOptions="actionDone"
+               android:importantForAutofill="no"
+               android:inputType="textPassword"
+               android:paddingStart="@dimen/_16sdp"
+               android:paddingEnd="@dimen/_16sdp"
+               android:textColor="@color/primary_text"
+               android:textSize="@dimen/_13ssp"/>
+           <FrameLayout
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:layout_marginTop="@dimen/_16sdp"
+               android:animateLayoutChanges="true">
+
+               <com.google.android.material.button.MaterialButton
+                   android:id="@+id/buttonSignUp"
+                   android:layout_width="match_parent"
+                   android:layout_height="@dimen/_50sdp"
+                   android:text="@string/sign_up"
+                   android:textColor="@color/white"
+                   android:textSize="@dimen/_13ssp"
+                   android:textStyle="bold"
+                   app:cornerRadius="@dimen/_8sdp"/>
+               <ProgressBar
+                   android:id="@+id/progressBar"
+                   android:layout_width="@dimen/_25sdp"
+                   android:layout_height="@dimen/_25sdp"
+                   android:layout_gravity="center"
+                   android:visibility="visible"/>
+           </FrameLayout>
+
+
+           <TextView
+               android:id="@+id/textSignIn"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:layout_marginTop="@dimen/_1sdp"
+               android:text="@string/sign_in"
+               android:textColor="@color/primary"
+               android:textSize="@dimen/_13ssp"
+               android:textStyle="bold"/>
+       </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/verificationLayout"
+            android:visibility="visible"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_16sdp"
-            android:animateLayoutChanges="true">
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/buttonSignUp"
+            >
+            <EditText
+                android:id="@+id/verificationCodeEditText"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/_50sdp"
-                android:text="@string/sign_up"
-                android:textColor="@color/white"
-                android:textSize="@dimen/_13ssp"
-                android:textStyle="bold"
-                app:cornerRadius="@dimen/_8sdp"/>
-            <ProgressBar
-                android:id="@+id/progressBar"
-                android:layout_width="@dimen/_25sdp"
-                android:layout_height="@dimen/_25sdp"
-                android:layout_gravity="center"
-                android:visibility="visible"/>
-        </FrameLayout>
+                android:layout_height="@dimen/_45sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:background="@drawable/background_input"
+                android:hint="Enter verification code"
+
+                android:imeOptions="actionNext"
+                android:importantForAutofill="no"
+                android:inputType="text"
+                android:paddingStart="@dimen/_16sdp"
+                android:paddingEnd="@dimen/_16sdp"
+                android:textColor="@color/primary_text"
+                android:textSize="@dimen/_13ssp"/>
 
 
-        <TextView
-            android:id="@+id/textSignIn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_10sdp"
-            android:text="@string/sign_in"
-            android:textColor="@color/primary"
-            android:textSize="@dimen/_13ssp"
-            android:textStyle="bold"/>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_16sdp"
+                android:animateLayoutChanges="true">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/confirm_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_50sdp"
+                    android:text="Submit"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_13ssp"
+                    android:textStyle="bold"
+                    app:cornerRadius="@dimen/_8sdp"/>
+                <ProgressBar
+                    android:id="@+id/progressBarWhileVerifying"
+                    android:layout_width="@dimen/_25sdp"
+                    android:layout_height="@dimen/_25sdp"
+                    android:layout_gravity="center"
+                    android:visibility="visible"/>
+            </FrameLayout>
+
+
+
+        </LinearLayout>
+
     </LinearLayout>
 </ScrollView>
