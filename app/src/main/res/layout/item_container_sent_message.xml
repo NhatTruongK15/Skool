@@ -40,20 +40,24 @@
         app:layout_constraintWidth_max="wrap"
         app:layout_constraintHeight_max="wrap"
         app:layout_constraintWidth_percent="0.8" />
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintTop_toTopOf="parent"
 
-        >
 
-        <VideoView
-            android:id="@+id/vidMessage"
-            android:layout_width="wrap_content"
-            android:layout_height="300dp"
-            android:layout_gravity="center" />
-    </FrameLayout>
+            <VideoView
+                android:id="@+id/vidMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:background="@color/Trans"
+                app:layout_constraintBottom_toTopOf="@+id/textDateTime"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_max="wrap"
+                app:layout_constraintHeight_max="wrap"
+
+                app:layout_constraintWidth_percent="0.8"/>
+
+
     <TextView
         android:id="@+id/textDateTime"
         android:layout_width="0dp"

@@ -16,8 +16,10 @@ import android.graphics.BitmapFactory;
 
 
 import android.graphics.Matrix;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.OpenableColumns;
@@ -26,6 +28,7 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.MediaController;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
@@ -68,7 +71,9 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -106,6 +111,47 @@ public class ChatActivity extends BaseActivity {
         loadReceiverDetails();
         init();
         listenMessages();
+
+        MediaController mediaController= new MediaController(this);
+        mediaController.setAnchorView(binding.vidMessage);
+        binding.vidMessage.setMediaController(mediaController);
+
+        // implement on completion listener on video view
+        binding.vidMessage.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                showToast("Thank You...!!!");
+            }
+        });
+        binding.vidMessage.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+            @Override
+            public boolean onError(MediaPlayer mp, int what, int extra) {
+                 showToast("Oops An Error Occur While Playing Video...!!!");
+                return false;
+            }
+        });
+////            String videoPath = "https://firebasestorage.googleapis.com/v0/b/clown-3264c.appspot.com/o/96e523be723a8206.mp4?alt=media&token=1c06dd34-25a3-46dd-83d2-c5d93af72b2c";
+////            if(chatMessage.videoPath!=null){
+////                if(chatMessage.videoPath.compareTo("")!=0){
+////                    binding.vidMessage.setVideoURI(Uri.parse(chatMessage.videoPath));
+////
+////                    binding.vidMessage.setVideoPath(videoPath);
+////
+////                }
+////            }
+////            Uri uriVideo = Uri.parse(videoPath);
+////            // set the path for the video view
+//////            binding.vidMessage.setVideoURI(uriVideo);
+//
+//        try {
+//            String videoPath = "https://firebasestorage.googleapis.com/v0/b/clown-3264c.appspot.com/o/96e523be723a8206-1.mp4?alt=media&token=e7a20aae-04c9-4060-b7a9-23692ab2a700";
+//            Uri rui=Uri.parse(videoPath);
+//            binding.vidMessage.setVideoPath(videoPath);
+//            binding.vidMessage.start();
+//        } catch (Exception ex) {
+//
+//        }
+
     }
 
 
@@ -276,6 +322,49 @@ public class ChatActivity extends BaseActivity {
         });
     }
 
+    public String VideoToBase64(String finame){
+        File tempFile = new File(finame);
+        String encodedString = null;
+        InputStream inputStream = null;
+        try {
+            inputStream = new FileInputStream(tempFile);
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+        byte[] bytes;
+        byte[] buffer = new byte[10000];
+        int bytesRead;
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        try {
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                output.write(buffer, 0, bytesRead);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        bytes = output.toByteArray();
+        encodedString = Base64.encodeToString(bytes, Base64.DEFAULT);
+        Log.i("Strng", encodedString);
+        return encodedString;
+    }
+
+    public String videolocation=null;
+    public void Base64ToVideo(String encodedString){
+        byte[] decodedBytes = Base64.decode(encodedString.getBytes(),Base64.DEFAULT);
+        try {
+            FileOutputStream out = new FileOutputStream(
+                    Environment.getExternalStorageDirectory()
+                            + "/my/Convert.mp4");
+            out.write(decodedBytes);
+            out.close();
+            videolocation=Environment.getExternalStorageDirectory()+ "/my/Convert.mp4";
+            binding.vidMessage.setVideoPath(videolocation);
+        } catch (Exception e) {
+            // TODO: handle exception
+            Log.e("Error", e.toString());
+        }
+    }
+
 
     private void sendMessage() {
         if( (binding.inputMessage.getText().toString().isEmpty()&&finame==null)||isUploadingFile==true){
@@ -302,7 +391,8 @@ public class ChatActivity extends BaseActivity {
         if(filelink!=null){
             message.put(Constants.KEY_MESSAGE_VIDEO,filelink);
             message.put(Constants.KEY_MESSAGE_IMAGE,"");
-
+            binding.vidMessage.setVideoPath(filelink);
+            binding.vidMessage.start();
         }
         else{
             message.put(Constants.KEY_MESSAGE_VIDEO,"");
