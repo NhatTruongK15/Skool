@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.MediaController;
 import android.widget.Toast;
 
@@ -103,54 +104,38 @@ public class ChatAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         void setData(ChatMessage chatMessage)
         {
-            binding.textMessage.setText(chatMessage.message);
             binding.textDateTime.setText(chatMessage.dateTime);
             binding.imgMessage.setImageBitmap(chatMessage.message_img);
+            binding.textMessage.setText(chatMessage.message);
 
+            if(chatMessage.videoPath!=null&&chatMessage.videoPath.compareTo("")!=0){
+                binding.textMessage.setVisibility(View.GONE);
 
-//            if(chatMessage.videoPath!=null&&chatMessage.videoPath.compareTo("")!=0){
-//                chatMessage.mediaController=new MediaController(itemView.getContext());
-//                chatMessage.mediaController.setAnchorView(binding.vidMessage);
-//                binding.vidMessage.setMediaController(chatMessage.mediaController);
-//
-//                // implement on completion listener on video view
-//                binding.vidMessage.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-//                    @Override
-//                    public void onCompletion(MediaPlayer mp) {
-//                        Toast.makeText(itemView.getContext(), "Thank You...!!!", Toast.LENGTH_SHORT).show();
-//                    }
-//                });
-//                binding.vidMessage.setOnErrorListener(new MediaPlayer.OnErrorListener() {
-//                    @Override
-//                    public boolean onError(MediaPlayer mp, int what, int extra) {
-//                        Toast.makeText(itemView.getContext(), "Oops An Error Occur While Playing Video...!!!", Toast.LENGTH_SHORT).show();
-//                        return false;
-//                    }
-//                });
-////            String videoPath = "https://firebasestorage.googleapis.com/v0/b/clown-3264c.appspot.com/o/96e523be723a8206.mp4?alt=media&token=1c06dd34-25a3-46dd-83d2-c5d93af72b2c";
-////            if(chatMessage.videoPath!=null){
-////                if(chatMessage.videoPath.compareTo("")!=0){
-////                    binding.vidMessage.setVideoURI(Uri.parse(chatMessage.videoPath));
-////
-////                    binding.vidMessage.setVideoPath(videoPath);
-////
-////                }
-////            }
-////            Uri uriVideo = Uri.parse(videoPath);
-////            // set the path for the video view
-//////            binding.vidMessage.setVideoURI(uriVideo);
-//
-//                try{
-//                    String videoPath = "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4";
-//                    binding.vidMessage.setVideoURI(Uri.parse(chatMessage.videoPath));
-//                    binding.vidMessage.start();
-//                }
-//                catch (Exception ex){
-//
-//                }
-//
-//            }
+                chatMessage.mediaController=new MediaController(itemView.getContext());
+                chatMessage.mediaController.setAnchorView(binding.vidMessage);
+                binding.vidMessage.setMediaController(chatMessage.mediaController);
 
+                // implement on completion listener on video view
+                binding.vidMessage.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                    @Override
+                    public void onCompletion(MediaPlayer mp) {
+                        Toast.makeText(itemView.getContext(), "Thank You...!!!", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                binding.vidMessage.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+                    @Override
+                    public boolean onError(MediaPlayer mp, int what, int extra) {
+                        Toast.makeText(itemView.getContext(), "Oops An Error Occur While Playing Video...!!!", Toast.LENGTH_SHORT).show();
+                        return false;
+                    }
+                });
+                binding.vidMessage.setVideoURI(Uri.parse(chatMessage.videoPath));
+            }
+            else{
+                binding.vidMessage.setVisibility(View.GONE);
+                binding.vidMessage.setLayoutParams(new FrameLayout.LayoutParams(0,0));
+
+            }
         }
     }
 
@@ -166,51 +151,38 @@ public class ChatAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         void setData(ChatMessage chatMessage, Bitmap receiverProfileImage)
         {
-            binding.textMessage.setText(chatMessage.message);
             binding.textDateTime.setText(chatMessage.dateTime);
             binding.imgMessage.setImageBitmap(chatMessage.message_img);
+            binding.textMessage.setText(chatMessage.message);
 
 
-//            if(chatMessage.videoPath!=null&&chatMessage.videoPath.compareTo("")!=0) {
-//                chatMessage.mediaController = new MediaController(itemView.getContext());
-//                chatMessage.mediaController.setAnchorView(binding.vidMessage);
-//                binding.vidMessage.setMediaController(chatMessage.mediaController);
-//
-//                // implement on completion listener on video view
-//                binding.vidMessage.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-//                    @Override
-//                    public void onCompletion(MediaPlayer mp) {
-//                        Toast.makeText(itemView.getContext(), "Thank You...!!!", Toast.LENGTH_SHORT).show();
-//                    }
-//                });
-//                binding.vidMessage.setOnErrorListener(new MediaPlayer.OnErrorListener() {
-//                    @Override
-//                    public boolean onError(MediaPlayer mp, int what, int extra) {
-//                        Toast.makeText(itemView.getContext(), "Oops An Error Occur While Playing Video...!!!", Toast.LENGTH_SHORT).show();
-//                        return false;
-//                    }
-//                });
-////            String videoPath = "https://firebasestorage.googleapis.com/v0/b/clown-3264c.appspot.com/o/96e523be723a8206.mp4?alt=media&token=1c06dd34-25a3-46dd-83d2-c5d93af72b2c";
-////            if(chatMessage.videoPath!=null){
-////                if(chatMessage.videoPath.compareTo("")!=0){
-////                    binding.vidMessage.setVideoURI(Uri.parse(chatMessage.videoPath));
-////
-////                    binding.vidMessage.setVideoPath(videoPath);
-////
-////                }
-////            }
-////            Uri uriVideo = Uri.parse(videoPath);
-////            // set the path for the video view
-//////            binding.vidMessage.setVideoURI(uriVideo);
-//
-//                try {
-//                    String videoPath = "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4";
-//                    binding.vidMessage.setVideoURI(Uri.parse(chatMessage.videoPath));
-//                    binding.vidMessage.start();
-//                } catch (Exception ex) {
-//
-//                }
-//            }
+            if(chatMessage.videoPath!=null&&chatMessage.videoPath.compareTo("")!=0) {
+                binding.textMessage.setVisibility(View.GONE);
+
+                chatMessage.mediaController = new MediaController(itemView.getContext());
+                chatMessage.mediaController.setAnchorView(binding.vidMessage);
+                binding.vidMessage.setMediaController(chatMessage.mediaController);
+
+                // implement on completion listener on video view
+                binding.vidMessage.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                    @Override
+                    public void onCompletion(MediaPlayer mp) {
+                        Toast.makeText(itemView.getContext(), "Thank You...!!!", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                binding.vidMessage.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+                    @Override
+                    public boolean onError(MediaPlayer mp, int what, int extra) {
+                        Toast.makeText(itemView.getContext(), "Oops An Error Occur While Playing Video...!!!", Toast.LENGTH_SHORT).show();
+                        return false;
+                    }
+                });
+                binding.vidMessage.setVideoURI(Uri.parse(chatMessage.videoPath));
+            }
+            else{
+                binding.vidMessage.setVisibility(View.GONE);
+                binding.vidMessage.setLayoutParams(new FrameLayout.LayoutParams(1,1));
+            }
         }
     }
 }

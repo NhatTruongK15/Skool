@@ -112,46 +112,6 @@ public class ChatActivity extends BaseActivity {
         init();
         listenMessages();
 
-        MediaController mediaController= new MediaController(this);
-        mediaController.setAnchorView(binding.vidMessage);
-        binding.vidMessage.setMediaController(mediaController);
-
-        // implement on completion listener on video view
-        binding.vidMessage.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mp) {
-                showToast("Thank You...!!!");
-            }
-        });
-        binding.vidMessage.setOnErrorListener(new MediaPlayer.OnErrorListener() {
-            @Override
-            public boolean onError(MediaPlayer mp, int what, int extra) {
-                 showToast("Oops An Error Occur While Playing Video...!!!");
-                return false;
-            }
-        });
-////            String videoPath = "https://firebasestorage.googleapis.com/v0/b/clown-3264c.appspot.com/o/96e523be723a8206.mp4?alt=media&token=1c06dd34-25a3-46dd-83d2-c5d93af72b2c";
-////            if(chatMessage.videoPath!=null){
-////                if(chatMessage.videoPath.compareTo("")!=0){
-////                    binding.vidMessage.setVideoURI(Uri.parse(chatMessage.videoPath));
-////
-////                    binding.vidMessage.setVideoPath(videoPath);
-////
-////                }
-////            }
-////            Uri uriVideo = Uri.parse(videoPath);
-////            // set the path for the video view
-//////            binding.vidMessage.setVideoURI(uriVideo);
-//
-//        try {
-//            String videoPath = "https://firebasestorage.googleapis.com/v0/b/clown-3264c.appspot.com/o/96e523be723a8206-1.mp4?alt=media&token=e7a20aae-04c9-4060-b7a9-23692ab2a700";
-//            Uri rui=Uri.parse(videoPath);
-//            binding.vidMessage.setVideoPath(videoPath);
-//            binding.vidMessage.start();
-//        } catch (Exception ex) {
-//
-//        }
-
     }
 
 
@@ -275,14 +235,16 @@ public class ChatActivity extends BaseActivity {
         storageReference.putFile(fileuri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                loading(true);
                 getLinkDownload(finame);
 
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                showToast("failed sml ");
-
+                showToast("failed  ");
+                loading(false);
+                isUploadingFile=false;
             }
         });
 
@@ -358,7 +320,7 @@ public class ChatActivity extends BaseActivity {
             out.write(decodedBytes);
             out.close();
             videolocation=Environment.getExternalStorageDirectory()+ "/my/Convert.mp4";
-            binding.vidMessage.setVideoPath(videolocation);
+//            binding.vidMessage.setVideoPath(videolocation);
         } catch (Exception e) {
             // TODO: handle exception
             Log.e("Error", e.toString());
@@ -391,8 +353,8 @@ public class ChatActivity extends BaseActivity {
         if(filelink!=null){
             message.put(Constants.KEY_MESSAGE_VIDEO,filelink);
             message.put(Constants.KEY_MESSAGE_IMAGE,"");
-            binding.vidMessage.setVideoPath(filelink);
-            binding.vidMessage.start();
+//            binding.vidMessage.setVideoPath(filelink);
+//            binding.vidMessage.start();
         }
         else{
             message.put(Constants.KEY_MESSAGE_VIDEO,"");
@@ -554,6 +516,7 @@ public class ChatActivity extends BaseActivity {
                     chatMessage.receiverId = documentChange.getDocument().getString(Constants.KEY_RECEIVER_ID);
                     chatMessage.message = documentChange.getDocument().getString(Constants.KEY_MESSAGE);
                     chatMessage.message_img=getBitmapFromEncodeString( documentChange.getDocument().getString(Constants.KEY_MESSAGE_IMAGE));
+                    chatMessage.videoPath=documentChange.getDocument().getString(Constants.KEY_MESSAGE_VIDEO);
                     chatMessage.dateTime = getReadableDateTime(documentChange.getDocument().getDate(Constants.KEY_TIMESTAMP));
                     chatMessage.dateObject = documentChange.getDocument().getDate(Constants.KEY_TIMESTAMP);
                     chatMessages.add(chatMessage);
