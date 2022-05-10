@@ -52,9 +52,8 @@ public class SignUpActivity extends AppCompatActivity {
     ProgressDialog pd;
 
     // login with FirebaseAuth
-    FirebaseAuth auth = FirebaseAuth.getInstance();
-    DatabaseReference userReference;
-
+/*    FirebaseAuth auth = FirebaseAuth.getInstance();
+    DatabaseReference userReference;*/
 
     FirebaseAuth mAuth;
     @NonNull

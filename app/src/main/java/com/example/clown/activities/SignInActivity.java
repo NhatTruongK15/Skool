@@ -62,32 +62,6 @@ public class SignInActivity extends AppCompatActivity {
         setListener();
     }
 
-    private void showOTPDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        View view1 = LayoutInflater
-                .from(this)
-                .inflate(R.layout.applying_verification_code_dialog,(ConstraintLayout)findViewById(R.id.verificationCodeDialog));
-        builder.setView(view1);
-        final AlertDialog alertDialog = builder.create();
-        alertDialog.show();
-
-        view1.findViewById(R.id.confirm_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                alertDialog.dismiss();
-            }
-        });
-
-        view1.findViewById(R.id.cancel_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showToast("back to sign up activity");
-                alertDialog.dismiss();
-
-            }
-        });
-    }
 
 
     private void setListener() {
@@ -96,6 +70,13 @@ public class SignInActivity extends AppCompatActivity {
         binding.buttonSignIn.setOnClickListener(v -> {
             if (isValidSignInDetails()) {
                 SignIn();
+            }
+        });
+
+        binding.forgetPasswordText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getApplicationContext(), ResetPasswordActivity.class));
             }
         });
     }
@@ -159,7 +140,8 @@ public class SignInActivity extends AppCompatActivity {
                 .whereEqualTo(Constants.KEY_PASSWORD, binding.inputPassword.getText().toString())
                 .get()
                 .addOnCompleteListener(querySnapshotTask -> {
-                    if (querySnapshotTask.isSuccessful() && querySnapshotTask.getResult() != null && querySnapshotTask.getResult().getDocuments().size() > 0) {
+                    if (querySnapshotTask.isSuccessful() && querySnapshotTask.getResult() != null
+                            && querySnapshotTask.getResult().getDocuments().size() > 0) {
                         DocumentSnapshot documentSnapshot = querySnapshotTask.getResult().getDocuments().get(0);
                         preferenceManager.putBoolean(Constants.KEY_IS_SIGNED_IN, true);
                         preferenceManager.putString(Constants.KEY_DOCUMENT_REFERENCE_ID, documentSnapshot.getId());
@@ -191,7 +173,9 @@ public class SignInActivity extends AppCompatActivity {
         if (binding.inputEmail.getText().toString().trim().isEmpty()) {
             showToast("Enter email");
             return false;
-        } else if (!Patterns.EMAIL_ADDRESS.matcher(binding.inputEmail.getText().toString()).matches()) {
+        } else if (!(Patterns.EMAIL_ADDRESS.matcher(binding.inputEmail.getText().toString()).matches()
+                || Patterns.PHONE.matcher(binding.inputEmail.getText().toString()).matches()))
+        {
             showToast("Enter valid email");
             return false;
         } else if (binding.inputPassword.getText().toString().trim().isEmpty()) {

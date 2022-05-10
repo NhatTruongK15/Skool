@@ -50,6 +50,7 @@
                 android:textSize="@dimen/_10ssp" />
         </FrameLayout>
 
+        <!-- Verification layout-->
         <LinearLayout
             android:id="@+id/userInfoLayout"
             android:layout_width="match_parent"
@@ -169,6 +170,7 @@
                 android:textStyle="bold" />
         </LinearLayout>
 
+        <!-- Verification layout-->
         <LinearLayout
             android:id="@+id/verificationLayout"
             android:layout_width="match_parent"
