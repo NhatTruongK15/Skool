@@ -4,6 +4,7 @@ import static com.example.clown.utilities.Constants.HD_RES;
 import static com.example.clown.utilities.Constants.HD_RES_860;
 import static com.example.clown.utilities.Constants.PIC_HOLDER;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -19,11 +20,14 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.clown.R;
+import com.example.clown.activities.FileDisplayActivitiy;
+import com.example.clown.activities.MainActivity;
 import com.example.clown.databinding.ItemContainerReceivedMessageBinding;
 import com.example.clown.databinding.ItemContainerSentMessageBinding;
 import com.example.clown.models.ChatMessage;
 
 import java.util.List;
+import android.content.Intent;
 
 public class ChatAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -155,7 +159,6 @@ public class ChatAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder> 
             binding.imgMessage.setImageBitmap(chatMessage.message_img);
             binding.textMessage.setText(chatMessage.message);
 
-
             if(chatMessage.videoPath!=null&&chatMessage.videoPath.compareTo("")!=0) {
                 binding.textMessage.setVisibility(View.GONE);
 
@@ -183,6 +186,17 @@ public class ChatAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 binding.vidMessage.setVisibility(View.GONE);
                 binding.vidMessage.setLayoutParams(new FrameLayout.LayoutParams(1,1));
             }
+
+        }
+
+        private void openFileDisplay(String videoPath) {
+            Toast.makeText(itemView.getContext(), "123", Toast.LENGTH_SHORT).show();
+
+
+        }
+        private void openFileDisplay(Bitmap message_img) {
+            Toast.makeText(itemView.getContext(), "456", Toast.LENGTH_SHORT).show();
+
         }
     }
 }

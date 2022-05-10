@@ -135,6 +135,7 @@ public class ChatActivity extends BaseActivity {
         switch (filetype(file)) {
             case ".mp4":
             case ".mkv":
+            case ".webm":
                 result = "vid";
                 break;
             case ".png":
@@ -278,7 +279,7 @@ public class ChatActivity extends BaseActivity {
                 filelink = uri.toString();
                 loading(false);
                 isUploadingFile=false;
-                showToast("upload success");
+                showToast("get link success");
 
             }
         });
@@ -334,8 +335,8 @@ public class ChatActivity extends BaseActivity {
         }
         if(fileuri!=null) {
             if (checkFileType(finame).compareTo("vid") == 0) {
-                loading(true);
-                getLinkDownload(finame);
+//                loading(true);
+//                getLinkDownload(finame);
             }
             if (checkFileType(finame).compareTo("img") == 0) {
                 filelink=null;
@@ -353,8 +354,6 @@ public class ChatActivity extends BaseActivity {
         if(filelink!=null){
             message.put(Constants.KEY_MESSAGE_VIDEO,filelink);
             message.put(Constants.KEY_MESSAGE_IMAGE,"");
-//            binding.vidMessage.setVideoPath(filelink);
-//            binding.vidMessage.start();
         }
         else{
             message.put(Constants.KEY_MESSAGE_VIDEO,"");
@@ -395,7 +394,7 @@ public class ChatActivity extends BaseActivity {
                 data.put(Constants.KEY_FCM_TOKEN, preferenceManager.getString(Constants.KEY_FCM_TOKEN));
                 data.put(Constants.KEY_MESSAGE, binding.inputMessage.getText().toString());
                 data.put(Constants.KEY_MESSAGE_IMAGE, encodedImage);
-                    data.put(Constants.KEY_MESSAGE_VIDEO,filelink);
+                data.put(Constants.KEY_MESSAGE_VIDEO,filelink);
 
                 JSONObject body = new JSONObject();
                 body.put(Constants.REMOTE_MSG_DATA,data);
@@ -411,6 +410,7 @@ public class ChatActivity extends BaseActivity {
         finame=null;
         fileuri=null;
         filelink=null;
+        videolocation=null;
     }
 
     private void showToast(String message)
