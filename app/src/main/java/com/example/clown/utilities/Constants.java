@@ -18,6 +18,9 @@ public class Constants {
     public static final String KEY_RECEIVER_ID="receiverId";
     public static final String KEY_MESSAGE ="message";
     public static final String KEY_MESSAGE_IMAGE ="message_image";
+    public static final String KEY_MESSAGE_IMAGE_LINK ="message_image_link";
+    public static final String KEY_MESSAGE_IMAGE_FINAME ="message_image_link";
+
     public static final String KEY_MESSAGE_VIDEO ="message_video";
     public static final String KEY_MESSAGE_VIDEO_BASE64 ="message_video_base64";
 

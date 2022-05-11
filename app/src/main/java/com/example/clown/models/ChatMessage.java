@@ -15,6 +15,9 @@ public class ChatMessage {
 
     public String videoPath = null;
     public Uri uriVideo=null;
+    public String message_img_link;
+
+    public String finame;
 
     public MediaController mediaController;
 

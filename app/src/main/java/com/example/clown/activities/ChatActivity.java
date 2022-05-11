@@ -199,6 +199,7 @@ public class ChatActivity extends BaseActivity {
     public String filelink="";
     String finame;
     Uri fileuri;
+    String imglink="";
     ActivityResultLauncher<Intent> activityResultLauncher;
 
     public void pickFile(){
@@ -339,7 +340,9 @@ public class ChatActivity extends BaseActivity {
 //                getLinkDownload(finame);
             }
             if (checkFileType(finame).compareTo("img") == 0) {
+                imglink=filelink;
                 filelink=null;
+
                 encodedImage = encodeImageFromUri(fileuri);
             }
 
@@ -360,9 +363,14 @@ public class ChatActivity extends BaseActivity {
         }
         if(encodedImage!=null){
             message.put(Constants.KEY_MESSAGE_IMAGE,encodedImage);
+            message.put(Constants.KEY_MESSAGE_IMAGE_LINK,imglink);
+            message.put(Constants.KEY_MESSAGE_IMAGE_FINAME,finame);
         }
         else{
             message.put(Constants.KEY_MESSAGE_IMAGE,"");
+            message.put(Constants.KEY_MESSAGE_IMAGE_LINK,"");
+            message.put(Constants.KEY_MESSAGE_IMAGE_FINAME,"");
+
         }
 
 
@@ -394,6 +402,9 @@ public class ChatActivity extends BaseActivity {
                 data.put(Constants.KEY_FCM_TOKEN, preferenceManager.getString(Constants.KEY_FCM_TOKEN));
                 data.put(Constants.KEY_MESSAGE, binding.inputMessage.getText().toString());
                 data.put(Constants.KEY_MESSAGE_IMAGE, encodedImage);
+                data.put(Constants.KEY_MESSAGE_IMAGE_LINK,imglink);
+                data.put(Constants.KEY_MESSAGE_IMAGE_FINAME,finame);
+
                 data.put(Constants.KEY_MESSAGE_VIDEO,filelink);
 
                 JSONObject body = new JSONObject();
@@ -410,6 +421,7 @@ public class ChatActivity extends BaseActivity {
         finame=null;
         fileuri=null;
         filelink=null;
+        imglink=null;
         videolocation=null;
     }
 
@@ -519,6 +531,8 @@ public class ChatActivity extends BaseActivity {
                     chatMessage.videoPath=documentChange.getDocument().getString(Constants.KEY_MESSAGE_VIDEO);
                     chatMessage.dateTime = getReadableDateTime(documentChange.getDocument().getDate(Constants.KEY_TIMESTAMP));
                     chatMessage.dateObject = documentChange.getDocument().getDate(Constants.KEY_TIMESTAMP);
+                    chatMessage.message_img_link=documentChange.getDocument().getString(Constants.KEY_MESSAGE_IMAGE_LINK);
+                    chatMessage.finame=documentChange.getDocument().getString(Constants.KEY_MESSAGE_IMAGE_FINAME);
                     chatMessages.add(chatMessage);
                 }
             }
@@ -554,9 +568,6 @@ public class ChatActivity extends BaseActivity {
             public void onActivityResult(ActivityResult result) {
                 fileuri= result.getData().getData();
                 finame=getFileName(fileuri);
-                if (checkFileType(finame).compareTo("img") == 0) {
-                    return;
-                }
                 loading(true);
                 isUploadingFile=true;
                 SendFileToDatabase(fileuri,finame);

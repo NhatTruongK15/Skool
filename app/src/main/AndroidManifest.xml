@@ -40,7 +40,9 @@
         <activity
             android:name=".activities.MainActivity"
             android:exported="true" />
-
+        <activity
+            android:name=".activities.FileDisplayActivitiy"
+            android:exported="true" />
         <service
             android:name=".firebase.MessagingService"
             android:exported="false">

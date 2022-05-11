@@ -1,12 +1,9 @@
 package com.example.clown.activities;
 
 import static com.example.clown.utilities.Constants.HD_RES;
-
-import android.annotation.SuppressLint;
 import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -14,7 +11,6 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.OpenableColumns;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
@@ -22,20 +18,21 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.MediaController;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import androidx.activity.result.ActivityResultLauncher;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 
-import com.example.clown.databinding.ActivityChatBinding;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.clown.R;
 import com.example.clown.databinding.ActitvityDisplayFileBinding;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -44,17 +41,40 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
+import java.util.Random;
 
-public class FileDisplayActivitiy extends ChatActivity {
+public class FileDisplayActivitiy extends AppCompatActivity {
     public ActitvityDisplayFileBinding binding;
-    private String encodedImage;
+    private String imagePath="";
     private FirebaseFirestore database;
-    private String videoPath;
+    private String videoPath="";
+    MediaController mediaController;
+    VideoView videoView;
+    ImageView imageView;
+    ImageView imageBack;
+    ImageView imageDownload;
+    String finame;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActitvityDisplayFileBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        Toast.makeText(getApplicationContext(), "Trời đụ", Toast.LENGTH_SHORT).show();
+
+        imageBack=findViewById(R.id.imageBack);
+        imageDownload=findViewById(R.id.imageDownload);
+        imageView=findViewById(R.id.imgMessage);
+        videoView=findViewById(R.id.vidMessage);
+        imageBack.setOnClickListener(v -> onBackPressed());
+
+        Bundle bundle=null;
+        bundle=getIntent().getExtras();
+        if(bundle!=null) {
+            imagePath = bundle.getString("imgPath");
+            videoPath = bundle.getString("vidPath");
+            finame=bundle.getString("finame");
+        }
 
         innit();
     }
@@ -65,24 +85,6 @@ public class FileDisplayActivitiy extends ChatActivity {
     }
     public String filetype(String file){
         return file.substring(file.lastIndexOf("."));
-    }
-
-    public String checkFileType(String file) {
-        String result = "";
-        switch (filetype(file)) {
-            case ".mp4":
-            case ".mkv":
-                result = "vid";
-                break;
-            case ".png":
-            case ".jpg":
-            case ".jpeg":
-                result = "img";
-                break;
-            default:
-                break;
-        }
-        return result;
     }
 
     private String encodeImageFromUri(Uri fileuri){
@@ -133,59 +135,7 @@ public class FileDisplayActivitiy extends ChatActivity {
     }
 
     public String filelink="";
-    String finame;
-    Uri fileuri;
     ActivityResultLauncher<Intent> activityResultLauncher;
-
-    public void pickFile(){
-        int i=0;
-        Intent intent = new Intent();
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        intent.setType("*/*");
-        activityResultLauncher.launch(intent);
-        //startActivityForResult(Intent.createChooser(intent, "Select Picture"), 1);
-    }
-    @SuppressLint("Range")
-    public String getFileName(Uri uri) {
-        String result = null;
-        if (uri.getScheme().equals("content")) {
-            Cursor cursor = getContentResolver().query(uri, null, null, null, null);
-            try {
-                if (cursor != null && cursor.moveToFirst()) {
-                    result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
-                }
-            } finally {
-                cursor.close();
-            }
-        }
-        if (result == null) {
-            result = uri.getPath();
-            int cut = result.lastIndexOf('/');
-            if (cut != -1) {
-                result = result.substring(cut + 1);
-            }
-        }
-        return result;
-    }
-    private void SendFileToDatabase(Uri  fileuri,String finame) {
-        StorageReference storageReference = FirebaseStorage.getInstance().getReference(finame);
-        storageReference.putFile(fileuri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                loading(true);
-                getLinkDownload(finame);
-
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                showToast("failed  ");
-                loading(false);
-                isUploadingFile=false;
-            }
-        });
-
-    }
 
     private void downloadFile(Context context, String fileName, String fileExtension, String destinationDirectory, String url) {
         DownloadManager downloadManager=(DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
@@ -262,34 +212,90 @@ public class FileDisplayActivitiy extends ChatActivity {
     }
     public void innit(){
 
-        binding.imageBack.setOnClickListener(v -> onBackPressed());
-        binding.imgMessage.setImageBitmap(resizeBitmap(getBitmapFromEncodeString(encodedImage)));
-        if(videoPath!=null&&videoPath.compareTo("")!=0) {
-            MediaController mediaController = new MediaController(getApplicationContext());
-            mediaController.setAnchorView(binding.vidMessage);
-            binding.vidMessage.setMediaController(mediaController);
-
+        if(videoPath.compareTo("")!=0) {
+            Toast.makeText(this, "654", Toast.LENGTH_SHORT).show();
+            mediaController = new MediaController(this);
+            mediaController.setAnchorView(videoView);
+            videoView.setMediaController(mediaController);
             // implement on completion listener on video view
-            binding.vidMessage.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mp) {
                     Toast.makeText(getApplicationContext(), "Thank You...!!!", Toast.LENGTH_SHORT).show();
                 }
             });
-            binding.vidMessage.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+            videoView.setOnErrorListener(new MediaPlayer.OnErrorListener() {
                 @Override
                 public boolean onError(MediaPlayer mp, int what, int extra) {
                     Toast.makeText(getApplicationContext(), "Oops An Error Occur While Playing Video...!!!", Toast.LENGTH_SHORT).show();
                     return false;
                 }
             });
-            binding.vidMessage.setVideoURI(Uri.parse(videoPath));
+            videoView.setVideoURI(Uri.parse(videoPath));
+            videoView.start();
         }
         else{
-            binding.vidMessage.setVisibility(View.GONE);
-            binding.vidMessage.setLayoutParams(new FrameLayout.LayoutParams(1,1));
+            videoView.setVisibility(View.GONE);
+            videoView.setLayoutParams(new FrameLayout.LayoutParams(1,1));
+        }
+        if(imagePath.compareTo("")!=0) {
+            Bitmap bitmap=null;
+//
+//            String rand=getRandomString(10);
+//            downloadFile(this,rand,".png",Environment.DIRECTORY_DOWNLOADS,imagePath);
+            try {
+
+                final File localFile=File.createTempFile(imagePath,"png");
+                StorageReference storageReference=FirebaseStorage.getInstance().getReference(finame);
+                storageReference.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+
+                        Bitmap tempbitmap=BitmapFactory.decodeFile(localFile.getAbsolutePath());
+                        imageView.setImageBitmap(tempbitmap);
+                        Toast.makeText(getApplicationContext(), "retr", Toast.LENGTH_SHORT).show();
+
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(getApplicationContext(), "unretr", Toast.LENGTH_SHORT).show();
+
+                    }
+                });
+
+            }catch (Exception e){
+                imageView.setImageBitmap(bitmap);
+
+            }
+
+            Toast.makeText(this, "321", Toast.LENGTH_SHORT).show();
         }
 
+        imageDownload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String rand=getRandomString(10);
 
+                downloadFile(getApplicationContext(),rand,".png",Environment.DIRECTORY_DOWNLOADS,imagePath);
+
+            }
+        });
+    }
+
+    public Bitmap ByteArrayToBitmap(byte[] arr){
+        Bitmap bitmap = BitmapFactory.decodeByteArray(arr, 0, arr.length);
+        return bitmap;
+    }
+
+    private static final String ALLOWED_CHARACTERS ="0123456789qwertyuiopasdfghjklzxcvbnm";
+
+    private static String getRandomString(final int sizeOfRandomString)
+    {
+        final Random random=new Random();
+        final StringBuilder sb=new StringBuilder(sizeOfRandomString);
+        for(int i=0;i<sizeOfRandomString;++i)
+            sb.append(ALLOWED_CHARACTERS.charAt(random.nextInt(ALLOWED_CHARACTERS.length())));
+        return sb.toString();
     }
 }

@@ -46,7 +46,7 @@
     <VideoView
         android:id="@+id/vidMessage"
         android:layout_width="wrap_content"
-        android:layout_height="@dimen/_400sdp"
+        android:layout_height="@dimen/_300sdp"
         android:layout_marginTop="268dp"
         android:layout_marginBottom="268dp"
         android:background="@color/Trans"
