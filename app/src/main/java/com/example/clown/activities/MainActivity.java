@@ -19,6 +19,7 @@ import com.example.clown.models.GroupUser;
 import com.example.clown.models.User;
 import com.example.clown.utilities.Constants;
 import com.example.clown.utilities.PreferenceManager;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.EventListener;
@@ -61,8 +62,6 @@ public class MainActivity extends BaseActivity implements ConversationListener, 
         listenConversation();
     }
 
-
-
     private void init()
     {
         conversations = new ArrayList<>();
@@ -98,10 +97,10 @@ public class MainActivity extends BaseActivity implements ConversationListener, 
     private void listenConversation()
     {
         database.collection(Constants.KEY_COLLECTION_CONVERSATIONS)
-                .whereEqualTo(Constants.KEY_SENDER_ID, preferenceManager.getString(Constants.KEY_USER_ID))
+                .whereEqualTo(Constants.KEY_SENDER_ID, preferenceManager.getString(Constants.KEY_DOCUMENT_REFERENCE_ID))
                 .addSnapshotListener(eventListener);
         database.collection(Constants.KEY_COLLECTION_CONVERSATIONS)
-                .whereEqualTo(Constants.KEY_RECEIVER_ID, preferenceManager.getString(Constants.KEY_USER_ID))
+                .whereEqualTo(Constants.KEY_RECEIVER_ID, preferenceManager.getString(Constants.KEY_DOCUMENT_REFERENCE_ID))
                 .addSnapshotListener(eventListener);
     }
 
@@ -120,7 +119,7 @@ public class MainActivity extends BaseActivity implements ConversationListener, 
                     ChatMessage chatMessage = new ChatMessage();
                     chatMessage.senderId = senderId;
                     chatMessage.receiverId = receiverId;
-                    if(preferenceManager.getString(Constants.KEY_USER_ID).equals(senderId))
+                    if(preferenceManager.getString(Constants.KEY_DOCUMENT_REFERENCE_ID).equals(senderId))
                     {
                         chatMessage.conversationImage = documentChange.getDocument().getString(Constants.KEY_RECEIVER_IMAGE);
                         chatMessage.conversationName = documentChange.getDocument().getString(Constants.KEY_RECEIVER_NAME);
@@ -167,7 +166,7 @@ public class MainActivity extends BaseActivity implements ConversationListener, 
         FirebaseFirestore database = FirebaseFirestore.getInstance();
         DocumentReference documentReference =
                 database.collection(Constants.KEY_COLLECTION_USERS).document(
-                        preferenceManager.getString(Constants.KEY_USER_ID)
+                        preferenceManager.getString(Constants.KEY_DOCUMENT_REFERENCE_ID)
                 );
         documentReference.update(Constants.KEY_FCM_TOKEN,token)
                 .addOnFailureListener(e->showToast("Failed"));
@@ -180,13 +179,14 @@ public class MainActivity extends BaseActivity implements ConversationListener, 
         FirebaseFirestore database = FirebaseFirestore.getInstance();
         DocumentReference documentReference =
                 database.collection(Constants.KEY_COLLECTION_USERS).document(
-                        preferenceManager.getString(Constants.KEY_USER_ID)
+                        preferenceManager.getString(Constants.KEY_DOCUMENT_REFERENCE_ID)
                 );
         HashMap<String, Object> updates = new HashMap<>();
         updates.put(Constants.KEY_FCM_TOKEN, FieldValue.delete());
         documentReference.update(updates)
                 .addOnSuccessListener(unused -> {
                     preferenceManager.clear();
+                    FirebaseAuth.getInstance().signOut();
                     startActivity(new Intent(getApplicationContext(),SignInActivity.class));
                     finish();
                 })

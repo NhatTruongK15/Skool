@@ -9,10 +9,12 @@ public class Constants {
     public static  final String KEY_COLLECTION_USERS = "users";
     public static final String KEY_NAME = "name";
     public static final String KEY_EMAIL = "email";
+    public static final String KEY_PHONE_NUMBER = "phoneNumber";
     public static final String KEY_PASSWORD = "password";
     public static final String KEY_REFERENCE_NAME = "clown";
     public static final String KEY_IS_SIGNED_IN = "isSignedIn";
-    public static final String KEY_USER_ID = "userId";
+    public static final String KEY_DOCUMENT_REFERENCE_ID = "documentReferenceID"; // userID cũ (  thực chất là ID của document )
+    public static final String KEY_USER_ID = "userID"; // authencation ID
     public static final String KEY_IMAGE = "image";
     public static final String KEY_FCM_TOKEN = "fcmToken";
     public static final String KEY_USER = "user";

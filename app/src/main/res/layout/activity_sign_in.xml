@@ -39,7 +39,7 @@
             android:layout_height="@dimen/_45sdp"
             android:layout_marginTop="@dimen/_40sdp"
             android:background="@drawable/background_input"
-            android:hint="@string/email"
+            android:hint="Phone number or Email"
             android:imeOptions="actionNext"
             android:importantForAutofill="no"
             android:inputType="textEmailAddress"
@@ -61,10 +61,20 @@
             android:paddingEnd="@dimen/_16sdp"
             android:textColor="@color/primary_text"
             android:textSize="@dimen/_13ssp"/>
+        <TextView
+            android:id="@+id/forgetPasswordText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="@dimen/_80sdp"
+            android:text="Forget Passoword??"
+            android:textColor="@color/primary"
+            android:textSize="14dp"
+            android:textStyle="bold"/>
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_20sdp"
+            android:layout_marginTop="@dimen/_15sdp"
             android:animateLayoutChanges="true">
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/buttonSignIn"
@@ -87,7 +97,7 @@
             android:id="@+id/textCreateNewAccount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_30sdp"
+            android:layout_marginTop="@dimen/_20sdp"
             android:text="@string/create_new_account"
             android:textColor="@color/primary"
             android:textSize="@dimen/_13ssp"

@@ -69,7 +69,7 @@ public class ChatActivity extends BaseActivity {
         preferenceManager = new PreferenceManager(getApplicationContext());
         chatMessages = new ArrayList<>();
         chatAdapter = new ChatAdapter(chatMessages,
-                preferenceManager.getString(Constants.KEY_USER_ID),
+                preferenceManager.getString(Constants.KEY_DOCUMENT_REFERENCE_ID),
                 getBitmapFromEncodeString(receiverUser.image));
         binding.chatRecyclerView.setAdapter(chatAdapter);
         database = FirebaseFirestore.getInstance();
@@ -77,7 +77,7 @@ public class ChatActivity extends BaseActivity {
 
     private void sendMessage() {
         HashMap<String, Object> message = new HashMap<>();
-        message.put(Constants.KEY_SENDER_ID, preferenceManager.getString(Constants.KEY_USER_ID));
+        message.put(Constants.KEY_SENDER_ID, preferenceManager.getString(Constants.KEY_DOCUMENT_REFERENCE_ID));
         message.put(Constants.KEY_RECEIVER_ID, receiverUser.id);
         message.put(Constants.KEY_MESSAGE, binding.inputMessage.getText().toString());
         message.put(Constants.KEY_TIMESTAMP, new Date());
@@ -86,7 +86,7 @@ public class ChatActivity extends BaseActivity {
             updateConversation(binding.inputMessage.getText().toString());
         } else {
             HashMap<String, Object> conversation = new HashMap<>();
-            conversation.put(Constants.KEY_SENDER_ID, preferenceManager.getString(Constants.KEY_USER_ID));
+            conversation.put(Constants.KEY_SENDER_ID, preferenceManager.getString(Constants.KEY_DOCUMENT_REFERENCE_ID));
             conversation.put(Constants.KEY_SENDER_NAME, preferenceManager.getString(Constants.KEY_NAME));
             conversation.put(Constants.KEY_SENDER_IMAGE, preferenceManager.getString(Constants.KEY_IMAGE));
             conversation.put(Constants.KEY_RECEIVER_ID, receiverUser.id);
@@ -103,7 +103,7 @@ public class ChatActivity extends BaseActivity {
                 tokens.put(receiverUser.token);
 
                 JSONObject data = new JSONObject();
-                data.put(Constants.KEY_USER_ID, preferenceManager.getString(Constants.KEY_USER_ID));
+                data.put(Constants.KEY_DOCUMENT_REFERENCE_ID, preferenceManager.getString(Constants.KEY_DOCUMENT_REFERENCE_ID));
                 data.put(Constants.KEY_NAME, preferenceManager.getString(Constants.KEY_NAME));
                 data.put(Constants.KEY_FCM_TOKEN, preferenceManager.getString(Constants.KEY_FCM_TOKEN));
                 data.put(Constants.KEY_MESSAGE, binding.inputMessage.getText().toString());
@@ -194,12 +194,12 @@ public class ChatActivity extends BaseActivity {
 
     private void listenMessages() {
         database.collection(Constants.KEY_COLLECTION_CHAT)
-                .whereEqualTo(Constants.KEY_SENDER_ID, preferenceManager.getString(Constants.KEY_USER_ID))
+                .whereEqualTo(Constants.KEY_SENDER_ID, preferenceManager.getString(Constants.KEY_DOCUMENT_REFERENCE_ID))
                 .whereEqualTo(Constants.KEY_RECEIVER_ID, receiverUser.id)
                 .addSnapshotListener(eventListener);
         database.collection(Constants.KEY_COLLECTION_CHAT)
                 .whereEqualTo(Constants.KEY_SENDER_ID, receiverUser.id)
-                .whereEqualTo(Constants.KEY_RECEIVER_ID, preferenceManager.getString(Constants.KEY_USER_ID))
+                .whereEqualTo(Constants.KEY_RECEIVER_ID, preferenceManager.getString(Constants.KEY_DOCUMENT_REFERENCE_ID))
                 .addSnapshotListener(eventListener);
     }
 
@@ -275,13 +275,13 @@ public class ChatActivity extends BaseActivity {
     private void checkConversation() {
         if (chatMessages.size() != 0) {
             checkConversationRemote(
-                    preferenceManager.getString(Constants.KEY_USER_ID),
+                    preferenceManager.getString(Constants.KEY_DOCUMENT_REFERENCE_ID),
                     receiverUser.id
             );
 
             checkConversationRemote(
                     receiverUser.id,
-                    preferenceManager.getString(Constants.KEY_USER_ID)
+                    preferenceManager.getString(Constants.KEY_DOCUMENT_REFERENCE_ID)
             );
         }
     }
