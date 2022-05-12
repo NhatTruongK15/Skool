@@ -42,6 +42,17 @@
         app:layout_constraintBottom_toBottomOf="@id/tvSelectUser"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginEnd="@dimen/_24sdp">
+
+        <ImageButton
+            android:layout_width="39dp"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="@dimen/_13sdp"
+            android:background="@color/primary"
+            android:backgroundTint="@color/primary"
+            android:src="@drawable/ic_add_person_name">
+
+        </ImageButton>
+
         <TextView
             android:id="@+id/btnOk"
             android:text="OK"

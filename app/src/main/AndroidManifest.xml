@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.clown">
 
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -13,18 +14,17 @@
         android:theme="@style/Theme.Clown">
         <activity
             android:name=".activities.GroupActivity"
-            android:exported="false" >
-
-        </activity>
+            android:exported="false"></activity>
         <activity
             android:name=".activities.GroupChatActivity"
-            android:exported="false">
-
-        </activity>
+            android:exported="false"></activity>
+        <activity
+            android:name=".activities.ResetPasswordActivity"
+            android:exported="false" />
         <activity
             android:name=".activities.ChatActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustResize"/>
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".activities.UsersActivity"
             android:exported="false" />

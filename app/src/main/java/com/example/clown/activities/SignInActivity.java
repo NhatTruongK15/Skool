@@ -1,15 +1,23 @@
 package com.example.clown.activities;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Patterns;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Toast;
 
+import com.example.clown.R;
 import com.example.clown.databinding.ActivitySignInBinding;
 import com.example.clown.utilities.Constants;
 import com.example.clown.utilities.PreferenceManager;
@@ -17,21 +25,33 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.PhoneAuthCredential;
+import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class SignInActivity extends AppCompatActivity {
     private ActivitySignInBinding binding;
     private PreferenceManager preferenceManager;
+    private ActivityResultLauncher<Intent> launcher;
 
     //firebase auth login
-    private FirebaseAuth auth = FirebaseAuth.getInstance();
+    private FirebaseAuth auth ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        launcher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+            @Override
+            public void onActivityResult(ActivityResult result) {
+
+            }
+        });
         preferenceManager = new PreferenceManager(getApplicationContext());
+        // check if we've already logined
         if (preferenceManager.getBoolean(Constants.KEY_IS_SIGNED_IN)) {
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
             startActivity(intent);
@@ -42,6 +62,8 @@ public class SignInActivity extends AppCompatActivity {
         setListener();
     }
 
+
+
     private void setListener() {
         binding.textCreateNewAccount.setOnClickListener(v ->
                 startActivity(new Intent(getApplicationContext(), SignUpActivity.class)));
@@ -50,18 +72,28 @@ public class SignInActivity extends AppCompatActivity {
                 SignIn();
             }
         });
+
+        binding.forgetPasswordText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getApplicationContext(), ResetPasswordActivity.class));
+            }
+        });
     }
 
     private void showToast(String message) {
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }
 
+
     private void SignIn() {
         loading(true);
         //old one-------------------------------------------------------
         FirebaseFirestore database = FirebaseFirestore.getInstance();
-
+        auth = FirebaseAuth.getInstance();
         //-----------------------------------------------------
+    //region old one login using mail
+        /*
         auth.signInWithEmailAndPassword(binding.inputEmail.getText().toString(), binding.inputPassword.getText().toString())
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -73,13 +105,14 @@ public class SignInActivity extends AppCompatActivity {
 
                             database.collection(Constants.KEY_COLLECTION_USERS)
                                     .whereEqualTo(Constants.KEY_USER_ID, auth.getCurrentUser().getUid())
-                                    /*.whereEqualTo(Constants.KEY_PASSWORD, binding.inputPassword.getText().toString())*/
+                                    *//*.whereEqualTo(Constants.KEY_PASSWORD, binding.inputPassword.getText().toString())*//*
                                     .get()
                                     .addOnCompleteListener(querySnapshotTask -> {
                                         if (querySnapshotTask.isSuccessful() && querySnapshotTask.getResult() != null && querySnapshotTask.getResult().getDocuments().size() > 0) {
                                             DocumentSnapshot documentSnapshot = querySnapshotTask.getResult().getDocuments().get(0);
                                             preferenceManager.putBoolean(Constants.KEY_IS_SIGNED_IN, true);
-                                            preferenceManager.putString(Constants.KEY_DOCUMENT_REFERENCE_ID, documentSnapshot.getId());                                            preferenceManager.putString(Constants.KEY_USER_ID, documentSnapshot.getString(Constants.KEY_USER_ID));
+                                            preferenceManager.putString(Constants.KEY_DOCUMENT_REFERENCE_ID, documentSnapshot.getId());
+                                            preferenceManager.putString(Constants.KEY_USER_ID, documentSnapshot.getString(Constants.KEY_USER_ID));
                                             preferenceManager.putString(Constants.KEY_NAME, documentSnapshot.getString(Constants.KEY_NAME));
                                             preferenceManager.putString(Constants.KEY_IMAGE, documentSnapshot.getString(Constants.KEY_IMAGE));
                                             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
@@ -99,6 +132,31 @@ public class SignInActivity extends AppCompatActivity {
                         }
                     }
                 });
+                */
+        //endregion
+
+        database.collection(Constants.KEY_COLLECTION_USERS)
+                .whereEqualTo(Constants.KEY_PHONE_NUMBER, binding.inputEmail.getText().toString())
+                .whereEqualTo(Constants.KEY_PASSWORD, binding.inputPassword.getText().toString())
+                .get()
+                .addOnCompleteListener(querySnapshotTask -> {
+                    if (querySnapshotTask.isSuccessful() && querySnapshotTask.getResult() != null
+                            && querySnapshotTask.getResult().getDocuments().size() > 0) {
+                        DocumentSnapshot documentSnapshot = querySnapshotTask.getResult().getDocuments().get(0);
+                        preferenceManager.putBoolean(Constants.KEY_IS_SIGNED_IN, true);
+                        preferenceManager.putString(Constants.KEY_DOCUMENT_REFERENCE_ID, documentSnapshot.getId());
+                        preferenceManager.putString(Constants.KEY_USER_ID, documentSnapshot.getString(Constants.KEY_USER_ID));
+                        preferenceManager.putString(Constants.KEY_NAME, documentSnapshot.getString(Constants.KEY_NAME));
+                        preferenceManager.putString(Constants.KEY_IMAGE, documentSnapshot.getString(Constants.KEY_IMAGE));
+                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                    } else {
+                        loading(false);
+                        showToast("Unable to sign in");
+                    }
+                });
+
     }
 
     private void loading(Boolean isLoading) {
@@ -115,7 +173,9 @@ public class SignInActivity extends AppCompatActivity {
         if (binding.inputEmail.getText().toString().trim().isEmpty()) {
             showToast("Enter email");
             return false;
-        } else if (!Patterns.EMAIL_ADDRESS.matcher(binding.inputEmail.getText().toString()).matches()) {
+        } else if (!(Patterns.EMAIL_ADDRESS.matcher(binding.inputEmail.getText().toString()).matches()
+                || Patterns.PHONE.matcher(binding.inputEmail.getText().toString()).matches()))
+        {
             showToast("Enter valid email");
             return false;
         } else if (binding.inputPassword.getText().toString().trim().isEmpty()) {
@@ -125,4 +185,56 @@ public class SignInActivity extends AppCompatActivity {
             return true;
         }
     }
+
+    private void verifyPhoneNumberWithCode(String verificationId, String code) {
+        // [START verify_with_code]
+        PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationId, code);
+        // [END verify_with_code]
+    }
+
+    private void signInWithPhoneAuthCredential(PhoneAuthCredential credential) {
+        FirebaseFirestore database = FirebaseFirestore.getInstance();
+
+        auth.signInWithCredential(credential)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d("Register state", "signInWithCredential:success");
+
+                            FirebaseUser user = auth.getCurrentUser();
+
+                            database.collection(Constants.KEY_COLLECTION_USERS)
+                                    .whereEqualTo(Constants.KEY_USER_ID, auth.getCurrentUser().getUid())
+                                    /*.whereEqualTo(Constants.KEY_PASSWORD, binding.inputPassword.getText().toString())*/
+                                    .get()
+                                    .addOnCompleteListener(querySnapshotTask -> {
+                                        if (querySnapshotTask.isSuccessful() && querySnapshotTask.getResult() != null && querySnapshotTask.getResult().getDocuments().size() > 0) {
+                                            DocumentSnapshot documentSnapshot = querySnapshotTask.getResult().getDocuments().get(0);
+                                            preferenceManager.putBoolean(Constants.KEY_IS_SIGNED_IN, true);
+                                            preferenceManager.putString(Constants.KEY_DOCUMENT_REFERENCE_ID, documentSnapshot.getId());
+                                            preferenceManager.putString(Constants.KEY_USER_ID, documentSnapshot.getString(Constants.KEY_USER_ID));
+                                            preferenceManager.putString(Constants.KEY_NAME, documentSnapshot.getString(Constants.KEY_NAME));
+                                            preferenceManager.putString(Constants.KEY_IMAGE, documentSnapshot.getString(Constants.KEY_IMAGE));
+                                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                            startActivity(intent);
+                                        } else {
+                                            loading(false);
+                                            showToast("Unable to sign in");
+                                        }
+                                    });
+                        } else {
+                            // Sign in failed, display a message and update the UI
+                            Log.w("Register state", "signInWithCredential:failure", task.getException());
+                            if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
+                                // The verification code entered was invalid
+                            }
+                        }
+                    }
+                });
+    }
+
 }
+
