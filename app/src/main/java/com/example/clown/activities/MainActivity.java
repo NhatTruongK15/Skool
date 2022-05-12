@@ -74,7 +74,7 @@ public class MainActivity extends BaseActivity implements ConversationListener, 
     {
         binding.imageSignOut.setOnClickListener(v -> signOut());
         binding.NewChat.setOnClickListener(v -> {
-            Intent intent = new Intent(getApplicationContext(),GroupActivity.class);
+            Intent intent = new Intent(getApplicationContext(),UsersActivity.class);
             intent.putExtra(Constants.KEY_USER,getUser());
             startActivity(intent);
         });
