@@ -56,11 +56,11 @@ public class FileDisplayActivitiy extends AppCompatActivity {
     ImageView imageDownload;
     String finame;
 
+    String downloadImagePath="";
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActitvityDisplayFileBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        Toast.makeText(getApplicationContext(), "Trời đụ", Toast.LENGTH_SHORT).show();
 
         imageBack=findViewById(R.id.imageBack);
         imageDownload=findViewById(R.id.imageDownload);
@@ -239,22 +239,18 @@ public class FileDisplayActivitiy extends AppCompatActivity {
             videoView.setLayoutParams(new FrameLayout.LayoutParams(1,1));
         }
         if(imagePath.compareTo("")!=0) {
-            Bitmap bitmap=null;
-//
-//            String rand=getRandomString(10);
-//            downloadFile(this,rand,".png",Environment.DIRECTORY_DOWNLOADS,imagePath);
+            Bitmap bitmap = null;
             try {
 
-                final File localFile=File.createTempFile(imagePath,"png");
-                StorageReference storageReference=FirebaseStorage.getInstance().getReference(finame);
+                final File localFile = File.createTempFile(finame, "");
+                StorageReference storageReference = FirebaseStorage.getInstance().getReference(finame);
                 storageReference.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-
-                        Bitmap tempbitmap=BitmapFactory.decodeFile(localFile.getAbsolutePath());
+                        Bitmap tempbitmap = BitmapFactory.decodeFile(localFile.getAbsolutePath());
                         imageView.setImageBitmap(tempbitmap);
+                        imageView.setVisibility(View.VISIBLE);
                         Toast.makeText(getApplicationContext(), "retr", Toast.LENGTH_SHORT).show();
-
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -263,10 +259,8 @@ public class FileDisplayActivitiy extends AppCompatActivity {
 
                     }
                 });
-
-            }catch (Exception e){
+            } catch (Exception e) {
                 imageView.setImageBitmap(bitmap);
-
             }
 
             Toast.makeText(this, "321", Toast.LENGTH_SHORT).show();
@@ -275,9 +269,12 @@ public class FileDisplayActivitiy extends AppCompatActivity {
         imageDownload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String rand=getRandomString(10);
-
-                downloadFile(getApplicationContext(),finame,"",Environment.DIRECTORY_DOWNLOADS,imagePath);
+                if(imagePath.compareTo("")!=0){
+                    downloadFile(getApplicationContext(),finame,"",Environment.DIRECTORY_DOWNLOADS,imagePath);
+                }
+                else if(videoPath.compareTo("")!=0){
+                    downloadFile(getApplicationContext(),finame,"",Environment.DIRECTORY_DOWNLOADS,videoPath);
+                }
 
             }
         });

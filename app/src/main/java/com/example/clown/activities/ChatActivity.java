@@ -141,6 +141,7 @@ public class ChatActivity extends BaseActivity {
             case ".png":
             case ".jpg":
             case ".jpeg":
+            case ".gif":
                 result = "img";
                 break;
             default:
@@ -372,7 +373,6 @@ public class ChatActivity extends BaseActivity {
         if(filelink!=null){
             message.put(Constants.KEY_MESSAGE_VIDEO,filelink);
             message.put(Constants.KEY_MESSAGE_IMAGE,"");
-            message.put(Constants.KEY_MESSAGE_IMAGE_FINAME,finame);
 
         }
         else{
@@ -381,14 +381,14 @@ public class ChatActivity extends BaseActivity {
         if(encodedImage!=null){
             message.put(Constants.KEY_MESSAGE_IMAGE,encodedImage);
             message.put(Constants.KEY_MESSAGE_IMAGE_LINK,imglink);
-            message.put(Constants.KEY_MESSAGE_IMAGE_FINAME,finame);
         }
         else{
             message.put(Constants.KEY_MESSAGE_IMAGE,"");
             message.put(Constants.KEY_MESSAGE_IMAGE_LINK,"");
-            message.put(Constants.KEY_MESSAGE_IMAGE_FINAME,"");
 
         }
+
+        message.put(Constants.KEY_MESSAGE_FINAME,finame);
 
 
 
@@ -421,6 +421,7 @@ public class ChatActivity extends BaseActivity {
                 data.put(Constants.KEY_MESSAGE_IMAGE, encodedImage);
                 data.put(Constants.KEY_MESSAGE_IMAGE_LINK,imglink);
                 data.put(Constants.KEY_MESSAGE_IMAGE_FINAME,finame);
+                data.put(Constants.KEY_MESSAGE_FINAME,finame);
 
                 data.put(Constants.KEY_MESSAGE_VIDEO,filelink);
 
@@ -549,7 +550,7 @@ public class ChatActivity extends BaseActivity {
                     chatMessage.dateTime = getReadableDateTime(documentChange.getDocument().getDate(Constants.KEY_TIMESTAMP));
                     chatMessage.dateObject = documentChange.getDocument().getDate(Constants.KEY_TIMESTAMP);
                     chatMessage.message_img_link=documentChange.getDocument().getString(Constants.KEY_MESSAGE_IMAGE_LINK);
-                    chatMessage.finame=documentChange.getDocument().getString(Constants.KEY_MESSAGE_IMAGE_FINAME);
+                    chatMessage.finame=documentChange.getDocument().getString(Constants.KEY_MESSAGE_FINAME);
                     chatMessages.add(chatMessage);
                 }
             }

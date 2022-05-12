@@ -161,19 +161,22 @@ public class ChatAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 return;
             }
 
-            if (chatMessage.videoPath.compareTo("") != 0) {
-                binding.btnMore.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Context context = itemView.getContext();
-                        Intent intent = new Intent(context, FileDisplayActivitiy.class);
-                        intent.putExtra("vidPath", chatMessage.videoPath);
-                        intent.putExtra("finame", chatMessage.finame);
-                        intent.putExtra("imgPath", "");
-                        context.startActivity(intent);
-                    }
-                });
+            if(chatMessage.videoPath!=null){
+                if (chatMessage.videoPath.compareTo("") != 0) {
+                    binding.btnMore.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Context context = itemView.getContext();
+                            Intent intent = new Intent(context, FileDisplayActivitiy.class);
+                            intent.putExtra("vidPath", chatMessage.videoPath);
+                            intent.putExtra("finame", chatMessage.finame);
+                            intent.putExtra("imgPath", "");
+                            context.startActivity(intent);
+                        }
+                    });
+                }
             }
+
             if (chatMessage.message.compareTo("") != 0) {
                 binding.btnMore.setVisibility(View.GONE);
             }
