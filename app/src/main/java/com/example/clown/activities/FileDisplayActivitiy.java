@@ -277,7 +277,7 @@ public class FileDisplayActivitiy extends AppCompatActivity {
             public void onClick(View view) {
                 String rand=getRandomString(10);
 
-                downloadFile(getApplicationContext(),rand,".png",Environment.DIRECTORY_DOWNLOADS,imagePath);
+                downloadFile(getApplicationContext(),finame,"",Environment.DIRECTORY_DOWNLOADS,imagePath);
 
             }
         });

@@ -232,23 +232,28 @@ public class ChatActivity extends BaseActivity {
         }
         return result;
     }
+    Boolean isfailupload=false;
+
     private void SendFileToDatabase(Uri  fileuri,String finame) {
+        isfailupload=false;
         StorageReference storageReference = FirebaseStorage.getInstance().getReference(finame);
         storageReference.putFile(fileuri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                isfailupload=false;
                 loading(true);
                 getLinkDownload(finame);
-
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
+                isfailupload=true;
                 showToast("failed  ");
                 loading(false);
                 isUploadingFile=false;
             }
         });
+
 
     }
 
@@ -334,6 +339,16 @@ public class ChatActivity extends BaseActivity {
         if( (binding.inputMessage.getText().toString().isEmpty()&&finame==null)||isUploadingFile==true){
             return;
         }
+        if(isfailupload){
+            encodedImage=null;
+            finame=null;
+            fileuri=null;
+            filelink=null;
+            imglink=null;
+            videolocation=null;
+            isfailupload=false;
+            return;
+        }
         if(fileuri!=null) {
             if (checkFileType(finame).compareTo("vid") == 0) {
 //                loading(true);
@@ -357,6 +372,8 @@ public class ChatActivity extends BaseActivity {
         if(filelink!=null){
             message.put(Constants.KEY_MESSAGE_VIDEO,filelink);
             message.put(Constants.KEY_MESSAGE_IMAGE,"");
+            message.put(Constants.KEY_MESSAGE_IMAGE_FINAME,finame);
+
         }
         else{
             message.put(Constants.KEY_MESSAGE_VIDEO,"");

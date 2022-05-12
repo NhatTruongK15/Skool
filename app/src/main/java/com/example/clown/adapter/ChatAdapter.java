@@ -261,7 +261,6 @@ public class ChatAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder> 
                         Intent intent = new Intent(context, FileDisplayActivitiy.class);
                         intent.putExtra("imgPath", chatMessage.message_img_link);
                         intent.putExtra("finame", chatMessage.finame);
-
                         intent.putExtra("vidPath", "");
                         context.startActivity(intent);
                     }
