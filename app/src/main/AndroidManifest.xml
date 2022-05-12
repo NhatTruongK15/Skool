@@ -12,19 +12,18 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Clown">
         <activity
+            android:name=".activities.GChatActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.GroupActivity"
-            android:exported="false" >
-
-        </activity>
+            android:exported="false"></activity>
         <activity
             android:name=".activities.GroupChatActivity"
-            android:exported="false">
-
-        </activity>
+            android:exported="false"></activity>
         <activity
             android:name=".activities.ChatActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustResize"/>
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".activities.UsersActivity"
             android:exported="false" />

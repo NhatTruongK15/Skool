@@ -3,6 +3,9 @@ package com.example.clown.utilities;
 import java.util.HashMap;
 
 public class Constants {
+    public static final String KEY_GROUP_MEMBERS = "members";
+    public static final String KEY_GROUP_ADMIN = "admin";
+    public static final String KEY_DOCUMENT_ID = "documentId";
     public static  final String KEY_COLLECTION_USERS = "users";
     public static final String KEY_NAME = "name";
     public static final String KEY_EMAIL = "email";

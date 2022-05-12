@@ -13,7 +13,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.clown.adapter.RecentConversationAdapter;
 import com.example.clown.databinding.ActivityMainBinding;
 import com.example.clown.listeners.ConversationListener;
+import com.example.clown.listeners.GroupChatListener;
 import com.example.clown.models.ChatMessage;
+import com.example.clown.models.GroupUser;
 import com.example.clown.models.User;
 import com.example.clown.utilities.Constants;
 import com.example.clown.utilities.PreferenceManager;
@@ -30,8 +32,17 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-public class MainActivity extends BaseActivity implements ConversationListener {
+public class MainActivity extends BaseActivity implements ConversationListener, GroupChatListener {
 
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    private User user;
     private ActivityMainBinding binding;
     private PreferenceManager preferenceManager;
     private List<ChatMessage> conversations;
@@ -50,6 +61,8 @@ public class MainActivity extends BaseActivity implements ConversationListener {
         listenConversation();
     }
 
+
+
     private void init()
     {
         conversations = new ArrayList<>();
@@ -62,7 +75,9 @@ public class MainActivity extends BaseActivity implements ConversationListener {
     {
         binding.imageSignOut.setOnClickListener(v -> signOut());
         binding.NewChat.setOnClickListener(v -> {
-            startActivity(new Intent(getApplicationContext(), GroupActivity.class));
+            Intent intent = new Intent(getApplicationContext(),GroupActivity.class);
+            intent.putExtra(Constants.KEY_USER,getUser());
+            startActivity(intent);
         });
     }
 
@@ -181,7 +196,19 @@ public class MainActivity extends BaseActivity implements ConversationListener {
     @Override
     public void onConversationClicked(User user) {
         Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
+        setUser(user);
         intent.putExtra(Constants.KEY_USER,user);
         startActivity(intent);
     }
+
+
+    @Override
+    public void onGroupChatClicked(GroupUser groupUser) {
+        Intent intent = new Intent(getApplicationContext(), GChatActivity.class);
+        intent.putExtra(Constants.KEY_USER,groupUser);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onGroupChatClicked(User user) { }
 }

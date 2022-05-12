@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Base64;
+import android.view.InputQueue;
 import android.view.View;
 import android.widget.Toast;
 
@@ -23,11 +24,13 @@ import com.example.clown.listeners.GroupChatListener;
 import com.example.clown.listeners.UserGCListener;
 import com.example.clown.listeners.UserListener;
 import com.example.clown.models.ChatMessage;
+import com.example.clown.models.GroupUser;
 import com.example.clown.models.User;
 import com.example.clown.utilities.Constants;
 import com.example.clown.utilities.PreferenceManager;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -38,6 +41,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -45,10 +49,13 @@ import java.util.stream.Collectors;
 
 public class GroupChatActivity extends BaseActivity implements GroupChatListener, UserGCListener {
 
+
+    private FirebaseFirestore database = FirebaseFirestore.getInstance();
     private ActivityGroupChatBinding binding;
     private PreferenceManager preferenceManager;
-    List<User> usersGroupChat = new ArrayList<>();
+    List<User>  usersGroupChat = new ArrayList<>();
     List<User> users = new ArrayList<>();
+    private String groupId;
     private int VIEW_OF_USERS = 1;
     private int VIEW_OF_GROUP_USERS = 0;
 
@@ -80,7 +87,34 @@ public class GroupChatActivity extends BaseActivity implements GroupChatListener
 
     private void setListener() {
         binding.imageBack.setOnClickListener(view -> { onBackPressed(); });
-        binding.btnOk.setOnClickListener(view ->{});
+        binding.btnOk.setOnClickListener(view ->{
+            CreateGroup();
+            Intent intent = new Intent(getApplicationContext(),GChatActivity.class);
+            intent.putExtra(Constants.KEY_DOCUMENT_ID,groupId);
+            startActivity(intent);
+            });
+    }
+
+    private void CreateGroup() {
+        HashMap<String,Object> createGroupChat = new HashMap<>();
+        groupId = "" + System.currentTimeMillis();
+        List<String> usersId = new ArrayList<>();
+        getUsersID(usersId,usersGroupChat);
+        createGroupChat.put(Constants.KEY_LAST_MESSAGE,"");
+        createGroupChat.put(Constants.KEY_GROUP_ADMIN,preferenceManager.getString(Constants.KEY_USER_ID));
+        createGroupChat.put(Constants.KEY_GROUP_MEMBERS,usersId);
+        createGroupChat.put(Constants.KEY_SENDER_ID,preferenceManager.getString(Constants.KEY_USER_ID));
+        createGroupChat.put(Constants.KEY_RECEIVER_ID,groupId);
+        createGroupChat.put(Constants.KEY_RECEIVER_IMAGE,preferenceManager.getString(Constants.KEY_IMAGE));
+        createGroupChat.put(Constants.KEY_TIMESTAMP,new Date());
+        database.collection(Constants.KEY_COLLECTION_CONVERSATIONS).document(groupId).set(createGroupChat);
+    }
+
+    private void getUsersID(List<String> usersId, List<User> usersGroupChat) {
+        for (User user:usersGroupChat
+             ) {
+            usersId.add(user.id);
+        }
     }
 
     private void getUsers()
@@ -148,6 +182,11 @@ public class GroupChatActivity extends BaseActivity implements GroupChatListener
         users.add(user);
         getUserForGroupList(users,VIEW_OF_USERS);
         getUserForGroupList(usersGroupChat,VIEW_OF_GROUP_USERS);
+    }
+
+    @Override
+    public void onGroupChatClicked(GroupUser groupUser) {
+
     }
 
     @Override
