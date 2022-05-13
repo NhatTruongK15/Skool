@@ -13,14 +13,20 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Clown">
         <activity
+            android:name=".ActivityMediaAndFile"
+            android:exported="false" />
+        <activity
             android:name=".activities.GChatActivity"
             android:exported="false" />
         <activity
+            android:name=".PhoneContactListActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.GroupActivity"
-            android:exported="false"></activity>
+            android:exported="false" />
         <activity
             android:name=".activities.GroupChatActivity"
-            android:exported="false"></activity>
+            android:exported="false" />
         <activity
             android:name=".activities.ResetPasswordActivity"
             android:exported="false" />
