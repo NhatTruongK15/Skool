@@ -114,7 +114,7 @@ public class ChatActivity extends BaseActivity {
 
                 sendNotification(body.toString());
             } catch (Exception exception) {
-                showToast(exception.getMessage());
+                showToast("how about this one" + exception.getMessage());
             }
         }
         binding.inputMessage.setText(null);
@@ -138,7 +138,7 @@ public class ChatActivity extends BaseActivity {
                             JSONArray results = responseJSON.getJSONArray("results");
                             if (responseJSON.getInt("failure") == 1) {
                                 JSONObject error = (JSONObject) results.get(0);
-                                showToast(error.getString("error"));
+                                showToast("this one ??? " + error.getString("error"));
                                 return;
                             }
                             showToast("success");
@@ -157,7 +157,7 @@ public class ChatActivity extends BaseActivity {
 
             @Override
             public void onFailure(@NonNull Call<String> call, @NonNull Throwable t) {
-                showToast(t.getMessage());
+                showToast("testing this" + (t.getMessage()));
             }
         });
     }

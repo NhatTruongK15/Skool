@@ -4,5 +4,5 @@ import java.io.Serializable;
 import java.util.Comparator;
 
 public class User implements Serializable {
-    public String name, image, email, token, id;
+    public String name, image, email, token, id,phoneNumber;
 }

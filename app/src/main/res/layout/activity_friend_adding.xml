@@ -121,7 +121,7 @@
         app:layout_constraintTop_toBottomOf="@id/mySeperator">
 
         <EditText
-            android:id="@+id/inputMessage2"
+            android:id="@+id/inputPhoneNumb"
             android:layout_width="0dp"
             android:layout_height="match_parent"
 
@@ -199,24 +199,72 @@
         app:layout_constraintStart_toStartOf="@id/viewBackground"
         app:layout_constraintTop_toTopOf="@id/viewBackground" />
 
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/FindContactLayout"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:layout_marginTop="10dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+
+        android:background="@drawable/background_friend_adding"
+
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/mySeperator2"
         app:layout_constraintVertical_bias="0.006"
         tools:layout_editor_absoluteX="16dp">
 
         <ImageView
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginStart="48dp"
-            android:src="@drawable/ic_launcher_background"
+            android:id="@+id/imageViewContact"
+            android:layout_width="@dimen/_40sdp"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_marginStart="4dp"
+            android:focusableInTouchMode="false"
+            android:minWidth="@dimen/_40sdp"
+            android:minHeight="@dimen/_40sdp"
+
+            android:src="@drawable/ic_contact_phone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+
+        <LinearLayout
+            android:id="@+id/TextViewLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/imageViewContact"
+            app:layout_constraintTop_toTopOf="parent"
+            >
+
+            <TextView
+                android:id="@+id/TextViewContact1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="@dimen/_150sdp"
+                android:focusableInTouchMode="false"
+                android:text="Danh bạ máy"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_15sdp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/TextViewContact2"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:focusableInTouchMode="false"
+                android:text="Thêm bạn từ danh bạ máy"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_11sdp"
+                android:textStyle="normal"
+
+                />
+
+        </LinearLayout>
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
