@@ -44,6 +44,7 @@ public class FriendAddingActivity extends AppCompatActivity {
                 findFriendByPhoneContact();
             }
         });
+        binding.imageBack.setOnClickListener(v -> onBackPressed());
     }
 
     private void findFriendByPhoneContact() {
