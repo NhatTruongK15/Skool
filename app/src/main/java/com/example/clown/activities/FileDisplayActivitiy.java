@@ -141,8 +141,18 @@ public class FileDisplayActivitiy extends AppCompatActivity {
         DownloadManager downloadManager=(DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
         Uri uri=Uri.parse(url);
         DownloadManager.Request request=new DownloadManager.Request(uri);
-        request.setDestinationInExternalFilesDir(context,destinationDirectory,fileName+fileExtension);
-        downloadManager.enqueue(request);
+        request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_MOBILE|DownloadManager.Request.NETWORK_WIFI);
+        request.setTitle(fileName);
+        request.setDescription("Downloading...");
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,String.valueOf(System.currentTimeMillis()));
+//        request.setDestinationInExternalFilesDir(context,destinationDirectory,fileName+fileExtension);
+
+        DownloadManager down=(DownloadManager)getSystemService(Context.DOWNLOAD_SERVICE);
+        if(down!=null){
+            down.enqueue(request);
+        }
+//        downloadManager.enqueue(request);
     }
 
     public Boolean isUploadingFile=false;
