@@ -95,6 +95,15 @@ public class MainActivity extends BaseActivity implements ConversationListener, 
                     binding.NavMenubarLayout.setVisibility(View.GONE);
             }
         });
+
+        binding.buttonContact.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), FriendAddingActivity.class);
+                intent.putExtra(Constants.KEY_USER, getUser());
+                startActivity(intent);
+            }
+        });
     }
 
     private void loadUserDetails() {

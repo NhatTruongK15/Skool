@@ -121,7 +121,7 @@
         app:layout_constraintTop_toBottomOf="@id/mySeperator">
 
         <EditText
-            android:id="@+id/inputMessage2"
+            android:id="@+id/inputPhoneNumb"
             android:layout_width="0dp"
             android:layout_height="match_parent"
 

@@ -18,6 +18,8 @@
         <activity
             android:name=".activities.GChatActivity"
             android:exported="false" />
+        <activity android:name=".activities.FriendAddingActivity"
+            android:exported="false"/>
         <activity
             android:name=".PhoneContactListActivity"
             android:exported="false" />

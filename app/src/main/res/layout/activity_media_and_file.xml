@@ -42,7 +42,7 @@
         android:layout_height="@dimen/_40sdp"
         android:layout_marginTop="1dp"
 
-        android:background="@drawable/background_finding_contact"
+        android:background="@drawable/background_medias_and_files"
         android:orientation="horizontal"
         android:paddingStart="@dimen/_16sdp"
         android:paddingEnd="@dimen/_16sdp"
