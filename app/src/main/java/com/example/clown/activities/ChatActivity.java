@@ -144,6 +144,14 @@ public class ChatActivity extends BaseActivity {
             case ".gif":
                 result = "img";
                 break;
+            case ".pdf":
+            case ".docx":
+            case ".pptx":
+            case ".doc":
+            case ".xlsx":
+
+                result = "etc";
+                break;
             default:
                 break;
         }
@@ -335,7 +343,7 @@ public class ChatActivity extends BaseActivity {
         }
     }
 
-
+    Boolean isnotVid=false;
     private void sendMessage() {
         if( (binding.inputMessage.getText().toString().isEmpty()&&finame==null)||isUploadingFile==true){
             return;
@@ -348,6 +356,7 @@ public class ChatActivity extends BaseActivity {
             imglink=null;
             videolocation=null;
             isfailupload=false;
+            isnotVid=false;
             return;
         }
         if(fileuri!=null) {
@@ -358,8 +367,11 @@ public class ChatActivity extends BaseActivity {
             if (checkFileType(finame).compareTo("img") == 0) {
                 imglink=filelink;
                 filelink=null;
-
                 encodedImage = encodeImageFromUri(fileuri);
+            }
+            if(checkFileType(finame).compareTo("etc")==0){
+                isnotVid=true;
+                binding.inputMessage.setText(finame);
             }
 
         }
@@ -370,13 +382,16 @@ public class ChatActivity extends BaseActivity {
         message.put(Constants.KEY_MESSAGE, binding.inputMessage.getText().toString());
         message.put(Constants.KEY_TIMESTAMP, new Date());
 
-        if(filelink!=null){
-            message.put(Constants.KEY_MESSAGE_VIDEO,filelink);
-            message.put(Constants.KEY_MESSAGE_IMAGE,"");
-
+        if(filelink!=null) {
+            if(isnotVid==false){
+                message.put(Constants.KEY_MESSAGE_VIDEO, filelink);
+            }
+            message.put(Constants.KEY_MESSAGE_FILE,filelink);
+            message.put(Constants.KEY_MESSAGE_IMAGE, "");
         }
         else{
             message.put(Constants.KEY_MESSAGE_VIDEO,"");
+
         }
         if(encodedImage!=null){
             message.put(Constants.KEY_MESSAGE_IMAGE,encodedImage);
@@ -424,6 +439,8 @@ public class ChatActivity extends BaseActivity {
                 data.put(Constants.KEY_MESSAGE_FINAME,finame);
 
                 data.put(Constants.KEY_MESSAGE_VIDEO,filelink);
+                data.put(Constants.KEY_MESSAGE_FILE,filelink);
+
 
                 JSONObject body = new JSONObject();
                 body.put(Constants.REMOTE_MSG_DATA,data);
@@ -441,6 +458,7 @@ public class ChatActivity extends BaseActivity {
         filelink=null;
         imglink=null;
         videolocation=null;
+        isnotVid=false;
     }
 
     private void showToast(String message)
@@ -547,6 +565,7 @@ public class ChatActivity extends BaseActivity {
                     chatMessage.message = documentChange.getDocument().getString(Constants.KEY_MESSAGE);
                     chatMessage.message_img=getBitmapFromEncodeString( documentChange.getDocument().getString(Constants.KEY_MESSAGE_IMAGE));
                     chatMessage.videoPath=documentChange.getDocument().getString(Constants.KEY_MESSAGE_VIDEO);
+                    chatMessage.filePath=documentChange.getDocument().getString(Constants.KEY_MESSAGE_FILE);
                     chatMessage.dateTime = getReadableDateTime(documentChange.getDocument().getDate(Constants.KEY_TIMESTAMP));
                     chatMessage.dateObject = documentChange.getDocument().getDate(Constants.KEY_TIMESTAMP);
                     chatMessage.message_img_link=documentChange.getDocument().getString(Constants.KEY_MESSAGE_IMAGE_LINK);

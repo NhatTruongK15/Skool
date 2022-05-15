@@ -25,6 +25,8 @@ public class Constants {
     public static final String KEY_MESSAGE_VIDEO ="message_video";
     public static final String KEY_MESSAGE_VIDEO_BASE64 ="message_video_base64";
 
+    public static final String KEY_MESSAGE_FILE ="message_file";
+
 
     public static final String KEY_TIMESTAMP="timestamp";
     public static final String KEY_COLLECTION_CONVERSATIONS="conversations";

@@ -138,12 +138,11 @@ public class ChatAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder> 
                     }
                 });
                 binding.vidMessage.setVideoURI(Uri.parse(chatMessage.videoPath));
-            } else {
+            }
+            else {
                 binding.vidMessage.setVisibility(View.GONE);
                 binding.vidMessage.setLayoutParams(new FrameLayout.LayoutParams(0, 0));
-
             }
-
 
             if (chatMessage.message_img != null) {
                 binding.btnMore.setOnClickListener(new View.OnClickListener() {
@@ -153,14 +152,13 @@ public class ChatAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder> 
                         Intent intent = new Intent(context, FileDisplayActivitiy.class);
                         intent.putExtra("imgPath", chatMessage.message_img_link);
                         intent.putExtra("finame", chatMessage.finame);
-
+                        intent.putExtra("fiPath", "");
                         intent.putExtra("vidPath", "");
                         context.startActivity(intent);
                     }
                 });
                 return;
             }
-
             if(chatMessage.videoPath!=null){
                 if (chatMessage.videoPath.compareTo("") != 0) {
                     binding.btnMore.setOnClickListener(new View.OnClickListener() {
@@ -170,14 +168,31 @@ public class ChatAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder> 
                             Intent intent = new Intent(context, FileDisplayActivitiy.class);
                             intent.putExtra("vidPath", chatMessage.videoPath);
                             intent.putExtra("finame", chatMessage.finame);
+                            intent.putExtra("fiPath", "");
                             intent.putExtra("imgPath", "");
                             context.startActivity(intent);
                         }
                     });
                 }
             }
+            if(chatMessage.filePath!=null){
+                if (chatMessage.filePath.compareTo("") != 0) {
+                    binding.btnMore.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Context context = itemView.getContext();
+                            Intent intent = new Intent(context, FileDisplayActivitiy.class);
+                            intent.putExtra("fiPath", chatMessage.filePath);
+                            intent.putExtra("finame", chatMessage.finame);
+                            intent.putExtra("imgPath", "");
+                            intent.putExtra("vidPath", "");
+                            context.startActivity(intent);
+                        }
+                    });
+                }
+            }
 
-            if (chatMessage.message.compareTo("") != 0) {
+            if (chatMessage.message.compareTo("") != 0&&chatMessage.finame==null) {
                 binding.btnMore.setVisibility(View.GONE);
             }
 
@@ -264,6 +279,7 @@ public class ChatAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder> 
                         Intent intent = new Intent(context, FileDisplayActivitiy.class);
                         intent.putExtra("imgPath", chatMessage.message_img_link);
                         intent.putExtra("finame", chatMessage.finame);
+                        intent.putExtra("fiPath", "");
                         intent.putExtra("vidPath", "");
                         context.startActivity(intent);
                     }
@@ -271,7 +287,7 @@ public class ChatAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 return;
             }
 
-            if(chatMessage.videoPath!=null) {
+            if(chatMessage.videoPath!=null){
                 if (chatMessage.videoPath.compareTo("") != 0) {
                     binding.btnMore.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -280,13 +296,33 @@ public class ChatAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder> 
                             Intent intent = new Intent(context, FileDisplayActivitiy.class);
                             intent.putExtra("vidPath", chatMessage.videoPath);
                             intent.putExtra("finame", chatMessage.finame);
+                            intent.putExtra("fiPath", "");
                             intent.putExtra("imgPath", "");
                             context.startActivity(intent);
                         }
                     });
                 }
             }
-            if (chatMessage.message.compareTo("") != 0) {
+
+            if(chatMessage.filePath!=null){
+                if (chatMessage.filePath.compareTo("") != 0) {
+                    binding.btnMore.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Context context = itemView.getContext();
+                            Intent intent = new Intent(context, FileDisplayActivitiy.class);
+                            intent.putExtra("fiPath", chatMessage.filePath);
+                            intent.putExtra("finame", chatMessage.finame);
+                            intent.putExtra("imgPath", "");
+                            intent.putExtra("vidPath", "");
+                            context.startActivity(intent);
+                        }
+                    });
+                }
+            }
+
+
+            if (chatMessage.message.compareTo("") != 0&&chatMessage.finame==null) {
                 binding.btnMore.setVisibility(View.GONE);
             }
 

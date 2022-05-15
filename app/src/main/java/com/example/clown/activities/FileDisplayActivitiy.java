@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.MediaController;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
@@ -46,48 +47,55 @@ import java.util.Random;
 
 public class FileDisplayActivitiy extends AppCompatActivity {
     public ActitvityDisplayFileBinding binding;
-    private String imagePath="";
+    private String imagePath = "";
     private FirebaseFirestore database;
-    private String videoPath="";
+    private String videoPath = "";
     MediaController mediaController;
     VideoView videoView;
     ImageView imageView;
+    TextView textView;
+
     ImageView imageBack;
     ImageView imageDownload;
     String finame;
+    private String filePath = "";
 
-    String downloadImagePath="";
+    String downloadImagePath = "";
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActitvityDisplayFileBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        imageBack=findViewById(R.id.imageBack);
-        imageDownload=findViewById(R.id.imageDownload);
-        imageView=findViewById(R.id.imgMessage);
-        videoView=findViewById(R.id.vidMessage);
+        imageBack = findViewById(R.id.imageBack);
+        imageDownload = findViewById(R.id.imageDownload);
+        imageView = findViewById(R.id.imgMessage);
+        videoView = findViewById(R.id.vidMessage);
+        textView = findViewById(R.id.textMessage);
         imageBack.setOnClickListener(v -> onBackPressed());
 
-        Bundle bundle=null;
-        bundle=getIntent().getExtras();
-        if(bundle!=null) {
+        Bundle bundle = null;
+        bundle = getIntent().getExtras();
+        if (bundle != null) {
             imagePath = bundle.getString("imgPath");
             videoPath = bundle.getString("vidPath");
-            finame=bundle.getString("finame");
+            filePath = bundle.getString("fiPath");
+            finame = bundle.getString("finame");
         }
 
         innit();
     }
-    private void showToast(String message)
-    {
+
+    private void showToast(String message) {
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
 
     }
-    public String filetype(String file){
+
+    public String filetype(String file) {
         return file.substring(file.lastIndexOf("."));
     }
 
-    private String encodeImageFromUri(Uri fileuri){
+    private String encodeImageFromUri(Uri fileuri) {
         try {
             InputStream inputStream = getContentResolver().openInputStream(fileuri);
             Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
@@ -99,27 +107,27 @@ public class FileDisplayActivitiy extends AppCompatActivity {
     }
 
     private Bitmap getBitmapFromEncodeString(String encodeImage) {
-        if(encodeImage != null)
-        {
+        if (encodeImage != null) {
             byte[] bytes = Base64.decode(encodeImage, Base64.DEFAULT);
             return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-        }
-        else
-        {
+        } else {
             return null;
         }
     }
-    private String encodeImage(Bitmap bitmap){
+
+    private String encodeImage(Bitmap bitmap) {
         int previewWidth = HD_RES;
         int previewHeight = bitmap.getHeight() * previewWidth / bitmap.getWidth();
         Bitmap previewBitmap = Bitmap.createScaledBitmap(resizeBitmap(bitmap), previewWidth, previewHeight, false);
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        previewBitmap.compress(Bitmap.CompressFormat.JPEG,95,byteArrayOutputStream);
+        previewBitmap.compress(Bitmap.CompressFormat.JPEG, 95, byteArrayOutputStream);
         byte[] bytes = byteArrayOutputStream.toByteArray();
         return Base64.encodeToString(bytes, Base64.DEFAULT);
     }
+
     private static final float PREFERRED_WIDTH = HD_RES;
     private static final float PREFERRED_HEIGHT = HD_RES;
+
     public static Bitmap resizeBitmap(Bitmap bitmap) {
         int width = bitmap.getWidth();
         int height = bitmap.getHeight();
@@ -134,52 +142,52 @@ public class FileDisplayActivitiy extends AppCompatActivity {
         return resizedBitmap;
     }
 
-    public String filelink="";
+    public String filelink = "";
     ActivityResultLauncher<Intent> activityResultLauncher;
 
     private void downloadFile(Context context, String fileName, String fileExtension, String destinationDirectory, String url) {
-        DownloadManager downloadManager=(DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
-        Uri uri=Uri.parse(url);
-        DownloadManager.Request request=new DownloadManager.Request(uri);
-        request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_MOBILE|DownloadManager.Request.NETWORK_WIFI);
+        DownloadManager downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+        Uri uri = Uri.parse(url);
+        DownloadManager.Request request = new DownloadManager.Request(uri);
+        request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_MOBILE | DownloadManager.Request.NETWORK_WIFI);
         request.setTitle(fileName);
         request.setDescription("Downloading...");
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,String.valueOf(System.currentTimeMillis()));
+        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, String.valueOf(System.currentTimeMillis()));
 //        request.setDestinationInExternalFilesDir(context,destinationDirectory,fileName+fileExtension);
 
-        DownloadManager down=(DownloadManager)getSystemService(Context.DOWNLOAD_SERVICE);
-        if(down!=null){
+        DownloadManager down = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
+        if (down != null) {
             down.enqueue(request);
         }
 //        downloadManager.enqueue(request);
     }
 
-    public Boolean isUploadingFile=false;
+    public Boolean isUploadingFile = false;
 
-    private void loading(Boolean isLoading)
-    {
-        if(isLoading){
+    private void loading(Boolean isLoading) {
+        if (isLoading) {
             binding.progressBar.setVisibility(View.VISIBLE);
-        }else
-        {
+        } else {
             binding.progressBar.setVisibility(View.INVISIBLE);
         }
     }
-    public void getLinkDownload(String finame){
+
+    public void getLinkDownload(String finame) {
         StorageReference storageReference = FirebaseStorage.getInstance().getReference(finame);
         storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
                 filelink = uri.toString();
                 loading(false);
-                isUploadingFile=false;
+                isUploadingFile = false;
                 showToast("upload success");
 
             }
         });
     }
-    public String VideoToBase64(String finame){
+
+    public String VideoToBase64(String finame) {
         File tempFile = new File(finame);
         String encodedString = null;
         InputStream inputStream = null;
@@ -204,25 +212,28 @@ public class FileDisplayActivitiy extends AppCompatActivity {
         Log.i("Strng", encodedString);
         return encodedString;
     }
-    public String videolocation=null;
-    public void Base64ToVideo(String encodedString){
-        byte[] decodedBytes = Base64.decode(encodedString.getBytes(),Base64.DEFAULT);
+
+    public String videolocation = null;
+
+    public void Base64ToVideo(String encodedString) {
+        byte[] decodedBytes = Base64.decode(encodedString.getBytes(), Base64.DEFAULT);
         try {
             FileOutputStream out = new FileOutputStream(
                     Environment.getExternalStorageDirectory()
                             + "/my/Convert.mp4");
             out.write(decodedBytes);
             out.close();
-            videolocation=Environment.getExternalStorageDirectory()+ "/my/Convert.mp4";
+            videolocation = Environment.getExternalStorageDirectory() + "/my/Convert.mp4";
 //            binding.vidMessage.setVideoPath(videolocation);
         } catch (Exception e) {
             // TODO: handle exception
             Log.e("Error", e.toString());
         }
     }
-    public void innit(){
 
-        if(videoPath.compareTo("")!=0) {
+    public void innit() {
+
+        if (videoPath.compareTo("") != 0) {
             Toast.makeText(this, "654", Toast.LENGTH_SHORT).show();
             mediaController = new MediaController(this);
             mediaController.setAnchorView(videoView);
@@ -243,12 +254,11 @@ public class FileDisplayActivitiy extends AppCompatActivity {
             });
             videoView.setVideoURI(Uri.parse(videoPath));
             videoView.start();
-        }
-        else{
+        } else {
             videoView.setVisibility(View.GONE);
-            videoView.setLayoutParams(new FrameLayout.LayoutParams(1,1));
+            videoView.setLayoutParams(new FrameLayout.LayoutParams(1, 1));
         }
-        if(imagePath.compareTo("")!=0) {
+        if (imagePath.compareTo("") != 0) {
             Bitmap bitmap = null;
             try {
 
@@ -274,34 +284,44 @@ public class FileDisplayActivitiy extends AppCompatActivity {
             }
 
             Toast.makeText(this, "321", Toast.LENGTH_SHORT).show();
+        } else {
+            imageView.setVisibility(View.GONE);
+        }
+        if (filePath.compareTo("") != 0) {
+            textView.setText(finame + " is not available to preview");
+            binding.progressBar.setVisibility(View.GONE);
+
+        } else {
+            textView.setVisibility(View.GONE);
+            binding.progressBar.setVisibility(View.GONE);
+
         }
 
         imageDownload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(imagePath.compareTo("")!=0){
-                    downloadFile(getApplicationContext(),finame,"",Environment.DIRECTORY_DOWNLOADS,imagePath);
+                if (imagePath.compareTo("") != 0) {
+                    downloadFile(getApplicationContext(), finame, "", Environment.DIRECTORY_DOWNLOADS, imagePath);
+                } else if (videoPath.compareTo("") != 0) {
+                    downloadFile(getApplicationContext(), finame, "", Environment.DIRECTORY_DOWNLOADS, videoPath);
+                } else if (filePath.compareTo("") != 0) {
+                    downloadFile(getApplicationContext(), finame, "", Environment.DIRECTORY_DOWNLOADS, filePath);
                 }
-                else if(videoPath.compareTo("")!=0){
-                    downloadFile(getApplicationContext(),finame,"",Environment.DIRECTORY_DOWNLOADS,videoPath);
-                }
-
             }
         });
     }
 
-    public Bitmap ByteArrayToBitmap(byte[] arr){
+    public Bitmap ByteArrayToBitmap(byte[] arr) {
         Bitmap bitmap = BitmapFactory.decodeByteArray(arr, 0, arr.length);
         return bitmap;
     }
 
-    private static final String ALLOWED_CHARACTERS ="0123456789qwertyuiopasdfghjklzxcvbnm";
+    private static final String ALLOWED_CHARACTERS = "0123456789qwertyuiopasdfghjklzxcvbnm";
 
-    private static String getRandomString(final int sizeOfRandomString)
-    {
-        final Random random=new Random();
-        final StringBuilder sb=new StringBuilder(sizeOfRandomString);
-        for(int i=0;i<sizeOfRandomString;++i)
+    private static String getRandomString(final int sizeOfRandomString) {
+        final Random random = new Random();
+        final StringBuilder sb = new StringBuilder(sizeOfRandomString);
+        for (int i = 0; i < sizeOfRandomString; ++i)
             sb.append(ALLOWED_CHARACTERS.charAt(random.nextInt(ALLOWED_CHARACTERS.length())));
         return sb.toString();
     }

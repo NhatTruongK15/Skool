@@ -14,6 +14,8 @@ public class ChatMessage {
     public Bitmap message_img=null;
 
     public String videoPath = null;
+    public String filePath = null;
+
     public Uri uriVideo=null;
     public String message_img_link;
 
