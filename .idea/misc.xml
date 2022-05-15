@@ -34,6 +34,7 @@
         <entry key="..\:/github/Skool/app/src/main/res/drawable/background_received_message.xml" value="0.124" />
         <entry key="..\:/github/Skool/app/src/main/res/drawable/background_received_message_img.xml" value="0.124" />
         <entry key="..\:/github/Skool/app/src/main/res/drawable/background_sent_message.xml" value="0.124" />
+        <entry key="..\:/github/Skool/app/src/main/res/drawable/background_sent_message_file.xml" value="0.124" />
         <entry key="..\:/github/Skool/app/src/main/res/drawable/background_sent_message_img.xml" value="0.124" />
         <entry key="..\:/github/Skool/app/src/main/res/drawable/ic_back.xml" value="0.124" />
         <entry key="..\:/github/Skool/app/src/main/res/drawable/ic_baseline_attach_file_24.xml" value="0.124" />
@@ -46,7 +47,7 @@
         <entry key="..\:/github/Skool/app/src/main/res/layout/activity_sign_up.xml" value="0.2" />
         <entry key="..\:/github/Skool/app/src/main/res/layout/activity_users.xml" value="0.11302083333333333" />
         <entry key="..\:/github/Skool/app/src/main/res/layout/item_container_received_image.xml" value="0.11302083333333333" />
-        <entry key="..\:/github/Skool/app/src/main/res/layout/item_container_received_message.xml" value="0.176" />
+        <entry key="..\:/github/Skool/app/src/main/res/layout/item_container_received_message.xml" value="0.4" />
         <entry key="..\:/github/Skool/app/src/main/res/layout/item_container_recent_conversation.xml" value="0.176" />
         <entry key="..\:/github/Skool/app/src/main/res/layout/item_container_sent_image.xml" value="0.2" />
         <entry key="..\:/github/Skool/app/src/main/res/layout/item_container_sent_message.xml" value="0.264" />

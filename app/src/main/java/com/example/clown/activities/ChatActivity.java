@@ -149,6 +149,8 @@ public class ChatActivity extends BaseActivity {
             case ".pptx":
             case ".doc":
             case ".xlsx":
+            case ".mp3":
+            case ".flac":
 
                 result = "etc";
                 break;

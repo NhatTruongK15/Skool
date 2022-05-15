@@ -260,16 +260,16 @@ public class ChatAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 binding.vidMessage.setOnErrorListener(new MediaPlayer.OnErrorListener() {
                     @Override
                     public boolean onError(MediaPlayer mp, int what, int extra) {
-                        Toast.makeText(itemView.getContext(), "Oops An While Playing Video...!!!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(itemView.getContext(), "Oops An Error Occur While Playing Video...!!!", Toast.LENGTH_SHORT).show();
                         return false;
                     }
                 });
                 binding.vidMessage.setVideoURI(Uri.parse(chatMessage.videoPath));
-            } else {
-                binding.vidMessage.setVisibility(View.GONE);
-                binding.vidMessage.setLayoutParams(new FrameLayout.LayoutParams(1, 1));
             }
-
+            else {
+                binding.vidMessage.setVisibility(View.GONE);
+                binding.vidMessage.setLayoutParams(new FrameLayout.LayoutParams(0, 0));
+            }
 
             if (chatMessage.message_img != null) {
                 binding.btnMore.setOnClickListener(new View.OnClickListener() {
@@ -286,7 +286,6 @@ public class ChatAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 });
                 return;
             }
-
             if(chatMessage.videoPath!=null){
                 if (chatMessage.videoPath.compareTo("") != 0) {
                     binding.btnMore.setOnClickListener(new View.OnClickListener() {
@@ -303,7 +302,6 @@ public class ChatAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder> 
                     });
                 }
             }
-
             if(chatMessage.filePath!=null){
                 if (chatMessage.filePath.compareTo("") != 0) {
                     binding.btnMore.setOnClickListener(new View.OnClickListener() {
@@ -320,7 +318,6 @@ public class ChatAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder> 
                     });
                 }
             }
-
 
             if (chatMessage.message.compareTo("") != 0&&chatMessage.finame==null) {
                 binding.btnMore.setVisibility(View.GONE);
