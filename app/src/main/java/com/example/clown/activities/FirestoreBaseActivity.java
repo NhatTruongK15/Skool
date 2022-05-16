@@ -1,6 +1,7 @@
 package com.example.clown.activities;
 
 import android.os.Bundle;
+import android.os.Message;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,7 +11,7 @@ import com.example.clown.utilities.PreferenceManager;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-public class BaseActivity extends AppCompatActivity {
+public class FirestoreBaseActivity extends AppCompatActivity {
     private DocumentReference documentReference;
 
     @Override

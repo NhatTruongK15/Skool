@@ -5,19 +5,24 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 
+import android.app.ActivityManager;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.Message;
+import android.os.Messenger;
 import android.util.Log;
 import android.util.Patterns;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Toast;
 
-import com.example.clown.R;
+import com.example.clown.agora.AgoraService;
 import com.example.clown.databinding.ActivitySignInBinding;
 import com.example.clown.utilities.Constants;
 import com.example.clown.utilities.PreferenceManager;
@@ -32,10 +37,13 @@ import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-public class SignInActivity extends AppCompatActivity {
+import io.agora.rtm.RtmClient;
+
+public class SignInActivity extends AgoraBaseActivity {
     private ActivitySignInBinding binding;
     private PreferenceManager preferenceManager;
     private ActivityResultLauncher<Intent> launcher;
+    private boolean mIsLoggedIn;
 
     //firebase auth login
     private FirebaseAuth auth ;
@@ -51,18 +59,42 @@ public class SignInActivity extends AppCompatActivity {
             }
         });
         preferenceManager = new PreferenceManager(getApplicationContext());
-        // check if we've already logined
+
+        initAgoraService();
+
+        binding = ActivitySignInBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        setListener();
+        mIsLoggedIn = false;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (!mIsLoggedIn)
+            destroyAgoraService();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        bindAgoraService();
+
+        // check if we've already logged in
         if (preferenceManager.getBoolean(Constants.KEY_IS_SIGNED_IN)) {
+            mIsLoggedIn = true;
+            toAgoraService(Constants.MSG_AGORA_LOG_IN, null);
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
             startActivity(intent);
             finish();
         }
-        binding = ActivitySignInBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
-        setListener();
     }
 
-
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unbindAgoraService();
+    }
 
     private void setListener() {
         binding.textCreateNewAccount.setOnClickListener(v ->
@@ -143,6 +175,8 @@ public class SignInActivity extends AppCompatActivity {
                     if (querySnapshotTask.isSuccessful() && querySnapshotTask.getResult() != null
                             && querySnapshotTask.getResult().getDocuments().size() > 0) {
                         DocumentSnapshot documentSnapshot = querySnapshotTask.getResult().getDocuments().get(0);
+
+                        mIsLoggedIn = true;
                         preferenceManager.putBoolean(Constants.KEY_IS_SIGNED_IN, true);
                         preferenceManager.putString(Constants.KEY_DOCUMENT_REFERENCE_ID, documentSnapshot.getId());
                         preferenceManager.putString(Constants.KEY_PHONE_NUMBER, documentSnapshot.getString(Constants.KEY_PHONE_NUMBER));
@@ -150,9 +184,16 @@ public class SignInActivity extends AppCompatActivity {
                         preferenceManager.putString(Constants.KEY_USER_ID, documentSnapshot.getString(Constants.KEY_USER_ID));
                         preferenceManager.putString(Constants.KEY_NAME, documentSnapshot.getString(Constants.KEY_NAME));
                         preferenceManager.putString(Constants.KEY_IMAGE, documentSnapshot.getString(Constants.KEY_IMAGE));
+
+                        String userId = documentSnapshot.getId();
+                        Bundle bundle = new Bundle();
+                        bundle.putString(Constants.KEY_DOCUMENT_REFERENCE_ID, userId);
+                        toAgoraService(Constants.MSG_AGORA_LOG_IN, bundle);
+
                         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        //intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(intent);
+                        finish();
                     } else {
                         loading(false);
                         showToast("Unable to sign in");
@@ -220,8 +261,9 @@ public class SignInActivity extends AppCompatActivity {
                                             preferenceManager.putString(Constants.KEY_NAME, documentSnapshot.getString(Constants.KEY_NAME));
                                             preferenceManager.putString(Constants.KEY_IMAGE, documentSnapshot.getString(Constants.KEY_IMAGE));
                                             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                            // intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                             startActivity(intent);
+                                            finish();
                                         } else {
                                             loading(false);
                                             showToast("Unable to sign in");
@@ -237,6 +279,5 @@ public class SignInActivity extends AppCompatActivity {
                     }
                 });
     }
-
 }
 

@@ -1,16 +1,27 @@
 package com.example.clown.activities;
 
+import android.app.ActivityManager;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.Message;
+import android.os.Messenger;
 import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
+
+import androidx.annotation.NonNull;
 
 import com.example.clown.adapter.RecentConversationAdapter;
+import com.example.clown.agora.AgoraService;
 import com.example.clown.databinding.ActivityMainBinding;
 import com.example.clown.listeners.ConversationListener;
 import com.example.clown.listeners.GroupChatListener;
@@ -33,7 +44,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-public class MainActivity extends BaseActivity implements ConversationListener, GroupChatListener {
+public class MainActivity extends FirestoreBaseActivity implements ConversationListener, GroupChatListener {
 
     public User getUser() {
         return user;
@@ -50,6 +61,76 @@ public class MainActivity extends BaseActivity implements ConversationListener, 
     private RecentConversationAdapter conversationAdapter;
     private FirebaseFirestore database;
 
+    // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    // Agora service manager
+    // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    private final Messenger mMessenger = new Messenger(new MainActivity.IncomingHandler());
+    private Messenger mService;
+    private boolean mIsBound;
+
+    private ServiceConnection mConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            mService = new Messenger(service);
+            toAgoraService(Constants.MSG_REGISTER_CLIENT, null);
+            Log.e("[INFO] ", "AgoraService to MainActivity connected!");
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mService = null;
+            Log.e("[INFO] ", "AgoraService disconnected!");
+        }
+    };
+
+
+    private class IncomingHandler extends Handler {
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+        }
+    }
+
+    private void toAgoraService(int msgNotification, Bundle bundle) {
+        try {
+            Message msg = Message.obtain(null, msgNotification, 0, 0);
+            msg.replyTo = mMessenger;
+            msg.setData(bundle);
+            mService.send(msg);
+        } catch (Exception ex) {
+            Log.e("[ERROR] ", ex.getMessage());
+        }
+    }
+
+    private void bindAgoraService() {
+        if (isServiceRunning(AgoraService.class)) {
+            Intent intent = new Intent(getApplicationContext(), AgoraService.class);
+            bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+            mIsBound = true;
+            Log.e("[INFO] ", "AgoraService bound!");
+        }
+    }
+
+    private void unbindAgoraService() {
+        if (mIsBound) {
+            toAgoraService(Constants.MSG_UNREGISTER_CLIENT, null);
+            unbindService(mConnection);
+            mIsBound = false;
+            Log.e("[INFO] ", "AgoraService unbound!");
+        }
+    }
+
+    private boolean isServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE))
+            if (serviceClass.getName().equals(service.service.getClassName()))
+                return true;
+        return false;
+    }
+    // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    // Agora service manager
+    // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,12 +144,23 @@ public class MainActivity extends BaseActivity implements ConversationListener, 
         listenConversation();
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        bindAgoraService();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unbindAgoraService();
+    }
+
     private void init() {
         conversations = new ArrayList<>();
         conversationAdapter = new RecentConversationAdapter(conversations, this);
         binding.conversationRecyclerView.setAdapter(conversationAdapter);
         database = FirebaseFirestore.getInstance();
-
         binding.NavMenubarLayout.setVisibility(View.GONE);
     }
 
@@ -202,6 +294,7 @@ public class MainActivity extends BaseActivity implements ConversationListener, 
                 .addOnSuccessListener(unused -> {
                     preferenceManager.clear();
                     FirebaseAuth.getInstance().signOut();
+                    toAgoraService(Constants.MSG_AGORA_LOG_OUT, null);
                     startActivity(new Intent(getApplicationContext(), SignInActivity.class));
                     finish();
                 })
