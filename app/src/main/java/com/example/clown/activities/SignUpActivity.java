@@ -20,6 +20,7 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.example.clown.agora.AgoraService;
 import com.example.clown.utilities.Constants;
 import com.example.clown.databinding.ActivitySignUpBinding;
 import com.example.clown.utilities.PreferenceManager;
@@ -43,7 +44,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
-public class SignUpActivity extends AppCompatActivity {
+public class SignUpActivity extends AgoraBaseActivity {
     private ActivitySignUpBinding binding;
     private String encodedImage;
     private PreferenceManager preferenceManager;
@@ -69,6 +70,7 @@ public class SignUpActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivitySignUpBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        initAgoraService();
         preferenceManager = new PreferenceManager(getApplicationContext());
         mAuth = FirebaseAuth.getInstance();
 
@@ -135,6 +137,17 @@ public class SignUpActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        bindAgoraService();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unbindAgoraService();
+    }
     private void signInWithPhoneAuthCredential(PhoneAuthCredential credential) {
         final String TAG = "OnSignIn";
         FirebaseFirestore database = FirebaseFirestore.getInstance();
@@ -178,6 +191,13 @@ public class SignUpActivity extends AppCompatActivity {
                                         preferenceManager.putString(Constants.KEY_DOCUMENT_REFERENCE_ID, documentReference.getId());
                                         preferenceManager.putString(Constants.KEY_NAME, binding.inputName.getText().toString());
                                         preferenceManager.putString(Constants.KEY_IMAGE, encodedImage);
+
+                                        // LOGIN AGORA SERVER
+                                        String userId = documentReference.getId();
+                                        Bundle bundle = new Bundle();
+                                        bundle.putString(Constants.KEY_DOCUMENT_REFERENCE_ID, userId);
+                                        toAgoraService(Constants.MSG_AGORA_LOG_IN, bundle);
+
                                         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                         startActivity(intent);
@@ -392,5 +412,4 @@ public class SignUpActivity extends AppCompatActivity {
             button.setVisibility(View.VISIBLE);
         }
     }
-
 }

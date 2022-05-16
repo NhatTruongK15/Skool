@@ -1,5 +1,6 @@
 package com.example.clown.utilities;
 
+import java.security.PublicKey;
 import java.util.HashMap;
 
 public class Constants {
@@ -35,6 +36,29 @@ public class Constants {
     public static final String REMOTE_MSG_CONTENT_TYPE="Content-Type";
     public static final String REMOTE_MSG_DATA="data";
     public static final String REMOTE_MSG_REGISTRATION_IDS="registration_ids";
+
+    // Agora
+    public static final String AGORA_APP_ID="7bf042d1345441fd9da44293ef98cd6d";
+    public static final String AGORA_APP_CERTIFICATE="d6a903468c3a4cd590d4a560c2ffb44c";
+    public static final String KEY_REMOTE_USER_DATA="remoteUserData";
+    public static final String KEY_REMOTE_ID="remoteId";
+    public static final String KEY_RTC_CHANNEL_ID="rtcChannelId";
+    public static final String KEY_IS_CALLER="isCaller";
+
+
+    public static final int EXPIRED_TIME_STAMP = 3600;
+    public static final int MSG_REGISTER_CLIENT = 0;
+    public static final int MSG_UNREGISTER_CLIENT = 1;
+    public static final int MSG_AGORA_LOG_IN = 2;
+    public static final int MSG_AGORA_LOG_OUT = 3;
+    public static final int MSG_AGORA_LOCAL_INVITATION_SEND = 4;
+    public static final int MSG_AGORA_LOCAL_INVITATION_REFUSED = 5;
+    public static final int MSG_AGORA_LOCAL_INVITATION_CANCELED = 6;
+    public static final int MSG_AGORA_LOCAL_INVITATION_FAILED = 7;
+    public static final int MSG_AGORA_REMOTE_INVITATION_ACCEPTED = 8;
+    public static final int MSG_AGORA_REMOTE_INVITATION_REFUSED = 9;
+    public static final int MSG_AGORA_REMOTE_INVITATION_CANCELED = 10;
+    public static final int MSG_AGORA_REMOTE_INVITATION_FAILED = 11;
 
     public static HashMap<String, String> remoteMsgHeader = null;
     public static HashMap<String, String> getRemoteMsgHeader(){

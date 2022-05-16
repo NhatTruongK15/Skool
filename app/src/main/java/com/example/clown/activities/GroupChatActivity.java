@@ -47,7 +47,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 
-public class GroupChatActivity extends BaseActivity implements GroupChatListener, UserGCListener {
+public class GroupChatActivity extends FirestoreBaseActivity implements GroupChatListener, UserGCListener {
 
 
     private FirebaseFirestore database = FirebaseFirestore.getInstance();
