@@ -123,7 +123,6 @@ public class ChatAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 chatMessage.mediaController.setAnchorView(binding.vidMessage);
                 binding.vidMessage.setMediaController(chatMessage.mediaController);
 
-                // implement on completion listener on video view
                 binding.vidMessage.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                     @Override
                     public void onCompletion(MediaPlayer mp) {
@@ -250,7 +249,6 @@ public class ChatAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 chatMessage.mediaController.setAnchorView(binding.vidMessage);
                 binding.vidMessage.setMediaController(chatMessage.mediaController);
 
-                // implement on completion listener on video view
                 binding.vidMessage.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                     @Override
                     public void onCompletion(MediaPlayer mp) {
