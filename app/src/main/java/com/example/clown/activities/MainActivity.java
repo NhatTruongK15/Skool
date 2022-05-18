@@ -36,6 +36,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.messaging.FirebaseMessaging;
 
@@ -196,6 +197,11 @@ public class MainActivity extends FirestoreBaseActivity implements ConversationL
                 startActivity(intent);
             }
         });
+        binding.llcNewGroup.setOnClickListener(v -> {
+            Intent intent = new Intent(getApplicationContext(),GroupChatActivity.class);
+            intent.putExtra(Constants.KEY_DOCUMENT_REFERENCE_ID,getUser());
+            startActivity(intent);
+        });
     }
 
     private void loadUserDetails() {
@@ -213,13 +219,14 @@ public class MainActivity extends FirestoreBaseActivity implements ConversationL
     }
 
     private void listenConversation() {
-        database.collection(Constants.KEY_COLLECTION_CONVERSATIONS)
-                .whereEqualTo(Constants.KEY_SENDER_ID, preferenceManager.getString(Constants.KEY_DOCUMENT_REFERENCE_ID))
-                .addSnapshotListener(eventListener);
-        database.collection(Constants.KEY_COLLECTION_CONVERSATIONS)
-                .whereEqualTo(Constants.KEY_RECEIVER_ID, preferenceManager.getString(Constants.KEY_DOCUMENT_REFERENCE_ID))
-                .addSnapshotListener(eventListener);
+            database.collection(Constants.KEY_COLLECTION_CONVERSATIONS)
+                    .whereEqualTo(Constants.KEY_SENDER_ID, preferenceManager.getString(Constants.KEY_DOCUMENT_REFERENCE_ID))
+                    .addSnapshotListener(eventListener);
+            database.collection(Constants.KEY_COLLECTION_CONVERSATIONS)
+                    .whereEqualTo(Constants.KEY_RECEIVER_ID, preferenceManager.getString(Constants.KEY_DOCUMENT_REFERENCE_ID))
+                    .addSnapshotListener(eventListener);
     }
+
 
     private final EventListener<QuerySnapshot> eventListener = (value, error) -> {
         if (error != null) {
@@ -242,7 +249,7 @@ public class MainActivity extends FirestoreBaseActivity implements ConversationL
                         chatMessage.conversationName = documentChange.getDocument().getString(Constants.KEY_SENDER_NAME);
                         chatMessage.conversationId = documentChange.getDocument().getString(Constants.KEY_SENDER_ID);
                     }
-                    chatMessage.message = documentChange.getDocument().getString(Constants.KEY_MESSAGE);
+                    chatMessage.message = documentChange.getDocument().getString(Constants.KEY_LAST_MESSAGE);
                     chatMessage.dateObject = documentChange.getDocument().getDate(Constants.KEY_TIMESTAMP);
                     conversations.add(chatMessage);
                 } else if (documentChange.getType() == DocumentChange.Type.MODIFIED) {
@@ -312,12 +319,14 @@ public class MainActivity extends FirestoreBaseActivity implements ConversationL
 
     @Override
     public void onGroupChatClicked(GroupUser groupUser) {
-        Intent intent = new Intent(getApplicationContext(), GChatActivity.class);
-        intent.putExtra(Constants.KEY_USER, groupUser);
-        startActivity(intent);
+
     }
 
     @Override
     public void onGroupChatClicked(User user) {
+
+        Intent intent = new Intent(getApplicationContext(), GChatActivity.class);
+        intent.putExtra(Constants.KEY_USER, user);
+        startActivity(intent);
     }
 }

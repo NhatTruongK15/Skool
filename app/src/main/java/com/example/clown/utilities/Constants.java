@@ -4,6 +4,8 @@ import java.security.PublicKey;
 import java.util.HashMap;
 
 public class Constants {
+    public static final String KEY_GROUP_NAME = "groupname";
+    public static final String KEY_HASH_MAP_GROUP_MEMBERS = "hashmap";
     public static final String KEY_GROUP_MEMBERS = "members";
     public static final String KEY_GROUP_ADMIN = "admin";
     public static final String KEY_DOCUMENT_ID = "documentId";

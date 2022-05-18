@@ -49,10 +49,9 @@ import java.util.stream.Collectors;
 
 public class GroupChatActivity extends FirestoreBaseActivity implements GroupChatListener, UserGCListener {
 
-
-    private FirebaseFirestore database = FirebaseFirestore.getInstance();
     private ActivityGroupChatBinding binding;
     private PreferenceManager preferenceManager;
+    HashMap<String,Object> createGroupChat;
     List<User>  usersGroupChat = new ArrayList<>();
     List<User> users = new ArrayList<>();
     private String groupId;
@@ -68,7 +67,6 @@ public class GroupChatActivity extends FirestoreBaseActivity implements GroupCha
         preferenceManager = new PreferenceManager(getApplicationContext());
         getUsers();
         setListener();
-
     }
 
 
@@ -87,27 +85,26 @@ public class GroupChatActivity extends FirestoreBaseActivity implements GroupCha
 
     private void setListener() {
         binding.imageBack.setOnClickListener(view -> { onBackPressed(); });
-        binding.btnOk.setOnClickListener(view ->{
+        binding.btnAdd.setOnClickListener(view ->{
             CreateGroup();
-            Intent intent = new Intent(getApplicationContext(),GChatActivity.class);
+            Intent intent = new Intent(getApplicationContext(),GroupActivity.class);
             intent.putExtra(Constants.KEY_DOCUMENT_ID,groupId);
+            intent.putExtra(Constants.KEY_HASH_MAP_GROUP_MEMBERS,createGroupChat);
             startActivity(intent);
             });
     }
 
     private void CreateGroup() {
-        HashMap<String,Object> createGroupChat = new HashMap<>();
+        createGroupChat = new HashMap<>();
         groupId = "" + System.currentTimeMillis();
         List<String> usersId = new ArrayList<>();
         getUsersID(usersId,usersGroupChat);
         createGroupChat.put(Constants.KEY_LAST_MESSAGE,"");
-        createGroupChat.put(Constants.KEY_GROUP_ADMIN,preferenceManager.getString(Constants.KEY_USER_ID));
+        createGroupChat.put(Constants.KEY_GROUP_ADMIN,preferenceManager.getString(Constants.KEY_DOCUMENT_REFERENCE_ID));
         createGroupChat.put(Constants.KEY_GROUP_MEMBERS,usersId);
-        createGroupChat.put(Constants.KEY_SENDER_ID,preferenceManager.getString(Constants.KEY_USER_ID));
+        createGroupChat.put(Constants.KEY_SENDER_ID,preferenceManager.getString(Constants.KEY_DOCUMENT_REFERENCE_ID));
         createGroupChat.put(Constants.KEY_RECEIVER_ID,groupId);
-        createGroupChat.put(Constants.KEY_RECEIVER_IMAGE,preferenceManager.getString(Constants.KEY_IMAGE));
         createGroupChat.put(Constants.KEY_TIMESTAMP,new Date());
-        database.collection(Constants.KEY_COLLECTION_CONVERSATIONS).document(groupId).set(createGroupChat);
     }
 
     private void getUsersID(List<String> usersId, List<User> usersGroupChat) {

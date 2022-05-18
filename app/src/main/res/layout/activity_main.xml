@@ -203,6 +203,7 @@
                         android:background="#E0A96D" />
 
                     <LinearLayout
+                        android:id="@+id/llcNewGroup"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="#17212b"

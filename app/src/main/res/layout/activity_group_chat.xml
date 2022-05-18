@@ -36,31 +36,25 @@
         app:layout_constraintTop_toTopOf="@+id/imageBack"
         app:layout_constraintVertical_bias="0.0" />
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="@dimen/_30sdp"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/_5sdp"
         app:layout_constraintTop_toTopOf="@id/tvSelectUser"
         app:layout_constraintBottom_toBottomOf="@id/tvSelectUser"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginEnd="@dimen/_24sdp">
+        android:layout_marginEnd="@dimen/_10sdp">
 
         <ImageButton
-            android:layout_width="39dp"
-            android:layout_height="match_parent"
+            android:id="@+id/btnAdd"
+            android:layout_width="@dimen/_30sdp"
+            android:layout_height="@dimen/_30sdp"
+            android:layout_gravity="end"
             android:layout_marginEnd="@dimen/_13sdp"
-            android:background="@color/primary"
-            android:backgroundTint="@color/primary"
-            android:src="@drawable/ic_add_person_name">
+            android:background="@drawable/background_add_group"
+            android:src="@drawable/ic_action_add_group"
+            app:tint="@color/white" />
 
-        </ImageButton>
 
-        <TextView
-            android:id="@+id/btnOk"
-            android:text="OK"
-            android:textColor="@android:color/holo_blue_light"
-            android:textSize="@dimen/_20sdp"
-            android:textStyle="bold"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
     </LinearLayout>
     <EditText
         android:id="@+id/txtSearchMember"
@@ -80,7 +74,7 @@
         app:layout_constraintTop_toBottomOf="@+id/imageBack"
         app:layout_constraintVertical_bias="0.0" />
 
-    <FrameLayout
+  <FrameLayout
         android:id="@+id/frameLayout2"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -90,12 +84,15 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/listUserAdded"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_100sdp"
+            android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:scrollbars="vertical"
+            android:overScrollMode="never"
+            android:nestedScrollingEnabled="false"
+            android:scrollbarAlwaysDrawVerticalTrack="true"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
 
     </FrameLayout>
-
     <TextView
         android:id="@+id/tvSuggested"
         android:layout_width="match_parent"

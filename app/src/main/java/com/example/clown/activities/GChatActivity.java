@@ -3,6 +3,7 @@ package com.example.clown.activities;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -24,6 +25,8 @@ import com.example.clown.utilities.Constants;
 import com.example.clown.utilities.PreferenceManager;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -50,6 +53,7 @@ import retrofit2.Response;
 
 public class GChatActivity extends AppCompatActivity {
 
+    private FirebaseUser currentUser;
     private ActivityGchatBinding binding;
     private PreferenceManager preferenceManager;
     private FirebaseFirestore database;
@@ -58,6 +62,8 @@ public class GChatActivity extends AppCompatActivity {
     private List<ChatMessage> chatMessages;
     private List<String> admin;
     private List<String> member;
+    private String groupName;
+    private Intent intent = getIntent();
     private ChatAdapter chatAdapter;
     private boolean isReceiverAvailable = false;
 
@@ -68,7 +74,8 @@ public class GChatActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         preferenceManager = new PreferenceManager(getApplicationContext());
         database = FirebaseFirestore.getInstance();
-        conversationId = preferenceManager.getString(Constants.KEY_DOCUMENT_ID);
+        conversationId = (String) intent.getSerializableExtra(Constants.KEY_DOCUMENT_ID);
+        currentUser = FirebaseAuth.getInstance().getCurrentUser();
         setListener();
         loadReceiverDetails();
         init();
@@ -81,8 +88,8 @@ public class GChatActivity extends AppCompatActivity {
 
     private void sendMessage() {
         HashMap<String, Object> message = new HashMap<>();
-        message.put(Constants.KEY_SENDER_ID, preferenceManager.getString(Constants.KEY_USER_ID));
-        message.put(Constants.KEY_RECEIVER_ID, preferenceManager.getString(Constants.KEY_RECEIVER_ID));
+        message.put(Constants.KEY_SENDER_ID, currentUser.getUid());
+        message.put(Constants.KEY_RECEIVER_ID, conversationId);
         message.put(Constants.KEY_MESSAGE, binding.inputMessage.getText().toString());
         message.put(Constants.KEY_TIMESTAMP, new Date());
         database.collection(Constants.KEY_COLLECTION_CHAT).add(message);
@@ -92,7 +99,7 @@ public class GChatActivity extends AppCompatActivity {
         if (!isReceiverAvailable) {
             try {
                 JSONArray tokens = new JSONArray();
-                tokens.put(receiverGroup.token);
+                tokens.put(conversationId);
 
                 JSONObject data = new JSONObject();
                 data.put(Constants.KEY_USER_ID, preferenceManager.getString(Constants.KEY_USER_ID));
@@ -169,16 +176,17 @@ public class GChatActivity extends AppCompatActivity {
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                         admin = (List<String>) documentSnapshot.get(Constants.KEY_GROUP_ADMIN);
                         member = (List<String>) documentSnapshot.get(Constants.KEY_GROUP_MEMBERS);
+                        groupName = (String) documentSnapshot.get(Constants.KEY_GROUP_NAME);
                     }
                 });
-        binding.textName.setText("GroupChat");
+        binding.textName.setText(groupName);
     }
 
     private void init() {
         preferenceManager = new PreferenceManager(getApplicationContext());
         chatMessages = new ArrayList<>();
         chatAdapter = new ChatAdapter(chatMessages,
-                preferenceManager.getString(Constants.KEY_USER_ID),
+                conversationId,
                 getBitmapFromEncodeString(preferenceManager.getString(Constants.KEY_RECEIVER_IMAGE)));
         binding.chatRecyclerView.setAdapter(chatAdapter);
         database = FirebaseFirestore.getInstance();
@@ -197,7 +205,6 @@ public class GChatActivity extends AppCompatActivity {
 
     private void listenMessages() {
         database.collection(Constants.KEY_COLLECTION_CHAT)
-                .whereEqualTo(Constants.KEY_SENDER_ID, preferenceManager.getString(Constants.KEY_SENDER_ID))
                 .whereEqualTo(Constants.KEY_RECEIVER_ID, conversationId)
                 .addSnapshotListener(eventListener);
 /*        database.collection(Constants.KEY_COLLECTION_CHAT)
@@ -260,7 +267,7 @@ public class GChatActivity extends AppCompatActivity {
                     ).intValue();
                     isReceiverAvailable = availability == 1;
                 }
-                receiverGroup.token = value.getString(Constants.KEY_FCM_TOKEN);
+                //receiverGroup.token = value.getString(Constants.KEY_FCM_TOKEN);
                 if (receiverGroup.image == null) {
                     receiverGroup.image = value.getString(Constants.KEY_IMAGE);
                     chatAdapter.setReceiverProfileImage(getBitmapFromEncodeString(receiverGroup.image));
