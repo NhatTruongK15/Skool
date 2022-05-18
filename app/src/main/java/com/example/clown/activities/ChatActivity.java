@@ -11,6 +11,11 @@ import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.app.ActivityManager;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
@@ -19,6 +24,10 @@ import android.graphics.Matrix;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.Message;
+import android.os.Messenger;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
@@ -40,6 +49,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.example.clown.adapter.ChatAdapter;
+import com.example.clown.agora.AgoraService;
 import com.example.clown.adapter.UsersAdapter;
 import com.example.clown.databinding.ActivityChatBinding;
 import com.example.clown.models.ChatMessage;
@@ -115,11 +125,23 @@ public class ChatActivity extends BaseActivity {
     }
 
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        bindAgoraService();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unbindAgoraService();
+    }
+
     private void init() {
         preferenceManager = new PreferenceManager(getApplicationContext());
         chatMessages = new ArrayList<>();
         chatAdapter = new ChatAdapter(chatMessages,
-                preferenceManager.getString(Constants.KEY_USER_ID),
+                preferenceManager.getString(Constants.KEY_DOCUMENT_REFERENCE_ID),
                 getBitmapFromEncodeString(receiverUser.image));
         binding.chatRecyclerView.setAdapter(chatAdapter);
         database = FirebaseFirestore.getInstance();
@@ -378,6 +400,7 @@ public class ChatActivity extends BaseActivity {
 
         }
         HashMap<String, Object> message = new HashMap<>();
+        message.put(Constants.KEY_SENDER_ID, preferenceManager.getString(Constants.KEY_DOCUMENT_REFERENCE_ID));
 
         message.put(Constants.KEY_SENDER_ID, preferenceManager.getString(Constants.KEY_USER_ID));
         message.put(Constants.KEY_RECEIVER_ID, receiverUser.id);
@@ -414,7 +437,7 @@ public class ChatActivity extends BaseActivity {
             updateConversation(binding.inputMessage.getText().toString());
         } else {
             HashMap<String, Object> conversation = new HashMap<>();
-            conversation.put(Constants.KEY_SENDER_ID, preferenceManager.getString(Constants.KEY_USER_ID));
+            conversation.put(Constants.KEY_SENDER_ID, preferenceManager.getString(Constants.KEY_DOCUMENT_REFERENCE_ID));
             conversation.put(Constants.KEY_SENDER_NAME, preferenceManager.getString(Constants.KEY_NAME));
             conversation.put(Constants.KEY_SENDER_IMAGE, preferenceManager.getString(Constants.KEY_IMAGE));
             conversation.put(Constants.KEY_RECEIVER_ID, receiverUser.id);
@@ -423,15 +446,15 @@ public class ChatActivity extends BaseActivity {
             conversation.put(Constants.KEY_LAST_MESSAGE, binding.inputMessage.getText().toString());
             conversation.put(Constants.KEY_TIMESTAMP, new Date());
             addConversation(conversation);
+
         }
-        if(!isReceiverAvailable)
-        {
-            try{
+        if (!isReceiverAvailable) {
+            try {
                 JSONArray tokens = new JSONArray();
                 tokens.put(receiverUser.token);
 
                 JSONObject data = new JSONObject();
-                data.put(Constants.KEY_USER_ID, preferenceManager.getString(Constants.KEY_USER_ID));
+                data.put(Constants.KEY_DOCUMENT_REFERENCE_ID, preferenceManager.getString(Constants.KEY_DOCUMENT_REFERENCE_ID));
                 data.put(Constants.KEY_NAME, preferenceManager.getString(Constants.KEY_NAME));
                 data.put(Constants.KEY_FCM_TOKEN, preferenceManager.getString(Constants.KEY_FCM_TOKEN));
                 data.put(Constants.KEY_MESSAGE, binding.inputMessage.getText().toString());
@@ -445,11 +468,12 @@ public class ChatActivity extends BaseActivity {
 
 
                 JSONObject body = new JSONObject();
-                body.put(Constants.REMOTE_MSG_DATA,data);
+                body.put(Constants.REMOTE_MSG_DATA, data);
                 body.put(Constants.REMOTE_MSG_REGISTRATION_IDS, tokens);
-            }catch(Exception exception)
-            {
-                showToast(exception.getMessage());
+
+                sendNotification(body.toString());
+            } catch (Exception exception) {
+                showToast("how about this one" + exception.getMessage());
             }
         }
         binding.inputMessage.setText(null);
@@ -463,8 +487,7 @@ public class ChatActivity extends BaseActivity {
         isnotVid=false;
     }
 
-    private void showToast(String message)
-    {
+    private void showToast(String message) {
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }
 
@@ -482,74 +505,69 @@ public class ChatActivity extends BaseActivity {
                             JSONArray results = responseJSON.getJSONArray("results");
                             if (responseJSON.getInt("failure") == 1) {
                                 JSONObject error = (JSONObject) results.get(0);
-                                showToast(error.getString("error"));
+                                showToast("this one ??? " + error.getString("error"));
                                 return;
                             }
                             showToast("success");
                             Log.d("test","success");
-
                         }
 
                     } catch (JSONException e) {
                         e.printStackTrace();
                         Log.d("test","success maybe");
+
                     }
                 }
                 else
                     showToast("Error: " + response.code());
-            }
+                }
+
 
             @Override
             public void onFailure(@NonNull Call<String> call, @NonNull Throwable t) {
-                showToast(t.getMessage());
+                showToast("testing this" + (t.getMessage()));
             }
         });
     }
 
-    private void listenAvailabilityOfReceiver()
-    {
+    private void listenAvailabilityOfReceiver() {
         database.collection(Constants.KEY_COLLECTION_USERS).document(
                 receiverUser.id
-        ).addSnapshotListener(ChatActivity.this,(value, error) -> {
-            if(error != null)
-            {
+        ).addSnapshotListener(ChatActivity.this, (value, error) -> {
+            if (error != null) {
                 return;
             }
-            if(value != null)
-            {
-                if(value.getLong(Constants.KEY_AVAILABILITY) != null )
-                {
+            if (value != null) {
+                if (value.getLong(Constants.KEY_AVAILABILITY) != null) {
                     int availability = Objects.requireNonNull(
                             value.getLong(Constants.KEY_AVAILABILITY)
                     ).intValue();
                     isReceiverAvailable = availability == 1;
                 }
                 receiverUser.token = value.getString(Constants.KEY_FCM_TOKEN);
-                if(receiverUser.image ==  null)
-                {
+                if (receiverUser.image == null) {
                     receiverUser.image = value.getString(Constants.KEY_IMAGE);
                     chatAdapter.setReceiverProfileImage(getBitmapFromEncodeString(receiverUser.image));
                     chatAdapter.notifyItemRangeChanged(0, chatMessages.size());
                 }
             }
-            if(isReceiverAvailable)
-            {
+            if (isReceiverAvailable) {
                 binding.textAvailability.setVisibility(View.VISIBLE);
-            }else{
+            } else {
                 binding.textAvailability.setVisibility(View.GONE);
             }
+        });
 
-        } );
     }
 
     private void listenMessages() {
         database.collection(Constants.KEY_COLLECTION_CHAT)
-                .whereEqualTo(Constants.KEY_SENDER_ID, preferenceManager.getString(Constants.KEY_USER_ID))
+                .whereEqualTo(Constants.KEY_SENDER_ID, preferenceManager.getString(Constants.KEY_DOCUMENT_REFERENCE_ID))
                 .whereEqualTo(Constants.KEY_RECEIVER_ID, receiverUser.id)
                 .addSnapshotListener(eventListener);
         database.collection(Constants.KEY_COLLECTION_CHAT)
                 .whereEqualTo(Constants.KEY_SENDER_ID, receiverUser.id)
-                .whereEqualTo(Constants.KEY_RECEIVER_ID, preferenceManager.getString(Constants.KEY_USER_ID))
+                .whereEqualTo(Constants.KEY_RECEIVER_ID, preferenceManager.getString(Constants.KEY_DOCUMENT_REFERENCE_ID))
                 .addSnapshotListener(eventListener);
     }
 
@@ -592,6 +610,8 @@ public class ChatActivity extends BaseActivity {
 
 
 
+
+
     private void loadReceiverDetails() {
         receiverUser = (User) getIntent().getSerializableExtra(Constants.KEY_USER);
         binding.textName.setText(receiverUser.name);
@@ -616,6 +636,14 @@ public class ChatActivity extends BaseActivity {
         });
         binding.layoutFile.setOnClickListener(v -> pickFile());
 
+        binding.imageCall.setOnClickListener(v -> startCall());
+    }
+
+    private void startCall() {
+        Bundle bundle = new Bundle();
+        bundle.putString(Constants.KEY_REMOTE_ID, receiverUser.id);
+        bundle.putString(Constants.KEY_RTC_CHANNEL_ID, conversationId);
+        toAgoraService(Constants.MSG_AGORA_LOCAL_INVITATION_SEND, bundle);
     }
 
     private String getReadableDateTime(Date date) {
@@ -637,13 +665,13 @@ public class ChatActivity extends BaseActivity {
     private void checkConversation() {
         if (chatMessages.size() != 0) {
             checkConversationRemote(
-                    preferenceManager.getString(Constants.KEY_USER_ID),
+                    preferenceManager.getString(Constants.KEY_DOCUMENT_REFERENCE_ID),
                     receiverUser.id
             );
 
             checkConversationRemote(
                     receiverUser.id,
-                    preferenceManager.getString(Constants.KEY_USER_ID)
+                    preferenceManager.getString(Constants.KEY_DOCUMENT_REFERENCE_ID)
             );
         }
     }
@@ -669,4 +697,66 @@ public class ChatActivity extends BaseActivity {
         listenAvailabilityOfReceiver();
     }
 
+
+    // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    // Agora service manager
+    // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    private final Messenger mMessenger = new Messenger(new ChatActivity.IncomingHandler());
+    private Messenger mService;
+    private boolean mIsBound;
+
+    private ServiceConnection mConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            mService = new Messenger(service);
+            toAgoraService(Constants.MSG_REGISTER_CLIENT, null);
+            Log.e("[INFO] ", "AgoraService to MainActivity connected!");
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mService = null;
+            Log.e("[INFO] ", "AgoraService disconnected!");
+        }
+    };
+
+
+    private class IncomingHandler extends Handler {
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+        }
+    }
+
+    private void toAgoraService(int msgNotification, Bundle bundle) {
+        try {
+            Message msg = Message.obtain(null, msgNotification, 0, 0);
+            msg.replyTo = mMessenger;
+            msg.setData(bundle);
+            mService.send(msg);
+        } catch (Exception ex) {
+            Log.e("[ERROR] ", ex.getMessage());
+        }
+    }
+
+    private void bindAgoraService() {
+        if (!mIsBound) {
+            Intent intent = new Intent(getApplicationContext(), AgoraService.class);
+            bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+            mIsBound = true;
+            Log.e("[INFO] ", "AgoraService bound!");
+        }
+    }
+
+    private void unbindAgoraService() {
+        if (mIsBound) {
+            toAgoraService(Constants.MSG_UNREGISTER_CLIENT, null);
+            unbindService(mConnection);
+            mIsBound = false;
+            Log.e("[INFO] ", "AgoraService unbound!");
+        }
+    }
+    // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    // Agora service manager
+    // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 }

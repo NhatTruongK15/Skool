@@ -15,7 +15,9 @@
         android:layout_marginBottom="@dimen/_16sdp"
         android:background="@drawable/background_content_top"
         app:layout_constraintBottom_toTopOf="@id/layoutSend"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        tools:layout_editor_absoluteX="202dp" />
 
     <View
         android:id="@+id/headerBackground"
@@ -51,6 +53,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:tint="@color/white"/>
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/imageCall"
+        android:layout_width="@dimen/_30sdp"
+        android:layout_height="@dimen/_30sdp"
+        android:layout_marginTop="@dimen/_12sdp"
+        android:layout_marginEnd="@dimen/_53sdp"
+        android:layout_marginRight="@dimen/_16sdp"
+        android:padding="@dimen/_4sdp"
+        android:src="@drawable/ic_call"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/white"
+        />
 
     <TextView
         android:id="@+id/textName"
@@ -101,24 +117,8 @@
         app:layout_constraintEnd_toEndOf="@id/viewBackground"
         app:layout_constraintStart_toStartOf="@id/viewBackground"
         app:layout_constraintTop_toTopOf="@id/viewBackground"/>
-<!--                <VideoView-->
-<!--                    android:id="@+id/vidMessage"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="200dp"-->
-<!--                    android:layout_marginTop="5dp"-->
-<!--                    android:layout_marginBottom="5dp"-->
-<!--                    android:background="@color/Trans"-->
-<!--                    app:layout_constraintBottom_toBottomOf="@id/viewBackground"-->
-<!--                    app:layout_constraintEnd_toEndOf="@id/viewBackground"-->
-<!--                    app:layout_constraintStart_toStartOf="@id/viewBackground"-->
-<!--                    app:layout_constraintTop_toTopOf="@id/viewBackground"-->
-<!--                    app:layout_constraintWidth_max="wrap"-->
-<!--                    app:layout_constraintHeight_max="wrap"-->
 
-<!--                    app:layout_constraintWidth_percent="0.8"/>-->
-
-
-    <FrameLayout
+<FrameLayout
     android:id="@+id/layoutSend"
     android:layout_width="@dimen/_40sdp"
     android:layout_height="@dimen/_40sdp"
@@ -156,15 +156,34 @@
             android:src="@drawable/ic_baseline_attach_file_24"
             app:tint="@color/white" />
 
+</FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/btn_emoji"
+        android:layout_width="@dimen/_40sdp"
+        android:layout_height="@dimen/_40sdp"
+        android:layout_marginEnd="@dimen/_16sdp"
+        android:layout_marginRight="@dimen/_16sdp"
+        android:layout_marginBottom="@dimen/_12sdp"
+        android:background="@drawable/background_chat_input"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="@dimen/_8sdp"
+            android:src="@drawable/ic_emoji"
+            app:tint="@color/white"/>
+
     </FrameLayout>
 
     <EditText
         android:id="@+id/inputMessage"
-        android:layout_width="0dp"
-        android:layout_height="@dimen/_40sdp"
+        android:layout_width="273dp"
+        android:layout_height="55dp"
         android:layout_marginStart="@dimen/_16sdp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="@dimen/_12sdp"
+        android:layout_marginEnd="@dimen/_8sdp"
+        android:layout_marginBottom="16dp"
         android:background="@drawable/background_chat_input"
         android:hint="Type a message"
         android:imeOptions="actionDone"
@@ -175,6 +194,7 @@
         android:textColor="@color/white"
         android:textColorHint="@color/secondary_text"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintEnd_toStartOf="@+id/layoutFile"
         app:layout_constraintStart_toStartOf="parent" />
     <TextView
