@@ -317,6 +317,7 @@ public class ChatAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 }
             }
 
+
             if (chatMessage.message.compareTo("") != 0&&chatMessage.finame==null) {
                 binding.btnMore.setVisibility(View.GONE);
             }
