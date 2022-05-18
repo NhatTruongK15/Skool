@@ -101,7 +101,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import androidx.activity.result.contract.ActivityResultContracts;
 
-public class ChatActivity extends BaseActivity {
+public class ChatActivity extends FirestoreBaseActivity {
     private ActivityChatBinding binding;
     private User receiverUser;
     private List<ChatMessage> chatMessages;
