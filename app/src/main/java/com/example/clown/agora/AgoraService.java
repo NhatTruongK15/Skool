@@ -1,6 +1,7 @@
 package com.example.clown.agora;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Intent;
@@ -71,6 +72,8 @@ public class AgoraService extends Service implements IEventListener, ResultCallb
 
         this.stopForeground(true);
         mNM.cancelAll();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+            mNM.deleteNotificationChannel(Constants.AGORA_APP_ID);
 
         showToast("AgoraService destroyed!");
     }
@@ -84,6 +87,7 @@ public class AgoraService extends Service implements IEventListener, ResultCallb
 
         initRtm();
 
+        createNotificationChannel();
         startForegroundNotification();
 
         showToast("AgoraService started!");
@@ -274,12 +278,25 @@ public class AgoraService extends Service implements IEventListener, ResultCallb
         mRtmToken = null;
     }
 
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel notificationChannel = new NotificationChannel(
+                    Constants.AGORA_APP_ID,
+                    "Clown",
+                    NotificationManager.IMPORTANCE_LOW);
+            mNM.createNotificationChannel(notificationChannel);
+        }
+    }
+
     private void startForegroundNotification() {
         final Notification.Builder builder = new Notification.Builder(this)
                 .setAutoCancel(true)
                 .setSmallIcon(R.drawable.ic_transparent)
                 .setPriority(Notification.PRIORITY_LOW)
                 .setVisibility(Notification.VISIBILITY_SECRET);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                builder.setChannelId(Constants.AGORA_APP_ID);
 
         final Notification notification;
         notification = builder.build();
@@ -363,7 +380,7 @@ public class AgoraService extends Service implements IEventListener, ResultCallb
             mRtmCallManager.sendLocalInvitation(mLocalInvitation, AgoraService.this);
 
             Bundle bundle2 = new Bundle();
-            bundle2.putString(Constants.KEY_REMOTE_ID, remoteUserId);
+            bundle2.putString(Constants.KEY_DOCUMENT_REFERENCE_ID, remoteUserId);
             bundle2.putString(Constants.KEY_RTC_CHANNEL_ID, channelId);
             bundle2.putBoolean(Constants.KEY_IS_CALLER, true);
 
@@ -388,6 +405,7 @@ public class AgoraService extends Service implements IEventListener, ResultCallb
         try {
             Intent intent = new Intent(getApplicationContext(), activityClass);
             intent.putExtra(Constants.KEY_REMOTE_USER_DATA, bundle);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
             startActivity(intent);
         } catch (Exception ex) {
             Log.e("[ERROR] ", ex.getMessage());
