@@ -176,7 +176,7 @@ public class ChatAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 }
             }
             if(chatMessage.filePath!=null){
-                if (chatMessage.filePath.compareTo("") != 0) {
+                if (chatMessage.filePath.compareTo("") != 0&&chatMessage.message.compareTo("") != 0) {
                     binding.btnMore.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -303,7 +303,7 @@ public class ChatAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 }
             }
             if(chatMessage.filePath!=null){
-                if (chatMessage.filePath.compareTo("") != 0) {
+                if (chatMessage.filePath.compareTo("") != 0&&chatMessage.message.compareTo("") != 0) {
                     binding.btnMore.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {

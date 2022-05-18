@@ -181,7 +181,7 @@ public class FileDisplayActivitiy extends AppCompatActivity {
                 filelink = uri.toString();
                 loading(false);
                 isUploadingFile = false;
-                showToast("upload success");
+//                showToast("upload success");
 
             }
         });
@@ -234,7 +234,7 @@ public class FileDisplayActivitiy extends AppCompatActivity {
     public void innit() {
 
         if (videoPath.compareTo("") != 0) {
-            Toast.makeText(this, "654", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "654", Toast.LENGTH_SHORT).show();
             mediaController = new MediaController(this);
             mediaController.setAnchorView(videoView);
             videoView.setMediaController(mediaController);
@@ -270,12 +270,12 @@ public class FileDisplayActivitiy extends AppCompatActivity {
                         Bitmap tempbitmap = BitmapFactory.decodeFile(localFile.getAbsolutePath());
                         imageView.setImageBitmap(tempbitmap);
                         imageView.setVisibility(View.VISIBLE);
-                        Toast.makeText(getApplicationContext(), "retr", Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(getApplicationContext(), "retr", Toast.LENGTH_SHORT).show();
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(getApplicationContext(), "unretr", Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(getApplicationContext(), "unretr", Toast.LENGTH_SHORT).show();
 
                     }
                 });
@@ -283,11 +283,12 @@ public class FileDisplayActivitiy extends AppCompatActivity {
                 imageView.setImageBitmap(bitmap);
             }
 
-            Toast.makeText(this, "321", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "321", Toast.LENGTH_SHORT).show();
         } else {
             imageView.setVisibility(View.GONE);
         }
-        if (filePath.compareTo("") != 0) {
+
+        if (filePath.compareTo("") != 0&&videoPath.compareTo("")==0) {
             textView.setText(finame + " is not available to preview");
             binding.progressBar.setVisibility(View.GONE);
 
@@ -296,6 +297,7 @@ public class FileDisplayActivitiy extends AppCompatActivity {
             binding.progressBar.setVisibility(View.GONE);
 
         }
+
 
         imageDownload.setOnClickListener(new View.OnClickListener() {
             @Override
