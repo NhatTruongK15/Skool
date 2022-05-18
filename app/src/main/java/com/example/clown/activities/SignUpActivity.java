@@ -177,10 +177,10 @@ public class SignUpActivity extends AgoraBaseActivity {
                             userInput.put(Constants.KEY_PHONE_NUMBER, binding.inputPhoneNumb.getText().toString());
                             userInput.put(Constants.KEY_PASSWORD, binding.inputPassword.getText().toString());
                             userInput.put(Constants.KEY_IMAGE, encodedImage);
-                            userInput.put(Constants.KEY_USER_ID, currentUser.getUid());
 
                             database.collection(Constants.KEY_COLLECTION_USERS)
-                                    .add(userInput)
+                                    .document(currentUser.getUid())
+                                    .set(userInput)
                                     .addOnSuccessListener(documentReference -> {
                                         loading(binding.buttonSignUp, binding.progressBar, false);
                                         preferenceManager.putBoolean(Constants.KEY_IS_SIGNED_IN, true);
@@ -188,12 +188,12 @@ public class SignUpActivity extends AgoraBaseActivity {
                                         preferenceManager.putString(Constants.KEY_PHONE_NUMBER, binding.inputPhoneNumb.getText().toString());
                                         preferenceManager.putString(Constants.KEY_EMAIL, binding.inputEmail.getText().toString());
 
-                                        preferenceManager.putString(Constants.KEY_DOCUMENT_REFERENCE_ID, documentReference.getId());
+                                        preferenceManager.putString(Constants.KEY_DOCUMENT_REFERENCE_ID, currentUser.getUid());
                                         preferenceManager.putString(Constants.KEY_NAME, binding.inputName.getText().toString());
                                         preferenceManager.putString(Constants.KEY_IMAGE, encodedImage);
 
                                         // LOGIN AGORA SERVER
-                                        String userId = documentReference.getId();
+                                        String userId = currentUser.getUid();
                                         Bundle bundle = new Bundle();
                                         bundle.putString(Constants.KEY_DOCUMENT_REFERENCE_ID, userId);
                                         toAgoraService(Constants.MSG_AGORA_LOG_IN, bundle);
