@@ -15,7 +15,7 @@ public class Constants {
     public static final String KEY_REFERENCE_NAME = "clown";
     public static final String KEY_IS_SIGNED_IN = "isSignedIn";
     public static final String KEY_DOCUMENT_REFERENCE_ID = "documentReferenceID"; // userID cũ (  thực chất là ID của document )
-    public static final String KEY_USER_ID = "userID"; // authencation ID
+    public static final String KEY_USER_ID = "userID"; // authencation ID not use anymore
     public static final String KEY_IMAGE = "image";
     public static final String KEY_FCM_TOKEN = "fcmToken";
     public static final String KEY_USER = "user";
