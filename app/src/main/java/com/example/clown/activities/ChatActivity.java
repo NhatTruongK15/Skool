@@ -400,8 +400,6 @@ public class ChatActivity extends FirestoreBaseActivity {
 
         }
         HashMap<String, Object> message = new HashMap<>();
-        message.put(Constants.KEY_SENDER_ID, preferenceManager.getString(Constants.KEY_DOCUMENT_REFERENCE_ID));
-
         message.put(Constants.KEY_SENDER_ID, preferenceManager.getString(Constants.KEY_USER_ID));
         message.put(Constants.KEY_RECEIVER_ID, receiverUser.id);
         message.put(Constants.KEY_MESSAGE, binding.inputMessage.getText().toString());
@@ -437,7 +435,7 @@ public class ChatActivity extends FirestoreBaseActivity {
             updateConversation(binding.inputMessage.getText().toString());
         } else {
             HashMap<String, Object> conversation = new HashMap<>();
-            conversation.put(Constants.KEY_SENDER_ID, preferenceManager.getString(Constants.KEY_DOCUMENT_REFERENCE_ID));
+            conversation.put(Constants.KEY_SENDER_ID, preferenceManager.getString(Constants.KEY_USER_ID));
             conversation.put(Constants.KEY_SENDER_NAME, preferenceManager.getString(Constants.KEY_NAME));
             conversation.put(Constants.KEY_SENDER_IMAGE, preferenceManager.getString(Constants.KEY_IMAGE));
             conversation.put(Constants.KEY_RECEIVER_ID, receiverUser.id);
