@@ -156,8 +156,6 @@ public class ChatActivity extends FirestoreBaseActivity {
         String result = "";
         switch (filetype(file)) {
             case ".mp4":
-            case ".mkv":
-            case ".webm":
                 result = "vid";
                 break;
             case ".png":
@@ -173,6 +171,8 @@ public class ChatActivity extends FirestoreBaseActivity {
             case ".xlsx":
             case ".mp3":
             case ".flac":
+            case ".mkv":
+            case ".webm":
 
                 result = "etc";
                 break;
