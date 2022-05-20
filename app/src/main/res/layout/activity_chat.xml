@@ -179,7 +179,7 @@
 
     <EditText
         android:id="@+id/inputMessage"
-        android:layout_width="203dp"
+        android:layout_width="173dp"
         android:layout_height="55dp"
         android:layout_marginEnd="@dimen/_8sdp"
         android:layout_marginBottom="16dp"
@@ -195,7 +195,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/layoutFile"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/btn_emoji" />
+        app:layout_constraintStart_toEndOf="@+id/btn_emoji"
+        />
     <TextView
         android:id="@+id/textAvailability"
         android:layout_width="match_parent"
