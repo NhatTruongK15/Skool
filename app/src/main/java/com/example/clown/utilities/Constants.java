@@ -17,7 +17,7 @@ public class Constants {
     public static final String KEY_REFERENCE_NAME = "clown";
     public static final String KEY_IS_SIGNED_IN = "isSignedIn";
     public static final String KEY_DOCUMENT_REFERENCE_ID = "documentReferenceID"; // userID cũ (  thực chất là ID của document )
-    public static final String KEY_USER_ID = "userID"; // authencation ID
+    public static final String KEY_USER_ID = "userID"; // authencation ID not use anymore
     public static final String KEY_IMAGE = "image";
     public static final String KEY_FCM_TOKEN = "fcmToken";
     public static final String KEY_USER = "user";
@@ -25,6 +25,17 @@ public class Constants {
     public static final String KEY_SENDER_ID ="senderId";
     public static final String KEY_RECEIVER_ID="receiverId";
     public static final String KEY_MESSAGE ="message";
+    public static final String KEY_MESSAGE_IMAGE ="message_image";
+    public static final String KEY_MESSAGE_IMAGE_LINK ="message_image_link";
+    public static final String KEY_MESSAGE_IMAGE_FINAME ="message_image_finame";
+    public static final String KEY_MESSAGE_FINAME ="message_finame";
+
+    public static final String KEY_MESSAGE_VIDEO ="message_video";
+    public static final String KEY_MESSAGE_VIDEO_BASE64 ="message_video_base64";
+
+    public static final String KEY_MESSAGE_FILE ="message_file";
+
+
     public static final String KEY_TIMESTAMP="timestamp";
     public static final String KEY_COLLECTION_CONVERSATIONS="conversations";
     public static final String KEY_SENDER_NAME="senderName";
@@ -62,7 +73,12 @@ public class Constants {
     public static final int MSG_AGORA_REMOTE_INVITATION_CANCELED = 10;
     public static final int MSG_AGORA_REMOTE_INVITATION_FAILED = 11;
 
+    public static final int HD_RES_860=860;
+    public static final int HD_RES=860;
+    public static final int PIC_HOLDER=500;
+
     public static HashMap<String, String> remoteMsgHeader = null;
+
     public static HashMap<String, String> getRemoteMsgHeader(){
         if(remoteMsgHeader ==  null)
         {

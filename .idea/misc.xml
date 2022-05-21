@@ -12,15 +12,11 @@
         <entry key="..\:/Users/84962/AndroidStudioProjects/Clown/app/src/main/res/drawable/background_received_message.xml" value="0.1405" />
         <entry key="..\:/Users/84962/AndroidStudioProjects/Clown/app/src/main/res/drawable/background_sent_message.xml" value="0.1405" />
         <entry key="..\:/Users/84962/AndroidStudioProjects/Clown/app/src/main/res/drawable/ic_add.xml" value="0.1405" />
-        <entry key="..\:/Users/84962/AndroidStudioProjects/Clown/app/src/main/res/drawable/ic_emoji.xml" value="0.163" />
-        <entry key="..\:/Users/84962/AndroidStudioProjects/Clown/app/src/main/res/drawable/image1.xml" value="0.163" />
-        <entry key="..\:/Users/84962/AndroidStudioProjects/Clown/app/src/main/res/drawable/item_info.xml" value="0.163" />
         <entry key="..\:/Users/84962/AndroidStudioProjects/Clown/app/src/main/res/layout/activity_chat.xml" value="0.22826086956521738" />
         <entry key="..\:/Users/84962/AndroidStudioProjects/Clown/app/src/main/res/layout/activity_main.xml" value="0.22826086956521738" />
         <entry key="..\:/Users/84962/AndroidStudioProjects/Clown/app/src/main/res/layout/activity_sign_in.xml" value="0.264" />
         <entry key="..\:/Users/84962/AndroidStudioProjects/Clown/app/src/main/res/layout/activity_sign_up.xml" value="0.22826086956521738" />
         <entry key="..\:/Users/84962/AndroidStudioProjects/Clown/app/src/main/res/layout/activity_users.xml" value="0.2" />
-        <entry key="..\:/Users/84962/AndroidStudioProjects/Clown/app/src/main/res/layout/item_avatar.xml" value="0.1388753056234719" />
         <entry key="..\:/Users/84962/AndroidStudioProjects/Clown/app/src/main/res/layout/item_container_received_message.xml" value="0.22826086956521738" />
         <entry key="..\:/Users/84962/AndroidStudioProjects/Clown/app/src/main/res/layout/item_container_recent_conversation.xml" value="0.2572463768115942" />
         <entry key="..\:/Users/84962/AndroidStudioProjects/Clown/app/src/main/res/layout/item_container_sent_message.xml" value="0.22826086956521738" />
@@ -92,6 +88,39 @@
         <entry key="..\:/Users/phatl/Desktop/Mobile_Introduction_Project/Skool/app/src/main/res/layout/activity_group.xml" value="0.25833333333333336" />
         <entry key="..\:/Users/phatl/Desktop/Mobile_Introduction_Project/Skool/app/src/main/res/layout/activity_group_chat.xml" value="0.25833333333333336" />
         <entry key="..\:/Users/phatl/Desktop/Mobile_Introduction_Project/Skool/app/src/main/res/layout/activity_main.xml" value="0.12563323201621074" />
+        <entry key="..\:/github/Skool/app/src/main/res/drawable/background_chat_img_2_input.xml" value="0.124" />
+        <entry key="..\:/github/Skool/app/src/main/res/drawable/background_chat_img_input.xml" value="0.124" />
+        <entry key="..\:/github/Skool/app/src/main/res/drawable/background_chat_input.xml" value="0.124" />
+        <entry key="..\:/github/Skool/app/src/main/res/drawable/background_content_bottom.xml" value="0.124" />
+        <entry key="..\:/github/Skool/app/src/main/res/drawable/background_content_top.xml" value="0.124" />
+        <entry key="..\:/github/Skool/app/src/main/res/drawable/background_icon.xml" value="0.124" />
+        <entry key="..\:/github/Skool/app/src/main/res/drawable/background_image.xml" value="0.124" />
+        <entry key="..\:/github/Skool/app/src/main/res/drawable/background_input.xml" value="0.124" />
+        <entry key="..\:/github/Skool/app/src/main/res/drawable/background_mess img_input.xml" value="0.124" />
+        <entry key="..\:/github/Skool/app/src/main/res/drawable/background_messimg.xml" value="0.124" />
+        <entry key="..\:/github/Skool/app/src/main/res/drawable/background_received_message.xml" value="0.124" />
+        <entry key="..\:/github/Skool/app/src/main/res/drawable/background_received_message_img.xml" value="0.124" />
+        <entry key="..\:/github/Skool/app/src/main/res/drawable/background_sent_message.xml" value="0.124" />
+        <entry key="..\:/github/Skool/app/src/main/res/drawable/background_sent_message_file.xml" value="0.124" />
+        <entry key="..\:/github/Skool/app/src/main/res/drawable/background_sent_message_img.xml" value="0.124" />
+        <entry key="..\:/github/Skool/app/src/main/res/drawable/ic_back.xml" value="0.124" />
+        <entry key="..\:/github/Skool/app/src/main/res/drawable/ic_baseline_attach_file_24.xml" value="0.124" />
+        <entry key="..\:/github/Skool/app/src/main/res/drawable/ic_notification.xml" value="0.124" />
+        <entry key="..\:/github/Skool/app/src/main/res/drawable/ic_send.xml" value="0.124" />
+        <entry key="..\:/github/Skool/app/src/main/res/layout/actitvity_display_file.xml" value="0.136" />
+        <entry key="..\:/github/Skool/app/src/main/res/layout/activity_chat.xml" value="0.176" />
+        <entry key="..\:/github/Skool/app/src/main/res/layout/activity_friend_adding.xml" value="0.11302083333333333" />
+        <entry key="..\:/github/Skool/app/src/main/res/layout/activity_gchat.xml" value="0.11302083333333333" />
+        <entry key="..\:/github/Skool/app/src/main/res/layout/activity_main.xml" value="0.176" />
+        <entry key="..\:/github/Skool/app/src/main/res/layout/activity_sign_in.xml" value="0.11302083333333333" />
+        <entry key="..\:/github/Skool/app/src/main/res/layout/activity_sign_up.xml" value="0.2" />
+        <entry key="..\:/github/Skool/app/src/main/res/layout/activity_users.xml" value="0.11302083333333333" />
+        <entry key="..\:/github/Skool/app/src/main/res/layout/item_container_received_image.xml" value="0.11302083333333333" />
+        <entry key="..\:/github/Skool/app/src/main/res/layout/item_container_received_message.xml" value="0.4" />
+        <entry key="..\:/github/Skool/app/src/main/res/layout/item_container_recent_conversation.xml" value="0.176" />
+        <entry key="..\:/github/Skool/app/src/main/res/layout/item_container_sent_image.xml" value="0.2" />
+        <entry key="..\:/github/Skool/app/src/main/res/layout/item_container_sent_message.xml" value="0.264" />
+        <entry key="..\:/github/Skool/app/src/main/res/layout/item_container_user.xml" value="0.11302083333333333" />
       </map>
     </option>
   </component>

@@ -177,7 +177,7 @@ public class SignUpActivity extends AgoraBaseActivity {
                             userInput.put(Constants.KEY_PHONE_NUMBER, binding.inputPhoneNumb.getText().toString());
                             userInput.put(Constants.KEY_PASSWORD, binding.inputPassword.getText().toString());
                             userInput.put(Constants.KEY_IMAGE, encodedImage);
-
+                            userInput.put(Constants.KEY_USER_ID, currentUser.getUid());
                             database.collection(Constants.KEY_COLLECTION_USERS)
                                     .document(currentUser.getUid())
                                     .set(userInput)

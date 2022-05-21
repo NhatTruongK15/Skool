@@ -29,6 +29,7 @@ public class FirestoreBaseActivity extends AppCompatActivity {
         documentReference.update(Constants.KEY_AVAILABILITY, 0);
     }
 
+
     @Override
     protected void onResume() {
         super.onResume();
