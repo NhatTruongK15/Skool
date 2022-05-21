@@ -620,7 +620,7 @@ public class ChatActivity extends FirestoreBaseActivity {
 
 
 
-    }
+
 
     private void loadReceiverDetails() {
         receiverUser = (User) getIntent().getSerializableExtra(Constants.KEY_USER);
