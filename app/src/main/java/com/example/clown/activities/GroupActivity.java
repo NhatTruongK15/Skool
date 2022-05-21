@@ -56,7 +56,7 @@ public class GroupActivity extends AppCompatActivity {
             createGroupChat.put(Constants.KEY_GROUP_NAME,binding.etGroupName.getText().toString().trim());
             database.collection(Constants.KEY_COLLECTION_CONVERSATIONS).document(documentId).set(createGroupChat);
 
-            Intent intent1 = new Intent(getApplicationContext(),GChatActivity.class);
+            Intent intent1 = new Intent(getApplicationContext(),ChatActivity.class);
             startActivity(intent1);
 
         });

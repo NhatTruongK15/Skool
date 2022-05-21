@@ -39,6 +39,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -98,9 +99,10 @@ public class GroupChatActivity extends FirestoreBaseActivity implements GroupCha
         createGroupChat = new HashMap<>();
         groupId = "" + System.currentTimeMillis();
         List<String> usersId = new ArrayList<>();
+        String[] array = {preferenceManager.getString(Constants.KEY_DOCUMENT_REFERENCE_ID),""};
         getUsersID(usersId,usersGroupChat);
         createGroupChat.put(Constants.KEY_LAST_MESSAGE,"");
-        createGroupChat.put(Constants.KEY_GROUP_ADMIN,preferenceManager.getString(Constants.KEY_DOCUMENT_REFERENCE_ID));
+        createGroupChat.put(Constants.KEY_GROUP_ADMIN, Arrays.asList(array));
         createGroupChat.put(Constants.KEY_GROUP_MEMBERS,usersId);
         createGroupChat.put(Constants.KEY_SENDER_ID,preferenceManager.getString(Constants.KEY_DOCUMENT_REFERENCE_ID));
         createGroupChat.put(Constants.KEY_RECEIVER_ID,groupId);

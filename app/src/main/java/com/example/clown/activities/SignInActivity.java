@@ -60,7 +60,7 @@ public class SignInActivity extends AgoraBaseActivity {
         });
         preferenceManager = new PreferenceManager(getApplicationContext());
 
-        //initAgoraService();
+        initAgoraService();
 
         binding = ActivitySignInBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());

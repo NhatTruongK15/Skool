@@ -121,9 +121,7 @@ public class ChatActivity extends FirestoreBaseActivity {
         loadReceiverDetails();
         init();
         listenMessages();
-
     }
-
 
     @Override
     protected void onStart() {
@@ -145,6 +143,16 @@ public class ChatActivity extends FirestoreBaseActivity {
                 getBitmapFromEncodeString(receiverUser.image));
         binding.chatRecyclerView.setAdapter(chatAdapter);
         database = FirebaseFirestore.getInstance();
+    }
+
+    private boolean checkGroupConversation(String id) {
+        try{
+            double val = Double.parseDouble(id);
+            return true;
+        }
+        catch (Exception e){
+            return false;
+        }
     }
 
 
@@ -402,8 +410,11 @@ public class ChatActivity extends FirestoreBaseActivity {
 
         }
         HashMap<String, Object> message = new HashMap<>();
-        message.put(Constants.KEY_SENDER_ID, preferenceManager.getString(Constants.KEY_USER_ID));
-        message.put(Constants.KEY_RECEIVER_ID, receiverUser.id);
+        message.put(Constants.KEY_SENDER_ID, preferenceManager.getString(Constants.KEY_DOCUMENT_REFERENCE_ID));
+        if(checkGroupConversation(conversationId))
+            message.put(Constants.KEY_RECEIVER_ID,conversationId);
+        else
+            message.put(Constants.KEY_RECEIVER_ID, receiverUser.id);
         message.put(Constants.KEY_MESSAGE, binding.inputMessage.getText().toString());
         message.put(Constants.KEY_TIMESTAMP, new Date());
 
@@ -437,7 +448,7 @@ public class ChatActivity extends FirestoreBaseActivity {
             updateConversation(binding.inputMessage.getText().toString());
         } else {
             HashMap<String, Object> conversation = new HashMap<>();
-            conversation.put(Constants.KEY_SENDER_ID, preferenceManager.getString(Constants.KEY_USER_ID));
+            conversation.put(Constants.KEY_SENDER_ID, preferenceManager.getString(Constants.KEY_DOCUMENT_REFERENCE_ID));
             conversation.put(Constants.KEY_SENDER_NAME, preferenceManager.getString(Constants.KEY_NAME));
             conversation.put(Constants.KEY_SENDER_IMAGE, preferenceManager.getString(Constants.KEY_IMAGE));
             conversation.put(Constants.KEY_RECEIVER_ID, receiverUser.id);
@@ -522,7 +533,6 @@ public class ChatActivity extends FirestoreBaseActivity {
                     showToast("Error: " + response.code());
                 }
 
-
             @Override
             public void onFailure(@NonNull Call<String> call, @NonNull Throwable t) {
                 showToast("testing this" + (t.getMessage()));
@@ -562,12 +572,12 @@ public class ChatActivity extends FirestoreBaseActivity {
 
     private void listenMessages() {
         database.collection(Constants.KEY_COLLECTION_CHAT)
-                .whereEqualTo(Constants.KEY_SENDER_ID, preferenceManager.getString(Constants.KEY_USER_ID))
+                .whereEqualTo(Constants.KEY_SENDER_ID, preferenceManager.getString(Constants.KEY_DOCUMENT_REFERENCE_ID))
                 .whereEqualTo(Constants.KEY_RECEIVER_ID, receiverUser.id)
                 .addSnapshotListener(eventListener);
         database.collection(Constants.KEY_COLLECTION_CHAT)
                 .whereEqualTo(Constants.KEY_SENDER_ID, receiverUser.id)
-                .whereEqualTo(Constants.KEY_RECEIVER_ID, preferenceManager.getString(Constants.KEY_USER_ID))
+                .whereEqualTo(Constants.KEY_RECEIVER_ID, preferenceManager.getString(Constants.KEY_DOCUMENT_REFERENCE_ID))
                 .addSnapshotListener(eventListener);
     }
 
@@ -602,7 +612,7 @@ public class ChatActivity extends FirestoreBaseActivity {
             }
             binding.chatRecyclerView.setVisibility(View.VISIBLE);
         }
-        binding.progressBar.setVisibility(View.INVISIBLE);
+        binding.progressBar.setVisibility(View.GONE);
         if (conversationId == null) {
             checkConversation();
         }
@@ -610,7 +620,7 @@ public class ChatActivity extends FirestoreBaseActivity {
 
 
 
-
+    }
 
     private void loadReceiverDetails() {
         receiverUser = (User) getIntent().getSerializableExtra(Constants.KEY_USER);
@@ -659,7 +669,10 @@ public class ChatActivity extends FirestoreBaseActivity {
     private void updateConversation(String message) {
         DocumentReference documentReference =
                 database.collection(Constants.KEY_COLLECTION_CONVERSATIONS).document(conversationId);
-        documentReference.update(Constants.KEY_LAST_MESSAGE, message, Constants.KEY_TIMESTAMP, new Date());
+        if(checkGroupConversation(conversationId))
+            documentReference.update(Constants.KEY_SENDER_ID,Constants.KEY_DOCUMENT_REFERENCE_ID,Constants.KEY_LAST_MESSAGE, message, Constants.KEY_TIMESTAMP, new Date());
+        else
+            documentReference.update(Constants.KEY_LAST_MESSAGE, message, Constants.KEY_TIMESTAMP, new Date());
     }
 
     private void checkConversation() {
@@ -696,7 +709,6 @@ public class ChatActivity extends FirestoreBaseActivity {
         super.onResume();
         listenAvailabilityOfReceiver();
     }
-
 
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // Agora service manager
