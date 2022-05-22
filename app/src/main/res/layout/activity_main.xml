@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawerLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
@@ -127,28 +129,18 @@
             </com.google.android.material.appbar.AppBarLayout>
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
+
     <!--nav bar Layout-->
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/NavMenubarLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#862A2A2A">
         <!--menu sidebar-->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
 
-
-            android:orientation="horizontal"
-
-            app:layout_constraintEnd_toStartOf="parent">
 
             <com.google.android.material.navigation.NavigationView
-
+                android:id="@+id/NavMenubarLayout"
                 android:layout_width="@dimen/_240sdp"
                 android:layout_height="match_parent"
                 android:background="@drawable/background_nav_menubar"
                 android:fitsSystemWindows="false"
+                android:layout_gravity="start"
                 tools:ignore="MissingConstraints">
 
                 <LinearLayout
@@ -456,11 +448,11 @@
 
             </com.google.android.material.navigation.NavigationView>
 
-            />
 
-        </LinearLayout>
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</FrameLayout>
+
+
+
+</androidx.drawerlayout.widget.DrawerLayout>
 
 
 
