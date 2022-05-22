@@ -146,7 +146,7 @@ public class FileDisplayActivitiy extends AppCompatActivity {
     ActivityResultLauncher<Intent> activityResultLauncher;
 
     private void downloadFile(Context context, String fileName, String fileExtension, String destinationDirectory, String url) {
-        DownloadManager downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+//        DownloadManager downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
         Uri uri = Uri.parse(url);
         DownloadManager.Request request = new DownloadManager.Request(uri);
         request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_MOBILE | DownloadManager.Request.NETWORK_WIFI);

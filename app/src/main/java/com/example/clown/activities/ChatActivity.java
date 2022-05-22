@@ -387,11 +387,13 @@ public class ChatActivity extends FirestoreBaseActivity {
             if (checkFileType(finame).compareTo("vid") == 0) {
 //                loading(true);
 //                getLinkDownload(finame);
+                binding.inputMessage.setText("");
             }
             if (checkFileType(finame).compareTo("img") == 0) {
                 imglink=filelink;
                 filelink=null;
                 encodedImage = encodeImageFromUri(fileuri);
+                binding.inputMessage.setText("");
             }
             if(checkFileType(finame).compareTo("etc")==0){
                 isnotVid=true;
