@@ -178,7 +178,7 @@ public class MainActivity extends FirestoreBaseActivity implements ConversationL
         conversationAdapter = new RecentConversationAdapter(conversations, this);
         binding.conversationRecyclerView.setAdapter(conversationAdapter);
         database = FirebaseFirestore.getInstance();
-        binding.NavMenubarLayout.setVisibility(View.GONE);
+
     }
     private void setListener() {
         binding.imageSignOut.setOnClickListener(v -> signOut());
@@ -191,7 +191,6 @@ public class MainActivity extends FirestoreBaseActivity implements ConversationL
             @Override
             public void onClick(View v) {
                DrawerLayout drawerLayout = binding.drawerLayout;
-
                 drawerLayout.openDrawer(GravityCompat.START);
             }
         });
