@@ -20,11 +20,15 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.example.clown.R;
 import com.example.clown.agora.AgoraService;
 import com.example.clown.utilities.Constants;
 import com.example.clown.databinding.ActivitySignUpBinding;
 import com.example.clown.utilities.PreferenceManager;
+import com.google.android.gms.tasks.OnCanceledListener;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.FirebaseTooManyRequestsException;
@@ -35,8 +39,15 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthOptions;
 import com.google.firebase.auth.PhoneAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
@@ -66,10 +77,18 @@ public class SignUpActivity extends AgoraBaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        final String TAG = "mCallBack";
         super.onCreate(savedInstanceState);
         binding = ActivitySignUpBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        init();
+        //listener
+        setListener();
+
+    }
+
+    private void init() {
+        final String TAG = "mCallBack";
+
         initAgoraService();
         preferenceManager = new PreferenceManager(getApplicationContext());
         mAuth = FirebaseAuth.getInstance();
@@ -132,9 +151,11 @@ public class SignUpActivity extends AgoraBaseActivity {
         //setup view
         binding.verificationLayout.setVisibility(View.GONE);
         binding.userInfoLayout.setVisibility(View.VISIBLE);
-        //listener
-        setListener();
 
+        //set default avatar
+        Bitmap icon = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.default_avatar);
+        binding.imageProfile.setImageBitmap(icon);
+        encodedImage = encodeImage(icon);
     }
 
     @Override
@@ -148,6 +169,126 @@ public class SignUpActivity extends AgoraBaseActivity {
         super.onStop();
         unbindAgoraService();
     }
+
+    private void setListener() {
+        binding.textSignIn.setOnClickListener(v -> onBackPressed());
+        final String TAG = "CheckPhone";
+
+        binding.buttonSignUp.setOnClickListener(v -> {
+            loading(binding.buttonSignUp,binding.progressBar,true);
+            FirebaseFirestore database = FirebaseFirestore.getInstance();
+
+            database.collection(Constants.KEY_COLLECTION_USERS)
+                    .whereEqualTo(Constants.KEY_PHONE_NUMBER, binding.inputPhoneNumb.getText().toString())
+                    .get()
+                    .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                        @Override
+                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                            Log.d(TAG, "onSuccess on.");
+                        }
+                    })
+                    .addOnCanceledListener(new OnCanceledListener() {
+                        @Override
+                        public void onCanceled() {
+                            Log.d(TAG, "onCanceled on.");
+                        }
+                    })
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                    Log.d(TAG, document.getId() + " => " + document.getData());
+                                    loading(binding.buttonSignUp,binding.progressBar,false);
+                                    showToast("already existed");
+                                    return;
+                                }
+                                if (isValidSignUpDetails()) {
+                                    signUP();
+                                }
+                            } else {
+                                Log.d(TAG, "Error getting documents: ", task.getException());
+                                if (isValidSignUpDetails()) {
+                                    signUP();
+                                }
+                            }
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.d(TAG, "Error getting documents2: ", e);
+                            if (isValidSignUpDetails()) {
+                                signUP();
+                            }
+                        }
+                    })
+            ;
+
+
+        });
+
+        binding.layoutImage.setOnClickListener(v -> {
+            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            pickImage.launch(intent);
+        });
+
+        binding.confirmButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pd.setMessage("Verifying smsCode");
+                pd.show();
+                smsCode = binding.verificationCodeEditText.getText().toString();
+                PhoneAuthCredential credential = PhoneAuthProvider.getCredential(mVerificationId, smsCode);
+                signInWithPhoneAuthCredential(credential);
+
+            }
+        });
+
+        binding.resendContent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                resendCode();
+            }
+        });
+    }
+
+    private void showToast(String message) {
+        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+    }
+
+    //region Images handing references
+    private String encodeImage(Bitmap bitmap) {
+        int previewWidth = 150;
+        int previewHeight = bitmap.getHeight() * previewWidth / bitmap.getWidth();
+        Bitmap previewBitmap = Bitmap.createScaledBitmap(bitmap, previewWidth, previewHeight, false);
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        previewBitmap.compress(Bitmap.CompressFormat.JPEG, 50, byteArrayOutputStream);
+        byte[] bytes = byteArrayOutputStream.toByteArray();
+        return Base64.encodeToString(bytes, Base64.DEFAULT);
+    }
+
+    private final ActivityResultLauncher<Intent> pickImage = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(), result -> {
+                if (result.getResultCode() == RESULT_OK) {
+                    if (result.getData() != null) {
+                        Uri imageUri = result.getData().getData();
+                        try {
+                            InputStream inputStream = getContentResolver().openInputStream(imageUri);
+                            Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                            binding.imageProfile.setImageBitmap(bitmap);
+                            //binding.textAddImage.setVisibility(View.GONE);
+                            encodedImage = encodeImage(bitmap);
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            });
+    //endregion
+
+    //region Sign up references
     private void signInWithPhoneAuthCredential(PhoneAuthCredential credential) {
         final String TAG = "OnSignIn";
         FirebaseFirestore database = FirebaseFirestore.getInstance();
@@ -203,9 +344,9 @@ public class SignUpActivity extends AgoraBaseActivity {
                                         startActivity(intent);
 
                                     }).addOnFailureListener(exception -> {
-                                loading(binding.buttonSignUp, binding.progressBar, false);
-                                showToast(exception.getMessage());
-                            });
+                                        loading(binding.buttonSignUp, binding.progressBar, false);
+                                        showToast(exception.getMessage());
+                                    });
                         } else {
                             // Sign in failed, display a message and update the UI
                             pd.dismiss();
@@ -219,41 +360,26 @@ public class SignUpActivity extends AgoraBaseActivity {
 
     }
 
-    private void setListener() {
-        binding.textSignIn.setOnClickListener(v -> onBackPressed());
+    boolean checkForPhoneNumber(String number){
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
 
-        binding.buttonSignUp.setOnClickListener(v -> {
-            if (isValidSignUpDetails()) {
-                signUP();
-            }
-        });
-
-        binding.layoutImage.setOnClickListener(v -> {
-            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            pickImage.launch(intent);
-        });
-
-        binding.confirmButton.setOnClickListener(new View.OnClickListener() {
+        ref.orderByChild("phone").equalTo(number).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onClick(View v) {
-                pd.setMessage("Verifying smsCode");
-                pd.show();
-                smsCode = binding.verificationCodeEditText.getText().toString();
-                PhoneAuthCredential credential = PhoneAuthProvider.getCredential(mVerificationId, smsCode);
-                signInWithPhoneAuthCredential(credential);
-
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists())
+                    flag = true;
+                else
+                    flag = false;
             }
-        });
 
-        binding.resendContent.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                resendCode();
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
             }
         });
+        return flag;
+
     }
-
     private void resendCode() {
         pd.setMessage("Resending smsCode");
         pd.show();
@@ -276,10 +402,7 @@ public class SignUpActivity extends AgoraBaseActivity {
 
         // [END verify_with_code]
     }
-
-    private void showToast(String message) {
-        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
-    }
+    boolean flag = true;
 
     private void signUP() {
         loading(binding.buttonSignUp, binding.progressBar, true);
@@ -288,7 +411,7 @@ public class SignUpActivity extends AgoraBaseActivity {
         //-----------------------------------------------------------
 
         //--------------------------------------------------------------
-        FirebaseFirestore database = FirebaseFirestore.getInstance();
+        //create account by emails
         /*auth.createUserWithEmailAndPassword(binding.inputEmail.getText().toString(), binding.inputPassword.getText().toString())
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -336,45 +459,19 @@ public class SignUpActivity extends AgoraBaseActivity {
                     }
                 });*/
 
-
         PhoneAuthOptions options =
                 PhoneAuthOptions.newBuilder(mAuth)
                         .setPhoneNumber("+84" + binding.inputPhoneNumb.getText().subSequence(1, binding.inputPhoneNumb.getText().length()))    // Phone number to verify
                         .setTimeout(60L, TimeUnit.SECONDS) // Timeout and unit
-                        .setActivity(this)                 // Activity (for callback binding)
+                        .setActivity(this)        // Activity (for callback binding)
                         .setCallbacks(mCallbacks)          // OnVerificationStateChangedCallbacks
                         .build();
         PhoneAuthProvider.verifyPhoneNumber(options);
 
     }
 
-    private String encodeImage(Bitmap bitmap) {
-        int previewWidth = 150;
-        int previewHeight = bitmap.getHeight() * previewWidth / bitmap.getWidth();
-        Bitmap previewBitmap = Bitmap.createScaledBitmap(bitmap, previewWidth, previewHeight, false);
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        previewBitmap.compress(Bitmap.CompressFormat.JPEG, 50, byteArrayOutputStream);
-        byte[] bytes = byteArrayOutputStream.toByteArray();
-        return Base64.encodeToString(bytes, Base64.DEFAULT);
-    }
 
-    private final ActivityResultLauncher<Intent> pickImage = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(), result -> {
-                if (result.getResultCode() == RESULT_OK) {
-                    if (result.getData() != null) {
-                        Uri imageUri = result.getData().getData();
-                        try {
-                            InputStream inputStream = getContentResolver().openInputStream(imageUri);
-                            Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-                            binding.imageProfile.setImageBitmap(bitmap);
-                            binding.textAddImage.setVisibility(View.GONE);
-                            encodedImage = encodeImage(bitmap);
-                        } catch (FileNotFoundException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            });
+//endregion
 
     private Boolean isValidSignUpDetails() {
         if (encodedImage == null) {

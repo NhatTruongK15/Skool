@@ -19,7 +19,10 @@ import android.widget.Toast;
 
 
 import androidx.annotation.NonNull;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.example.clown.R;
 import com.example.clown.adapter.RecentConversationAdapter;
 import com.example.clown.adapter.UsersGCAdapter;
 import com.example.clown.agora.AgoraService;
@@ -72,7 +75,9 @@ public class MainActivity extends FirestoreBaseActivity implements ConversationL
     private List<ChatMessage> conversations;
     private RecentConversationAdapter conversationAdapter;
     private FirebaseFirestore database;
-//region Agora
+
+
+    //region Agora
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // Agora service manager
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -175,7 +180,6 @@ public class MainActivity extends FirestoreBaseActivity implements ConversationL
         database = FirebaseFirestore.getInstance();
         binding.NavMenubarLayout.setVisibility(View.GONE);
     }
-
     private void setListener() {
         binding.imageSignOut.setOnClickListener(v -> signOut());
         binding.NewChat.setOnClickListener(v -> {
@@ -186,17 +190,9 @@ public class MainActivity extends FirestoreBaseActivity implements ConversationL
         binding.imageMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (binding.NavMenubarLayout.getVisibility() == View.GONE) {
-                    binding.NavMenubarLayout.setVisibility(View.VISIBLE);
+               DrawerLayout drawerLayout = binding.drawerLayout;
 
-                } else
-                    binding.NavMenubarLayout.setVisibility(View.GONE);
-            }
-        });
-        binding.NavMenubarLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                    binding.NavMenubarLayout.setVisibility(View.GONE);
+                drawerLayout.openDrawer(GravityCompat.START);
             }
         });
 
