@@ -119,6 +119,7 @@ public class ChatActivity extends FirestoreBaseActivity {
         setContentView(binding.getRoot());
         setListener();
         loadReceiverDetails();
+        conversationId = receiverUser.id;
         init();
         listenMessages();
     }
@@ -571,17 +572,54 @@ public class ChatActivity extends FirestoreBaseActivity {
     }
 
     private void listenMessages() {
+        if(checkGroupConversation(conversationId)) {
+            database.collection(Constants.KEY_COLLECTION_CHAT)
+                    .whereEqualTo(Constants.KEY_SENDER_ID,preferenceManager.getString(Constants.KEY_DOCUMENT_REFERENCE_ID))
+                    .whereEqualTo(Constants.KEY_RECEIVER_ID,receiverUser.id)
+                    .addSnapshotListener(eventGroupListener);
+        }
+        else{
         database.collection(Constants.KEY_COLLECTION_CHAT)
                 .whereEqualTo(Constants.KEY_SENDER_ID, preferenceManager.getString(Constants.KEY_DOCUMENT_REFERENCE_ID))
                 .whereEqualTo(Constants.KEY_RECEIVER_ID, receiverUser.id)
-                .addSnapshotListener(eventListener);
+                .addSnapshotListener(eventUserListener);
         database.collection(Constants.KEY_COLLECTION_CHAT)
                 .whereEqualTo(Constants.KEY_SENDER_ID, receiverUser.id)
                 .whereEqualTo(Constants.KEY_RECEIVER_ID, preferenceManager.getString(Constants.KEY_DOCUMENT_REFERENCE_ID))
-                .addSnapshotListener(eventListener);
+                .addSnapshotListener(eventUserListener);}
     }
 
-    private final EventListener<QuerySnapshot> eventListener = ((value, error) -> {
+    private final EventListener<QuerySnapshot> eventGroupListener = ((value, error) -> {
+        if (error != null) {
+            return;
+        }
+        if (value != null) {
+            int count = chatMessages.size();
+            for (DocumentChange documentChange : value.getDocumentChanges()) {
+                if (documentChange.getType() == DocumentChange.Type.ADDED) {
+                    ChatMessage chatMessage = new ChatMessage();
+                    chatMessage.senderId = documentChange.getDocument().getString(Constants.KEY_SENDER_ID);
+                    chatMessage.receiverId = documentChange.getDocument().getId();
+                    chatMessage.message = documentChange.getDocument().getString(Constants.KEY_MESSAGE);
+                    chatMessage.message_img=getBitmapFromEncodeString( documentChange.getDocument().getString(Constants.KEY_MESSAGE_IMAGE));
+                    chatMessage.videoPath=documentChange.getDocument().getString(Constants.KEY_MESSAGE_VIDEO);
+                    chatMessage.filePath=documentChange.getDocument().getString(Constants.KEY_MESSAGE_FILE);
+                    chatMessage.dateTime = getReadableDateTime(documentChange.getDocument().getDate(Constants.KEY_TIMESTAMP));
+                    chatMessage.dateObject = documentChange.getDocument().getDate(Constants.KEY_TIMESTAMP);
+                    chatMessage.message_img_link=documentChange.getDocument().getString(Constants.KEY_MESSAGE_IMAGE_LINK);
+                    chatMessage.finame=documentChange.getDocument().getString(Constants.KEY_MESSAGE_FINAME);
+                    chatMessages.add(chatMessage);
+                }
+            }
+            showMessage(chatMessages,count);
+        }
+        binding.progressBar.setVisibility(View.GONE);
+        if (conversationId == null) {
+            checkConversation();
+        }
+    });
+
+    private final EventListener<QuerySnapshot> eventUserListener = ((value, error) -> {
         if (error != null) {
             return;
         }
@@ -603,14 +641,7 @@ public class ChatActivity extends FirestoreBaseActivity {
                     chatMessages.add(chatMessage);
                 }
             }
-            Collections.sort(chatMessages, (obj1, obj2) -> obj1.dateObject.compareTo(obj2.dateObject));
-            if (count == 0) {
-                chatAdapter.notifyDataSetChanged();
-            } else {
-                chatAdapter.notifyItemRangeInserted(chatMessages.size(), chatMessages.size());
-                binding.chatRecyclerView.smoothScrollToPosition(chatMessages.size() - 1);
-            }
-            binding.chatRecyclerView.setVisibility(View.VISIBLE);
+            showMessage(chatMessages,count);
         }
         binding.progressBar.setVisibility(View.GONE);
         if (conversationId == null) {
@@ -618,8 +649,16 @@ public class ChatActivity extends FirestoreBaseActivity {
         }
     });
 
-
-
+    private void showMessage(List<ChatMessage> chatMessages,int count) {
+        Collections.sort(chatMessages, (obj1, obj2) -> obj1.dateObject.compareTo(obj2.dateObject));
+        if (count == 0) {
+            chatAdapter.notifyDataSetChanged();
+        } else {
+            chatAdapter.notifyItemRangeInserted(chatMessages.size(), chatMessages.size());
+            binding.chatRecyclerView.smoothScrollToPosition(chatMessages.size() - 1);
+        }
+        binding.chatRecyclerView.setVisibility(View.VISIBLE);
+    }
 
 
     private void loadReceiverDetails() {
