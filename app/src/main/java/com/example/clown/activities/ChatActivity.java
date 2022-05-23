@@ -119,7 +119,8 @@ public class ChatActivity extends FirestoreBaseActivity {
         setContentView(binding.getRoot());
         setListener();
         loadReceiverDetails();
-        conversationId = receiverUser.id;
+        if(checkGroupConversation(receiverUser.id))
+            conversationId = receiverUser.id;
         init();
         listenMessages();
     }
@@ -614,9 +615,7 @@ public class ChatActivity extends FirestoreBaseActivity {
             showMessage(chatMessages,count);
         }
         binding.progressBar.setVisibility(View.GONE);
-        if (conversationId == null) {
-            checkConversation();
-        }
+
     });
 
     private final EventListener<QuerySnapshot> eventUserListener = ((value, error) -> {
@@ -644,9 +643,8 @@ public class ChatActivity extends FirestoreBaseActivity {
             showMessage(chatMessages,count);
         }
         binding.progressBar.setVisibility(View.GONE);
-        if (conversationId == null) {
+        if (conversationId == null)
             checkConversation();
-        }
     });
 
     private void showMessage(List<ChatMessage> chatMessages,int count) {
@@ -709,7 +707,7 @@ public class ChatActivity extends FirestoreBaseActivity {
         DocumentReference documentReference =
                 database.collection(Constants.KEY_COLLECTION_CONVERSATIONS).document(conversationId);
         if(checkGroupConversation(conversationId))
-            documentReference.update(Constants.KEY_SENDER_ID,Constants.KEY_DOCUMENT_REFERENCE_ID,Constants.KEY_LAST_MESSAGE, message, Constants.KEY_TIMESTAMP, new Date());
+            documentReference.update(Constants.KEY_SENDER_ID,preferenceManager.getString(Constants.KEY_DOCUMENT_REFERENCE_ID),Constants.KEY_LAST_MESSAGE, message, Constants.KEY_TIMESTAMP, new Date());
         else
             documentReference.update(Constants.KEY_LAST_MESSAGE, message, Constants.KEY_TIMESTAMP, new Date());
     }
