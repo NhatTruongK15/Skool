@@ -25,7 +25,10 @@ import com.example.clown.agora.AgoraService;
 import com.example.clown.utilities.Constants;
 import com.example.clown.databinding.ActivitySignUpBinding;
 import com.example.clown.utilities.PreferenceManager;
+import com.google.android.gms.tasks.OnCanceledListener;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.FirebaseTooManyRequestsException;
@@ -36,8 +39,15 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthOptions;
 import com.google.firebase.auth.PhoneAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
@@ -162,11 +172,60 @@ public class SignUpActivity extends AgoraBaseActivity {
 
     private void setListener() {
         binding.textSignIn.setOnClickListener(v -> onBackPressed());
+        final String TAG = "CheckPhone";
 
         binding.buttonSignUp.setOnClickListener(v -> {
-            if (isValidSignUpDetails()) {
-                signUP();
-            }
+            loading(binding.buttonSignUp,binding.progressBar,true);
+            FirebaseFirestore database = FirebaseFirestore.getInstance();
+
+            database.collection(Constants.KEY_COLLECTION_USERS)
+                    .whereEqualTo(Constants.KEY_PHONE_NUMBER, binding.inputPhoneNumb.getText().toString())
+                    .get()
+                    .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                        @Override
+                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                            Log.d(TAG, "onSuccess on.");
+                        }
+                    })
+                    .addOnCanceledListener(new OnCanceledListener() {
+                        @Override
+                        public void onCanceled() {
+                            Log.d(TAG, "onCanceled on.");
+                        }
+                    })
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                    Log.d(TAG, document.getId() + " => " + document.getData());
+                                    loading(binding.buttonSignUp,binding.progressBar,false);
+                                    showToast("already existed");
+                                    return;
+                                }
+                                if (isValidSignUpDetails()) {
+                                    signUP();
+                                }
+                            } else {
+                                Log.d(TAG, "Error getting documents: ", task.getException());
+                                if (isValidSignUpDetails()) {
+                                    signUP();
+                                }
+                            }
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.d(TAG, "Error getting documents2: ", e);
+                            if (isValidSignUpDetails()) {
+                                signUP();
+                            }
+                        }
+                    })
+            ;
+
+
         });
 
         binding.layoutImage.setOnClickListener(v -> {
@@ -301,6 +360,26 @@ public class SignUpActivity extends AgoraBaseActivity {
 
     }
 
+    boolean checkForPhoneNumber(String number){
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+
+        ref.orderByChild("phone").equalTo(number).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists())
+                    flag = true;
+                else
+                    flag = false;
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        return flag;
+
+    }
     private void resendCode() {
         pd.setMessage("Resending smsCode");
         pd.show();
@@ -323,6 +402,7 @@ public class SignUpActivity extends AgoraBaseActivity {
 
         // [END verify_with_code]
     }
+    boolean flag = true;
 
     private void signUP() {
         loading(binding.buttonSignUp, binding.progressBar, true);
@@ -331,7 +411,7 @@ public class SignUpActivity extends AgoraBaseActivity {
         //-----------------------------------------------------------
 
         //--------------------------------------------------------------
-        FirebaseFirestore database = FirebaseFirestore.getInstance();
+        //create account by emails
         /*auth.createUserWithEmailAndPassword(binding.inputEmail.getText().toString(), binding.inputPassword.getText().toString())
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -379,12 +459,11 @@ public class SignUpActivity extends AgoraBaseActivity {
                     }
                 });*/
 
-
         PhoneAuthOptions options =
                 PhoneAuthOptions.newBuilder(mAuth)
                         .setPhoneNumber("+84" + binding.inputPhoneNumb.getText().subSequence(1, binding.inputPhoneNumb.getText().length()))    // Phone number to verify
                         .setTimeout(60L, TimeUnit.SECONDS) // Timeout and unit
-                        .setActivity(this)                 // Activity (for callback binding)
+                        .setActivity(this)        // Activity (for callback binding)
                         .setCallbacks(mCallbacks)          // OnVerificationStateChangedCallbacks
                         .build();
         PhoneAuthProvider.verifyPhoneNumber(options);
