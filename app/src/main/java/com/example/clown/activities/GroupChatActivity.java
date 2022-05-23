@@ -73,8 +73,6 @@ public class GroupChatActivity extends FirestoreBaseActivity implements GroupCha
 
 
     private void getUserForGroupList(List<User> user,int viewType){
-
-
         if (viewType == 0){
             GroupChatAdapter groupChatAdapter = new GroupChatAdapter(user, GroupChatActivity.this);
             binding.listUserAdded.setAdapter(groupChatAdapter);}

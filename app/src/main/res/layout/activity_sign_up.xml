@@ -36,18 +36,11 @@
                 android:id="@+id/imageProfile"
                 android:layout_width="@dimen/_80sdp"
                 android:layout_height="@dimen/_80sdp"
-                android:background="@drawable/background_image"
+                android:src="@drawable/default_avatar"
                 android:scaleType="centerCrop"
                 app:riv_oval="true" />
 
-            <TextView
-                android:id="@+id/textAddImage"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="@string/add_image"
-                android:textColor="@color/secondary_text"
-                android:textSize="@dimen/_10ssp" />
+
         </FrameLayout>
 
         <!-- Verification layout-->
