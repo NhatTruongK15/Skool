@@ -183,13 +183,6 @@ public class MainActivity extends FirestoreBaseActivity implements ConversationL
                 drawerLayout.openDrawer(GravityCompat.START);
             }
         });
-        binding.NavMenubarLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v)
-            {
-
-            }
-        });
 
         binding.buttonContact.setOnClickListener(new View.OnClickListener() {
             @Override
