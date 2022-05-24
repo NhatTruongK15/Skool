@@ -18,6 +18,7 @@ import android.os.Environment;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -82,8 +83,6 @@ public class ActivityMediaAndFile extends AppCompatActivity {
 
     private ImageView display;
 
-    private ArrayList<String> lstTitle;
-    private ArrayAdapter adapterTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,14 +91,12 @@ public class ActivityMediaAndFile extends AppCompatActivity {
         binding = ActivityMediaAndFileBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        lstTitle=new ArrayList<String>();
         binding.imageBack.setOnClickListener(v->onBackPressed());
         init();
 
         loadReceiverDetails();
         listenMessages();
-        adapterTitle=new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,lstTitle);
-        binding.listItem.setAdapter(adapterTitle);
+
         checkConversation();
         checkFileFunc();
 
@@ -194,7 +191,7 @@ public class ActivityMediaAndFile extends AppCompatActivity {
 //                            showToast(documentChange.getDocument().getString(Constants.KEY_MESSAGE_IMAGE_LINK));
 //
 //                        }
-                        lstTitle.add(documentChange.getDocument().getString(Constants.KEY_MESSAGE_FINAME));
+
                         showToast(documentChange.getDocument().getString(Constants.KEY_MESSAGE_FINAME));
                         showToast("stop");
 

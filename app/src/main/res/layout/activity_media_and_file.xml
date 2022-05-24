@@ -125,13 +125,7 @@
             android:textSize="@dimen/_12ssp"
             android:visibility="gone" />
 
-        <ListView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/listItem"
-            android:layout_gravity="center"
-            android:foreground="#F80909"
-            />
+
     </FrameLayout> // change this layout to the one u need, the one which is more suitable
                    // fuck no, u r geh :v
 
