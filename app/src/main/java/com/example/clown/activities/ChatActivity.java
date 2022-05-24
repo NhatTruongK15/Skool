@@ -48,6 +48,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.example.clown.ActivityMediaAndFile;
 import com.example.clown.adapter.ChatAdapter;
 import com.example.clown.agora.AgoraService;
 import com.example.clown.adapter.UsersAdapter;
@@ -568,6 +569,9 @@ public class ChatActivity extends FirestoreBaseActivity {
                 .whereEqualTo(Constants.KEY_SENDER_ID, receiverUser.id)
                 .whereEqualTo(Constants.KEY_RECEIVER_ID, preferenceManager.getString(Constants.KEY_USER_ID))
                 .addSnapshotListener(eventListener);
+//        showToast( preferenceManager.getString(Constants.KEY_USER_ID));
+//        showToast( receiverUser.id);
+
     }
 
     private final EventListener<QuerySnapshot> eventListener = ((value, error) -> {
@@ -618,6 +622,7 @@ public class ChatActivity extends FirestoreBaseActivity {
         binding.layoutSend.setOnClickListener(v -> sendMessage());
 
 
+
         activityResultLauncher=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
             @Override
             public void onActivityResult(ActivityResult result) {
@@ -626,13 +631,20 @@ public class ChatActivity extends FirestoreBaseActivity {
                 loading(true);
                 isUploadingFile=true;
                 SendFileToDatabase(fileuri,finame);
-
 //                binding.inputMessage.setText(finame);
             }
         });
         binding.layoutFile.setOnClickListener(v -> pickFile());
 
         binding.imageCall.setOnClickListener(v -> startCall());
+
+        binding.imageInfo.setOnClickListener(v->openFileAndMediaActivity());
+    }
+
+    private void openFileAndMediaActivity() {
+        Context context = this;
+        Intent intent = new Intent(context, ActivityMediaAndFile.class);
+        context.startActivity(intent);
     }
 
     private void startCall() {

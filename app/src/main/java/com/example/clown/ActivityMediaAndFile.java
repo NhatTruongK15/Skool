@@ -73,11 +73,11 @@ public class ActivityMediaAndFile extends AppCompatActivity {
     private String videoPath = "";
     private String filePath = "";
     private String finame="";
-
+    private String currentUserId;
     private PreferenceManager preferenceManager;
-    private User receiverUser;
     private List<ChatMessage> chatMessages;
     private String conversationId = null;
+    private User receiverUser;
 
     private ImageView display;
     @Override
@@ -87,19 +87,33 @@ public class ActivityMediaAndFile extends AppCompatActivity {
         binding = ActivityMediaAndFileBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        binding.imageBack.setOnClickListener(v->onBackPressed());
         init();
+
         loadReceiverDetails();
+        listenMessages();
         checkConversation();
         checkFileFunc();
 
 
     }
+    private void listenMessages() {
+        database.collection(Constants.KEY_COLLECTION_CHAT)
+                .whereEqualTo(Constants.KEY_SENDER_ID, preferenceManager.getString(Constants.KEY_USER_ID))
+                .whereEqualTo(Constants.KEY_RECEIVER_ID, receiverUser.id)
+                .addSnapshotListener(eventListener);
+        database.collection(Constants.KEY_COLLECTION_CHAT)
+                .whereEqualTo(Constants.KEY_SENDER_ID, receiverUser.id)
+                .whereEqualTo(Constants.KEY_RECEIVER_ID, preferenceManager.getString(Constants.KEY_USER_ID))
+                .addSnapshotListener(eventListener);
+    }
     private void init() {
         preferenceManager = new PreferenceManager(getApplicationContext());
         chatMessages = new ArrayList<>();
-
         database = FirebaseFirestore.getInstance();
+
     }
+
     private void loadReceiverDetails() {
         receiverUser = (User) getIntent().getSerializableExtra(Constants.KEY_USER);
     }
@@ -107,11 +121,11 @@ public class ActivityMediaAndFile extends AppCompatActivity {
         if (chatMessages.size() != 0) {
             checkConversationRemote(
                     preferenceManager.getString(Constants.KEY_DOCUMENT_REFERENCE_ID),
-                    receiverUser.id
+                    currentUserId
             );
 
             checkConversationRemote(
-                    receiverUser.id,
+                    currentUserId,
                     preferenceManager.getString(Constants.KEY_DOCUMENT_REFERENCE_ID)
             );
         }
@@ -153,6 +167,9 @@ public class ActivityMediaAndFile extends AppCompatActivity {
                     chatMessage.finame=documentChange.getDocument().getString(Constants.KEY_MESSAGE_FINAME);
                     if(documentChange.getDocument().getString(Constants.KEY_MESSAGE_FINAME)!=null){
                         showToast(documentChange.getDocument().getString(Constants.KEY_MESSAGE_FINAME));
+                    }
+                    else{
+                        showToast("finame null");
                     }
 
                     chatMessages.add(chatMessage);
