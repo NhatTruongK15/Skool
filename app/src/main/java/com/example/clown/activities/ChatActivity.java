@@ -300,8 +300,7 @@ public class ChatActivity extends FirestoreBaseActivity {
 
     public Boolean isUploadingFile=false;
 
-    private void loading(Boolean isLoading)
-    {
+    private void loading(Boolean isLoading){
         if(isLoading){
             binding.progressBar.setVisibility(View.VISIBLE);
         }else
@@ -607,9 +606,6 @@ public class ChatActivity extends FirestoreBaseActivity {
             checkConversation();
         }
     });
-
-
-
 
 
     private void loadReceiverDetails() {
