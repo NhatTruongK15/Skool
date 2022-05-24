@@ -88,6 +88,7 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <FrameLayout
+        android:id="@+id/frameLayout3"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="@dimen/_5sdp"
@@ -124,7 +125,15 @@
             android:textSize="@dimen/_12ssp"
             android:visibility="gone" />
 
-
+        <ListView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/listItem"
+            android:layout_gravity="center"
+            android:foreground="#F80909"
+            />
     </FrameLayout> // change this layout to the one u need, the one which is more suitable
                    // fuck no, u r geh :v
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

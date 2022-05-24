@@ -644,6 +644,7 @@ public class ChatActivity extends FirestoreBaseActivity {
     private void openFileAndMediaActivity() {
         Context context = this;
         Intent intent = new Intent(context, ActivityMediaAndFile.class);
+        intent.putExtra("receiverId", receiverUser.id);
         context.startActivity(intent);
     }
 

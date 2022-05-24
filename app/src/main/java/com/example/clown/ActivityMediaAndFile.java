@@ -18,6 +18,7 @@ import android.os.Environment;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.MediaController;
@@ -80,6 +81,10 @@ public class ActivityMediaAndFile extends AppCompatActivity {
     private User receiverUser;
 
     private ImageView display;
+
+    private ArrayList<String> lstTitle;
+    private ArrayAdapter adapterTitle;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,11 +92,14 @@ public class ActivityMediaAndFile extends AppCompatActivity {
         binding = ActivityMediaAndFileBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        lstTitle=new ArrayList<String>();
         binding.imageBack.setOnClickListener(v->onBackPressed());
         init();
 
         loadReceiverDetails();
         listenMessages();
+        adapterTitle=new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,lstTitle);
+        binding.listItem.setAdapter(adapterTitle);
         checkConversation();
         checkFileFunc();
 
@@ -100,22 +108,30 @@ public class ActivityMediaAndFile extends AppCompatActivity {
     private void listenMessages() {
         database.collection(Constants.KEY_COLLECTION_CHAT)
                 .whereEqualTo(Constants.KEY_SENDER_ID, preferenceManager.getString(Constants.KEY_USER_ID))
-                .whereEqualTo(Constants.KEY_RECEIVER_ID, receiverUser.id)
+                .whereEqualTo(Constants.KEY_RECEIVER_ID, currentUserId)
                 .addSnapshotListener(eventListener);
         database.collection(Constants.KEY_COLLECTION_CHAT)
-                .whereEqualTo(Constants.KEY_SENDER_ID, receiverUser.id)
+                .whereEqualTo(Constants.KEY_SENDER_ID, currentUserId)
                 .whereEqualTo(Constants.KEY_RECEIVER_ID, preferenceManager.getString(Constants.KEY_USER_ID))
                 .addSnapshotListener(eventListener);
+
+
     }
     private void init() {
         preferenceManager = new PreferenceManager(getApplicationContext());
         chatMessages = new ArrayList<>();
         database = FirebaseFirestore.getInstance();
-
+        showToast("pre is: "+preferenceManager.getString(Constants.KEY_USER_ID));
     }
 
     private void loadReceiverDetails() {
-        receiverUser = (User) getIntent().getSerializableExtra(Constants.KEY_USER);
+
+        Bundle bundle = null;
+        bundle = getIntent().getExtras();
+        if (bundle != null) {
+            currentUserId = bundle.getString("receiverId");
+        }
+        showToast("recv is: "+currentUserId);
     }
     private void checkConversation() {
         if (chatMessages.size() != 0) {
@@ -166,10 +182,24 @@ public class ActivityMediaAndFile extends AppCompatActivity {
                     chatMessage.message_img_link=documentChange.getDocument().getString(Constants.KEY_MESSAGE_IMAGE_LINK);
                     chatMessage.finame=documentChange.getDocument().getString(Constants.KEY_MESSAGE_FINAME);
                     if(documentChange.getDocument().getString(Constants.KEY_MESSAGE_FINAME)!=null){
+//                        if(documentChange.getDocument().getString(Constants.KEY_MESSAGE_VIDEO)!=""){
+//                            showToast(documentChange.getDocument().getString(Constants.KEY_MESSAGE_VIDEO));
+//
+//                        }
+//                        if(documentChange.getDocument().getString(Constants.KEY_MESSAGE_FILE)!=""){
+//                            showToast(documentChange.getDocument().getString(Constants.KEY_MESSAGE_FILE));
+//
+//                        }
+//                        if(documentChange.getDocument().getString(Constants.KEY_MESSAGE_IMAGE_LINK)!=""){
+//                            showToast(documentChange.getDocument().getString(Constants.KEY_MESSAGE_IMAGE_LINK));
+//
+//                        }
+                        lstTitle.add(documentChange.getDocument().getString(Constants.KEY_MESSAGE_FINAME));
                         showToast(documentChange.getDocument().getString(Constants.KEY_MESSAGE_FINAME));
+                        showToast("stop");
+
                     }
                     else{
-                        showToast("finame null");
                     }
 
                     chatMessages.add(chatMessage);
