@@ -154,6 +154,7 @@ public class ActivityMediaAndFile extends AppCompatActivity {
                     if(documentChange.getDocument().getString(Constants.KEY_MESSAGE_FINAME)!=null){
                         showToast(documentChange.getDocument().getString(Constants.KEY_MESSAGE_FINAME));
                     }
+
                     chatMessages.add(chatMessage);
                 }
             }
