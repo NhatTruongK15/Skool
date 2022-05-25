@@ -22,6 +22,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.MediaController;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,14 +33,18 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.clown.ActivityMediaAndFile;
 import com.example.clown.R;
 import com.example.clown.activities.FileDisplayActivitiy;
 import com.example.clown.adapter.ChatAdapter;
+import com.example.clown.adapter.MediaAndFileAdapter;
 import com.example.clown.databinding.ActitvityDisplayFileBinding;
 import com.example.clown.databinding.ActivityMediaAndFileBinding;
 import com.example.clown.models.ChatMessage;
+import com.example.clown.models.MediaAndFile;
 import com.example.clown.models.User;
 import com.example.clown.utilities.Constants;
 import com.example.clown.utilities.PreferenceManager;
@@ -83,6 +88,9 @@ public class ActivityMediaAndFile extends AppCompatActivity {
 
     private ImageView display;
 
+    private RecyclerView recyclerView;
+
+    private List<MediaAndFile> mediaandfile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,13 +100,23 @@ public class ActivityMediaAndFile extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         binding.imageBack.setOnClickListener(v->onBackPressed());
+
+        mediaandfile=new ArrayList<>() ;
+
+
         init();
 
         loadReceiverDetails();
         listenMessages();
 
         checkConversation();
-        checkFileFunc();
+
+        recyclerView=(RecyclerView) findViewById(R.id.rcvMediaAndFile);
+
+        LinearLayoutManager layoutManager=new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setAdapter(new MediaAndFileAdapter(this,mediaandfile));
 
 
     }
@@ -179,19 +197,7 @@ public class ActivityMediaAndFile extends AppCompatActivity {
                     chatMessage.message_img_link=documentChange.getDocument().getString(Constants.KEY_MESSAGE_IMAGE_LINK);
                     chatMessage.finame=documentChange.getDocument().getString(Constants.KEY_MESSAGE_FINAME);
                     if(documentChange.getDocument().getString(Constants.KEY_MESSAGE_FINAME)!=null){
-//                        if(documentChange.getDocument().getString(Constants.KEY_MESSAGE_VIDEO)!=""){
-//                            showToast(documentChange.getDocument().getString(Constants.KEY_MESSAGE_VIDEO));
-//
-//                        }
-//                        if(documentChange.getDocument().getString(Constants.KEY_MESSAGE_FILE)!=""){
-//                            showToast(documentChange.getDocument().getString(Constants.KEY_MESSAGE_FILE));
-//
-//                        }
-//                        if(documentChange.getDocument().getString(Constants.KEY_MESSAGE_IMAGE_LINK)!=""){
-//                            showToast(documentChange.getDocument().getString(Constants.KEY_MESSAGE_IMAGE_LINK));
-//
-//                        }
-
+                        mediaandfile.add(new MediaAndFile(chatMessage.videoPath,chatMessage.message_img_link,chatMessage.filePath,chatMessage.finame));
                         showToast(documentChange.getDocument().getString(Constants.KEY_MESSAGE_FINAME));
                         showToast("stop");
 
@@ -212,11 +218,6 @@ public class ActivityMediaAndFile extends AppCompatActivity {
             checkConversation();
         }
     });
-
-
-    private void checkFileFunc() {
-
-    }
 
     private void openVidDisplay(){
         Context context = this;
