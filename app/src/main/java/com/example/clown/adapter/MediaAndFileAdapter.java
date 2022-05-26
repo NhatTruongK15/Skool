@@ -1,7 +1,11 @@
 package com.example.clown.adapter;
 
+import static com.example.clown.utilities.Constants.HD_RES_860;
+
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.media.MediaMetadataRetriever;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +20,7 @@ import com.example.clown.activities.FileDisplayActivitiy;
 import com.example.clown.databinding.ItemMediaAndFileBinding;
 import com.example.clown.models.MediaAndFile;
 
+import java.util.HashMap;
 import java.util.List;
 
 public class MediaAndFileAdapter extends RecyclerView.Adapter<MediaAndFileAdapter.MediaAndFileViewHolder> {
@@ -115,6 +120,11 @@ public class MediaAndFileAdapter extends RecyclerView.Adapter<MediaAndFileAdapte
     /**
      * Data ViewHolder class.
      */
+
+    public class ThumbnailThread extends Thread{
+
+    }
+
     public static class MediaAndFileViewHolder extends RecyclerView.ViewHolder {
 
         private ItemMediaAndFileBinding binding;
@@ -125,7 +135,53 @@ public class MediaAndFileAdapter extends RecyclerView.Adapter<MediaAndFileAdapte
 
         }
 
+        public String filetype(String file){
+            return file.substring(file.lastIndexOf("."));
+        }
+        public String checkFileType(String file) {
+            String result = "";
+            switch (filetype(file)) {
+                case ".mp4":
+                    result = "VIDEO";
+                    break;
+                case ".png":
+                case ".jpg":
+                case ".jpeg":
+                case ".gif":
+                    result = "IMAGE";
+                    break;
+                case ".pdf":
+                case ".docx":
+                case ".pptx":
+                case ".doc":
+                case ".xlsx":
+                case ".mp3":
+                case ".flac":
+                case ".mkv":
+                case ".webm":
+
+                    result = "FILE";
+                    break;
+                default:
+                    break;
+            }
+            return result;
+        }
+
+        public static Bitmap scaleDown(Bitmap realImage, float maxImageSize,
+                                       boolean filter) {
+            float ratio = Math.min(
+                    (float) maxImageSize / realImage.getWidth(),
+                    (float) maxImageSize / realImage.getHeight());
+            int width = Math.round((float) ratio * realImage.getWidth());
+            int height = Math.round((float) ratio * realImage.getHeight());
+            Bitmap newBitmap = Bitmap.createScaledBitmap(realImage, width,
+                    height, filter);
+            return newBitmap;
+        }
+
         void setData(MediaAndFile mediaAndFile) {
+            binding.btnItem.setText(checkFileType(mediaAndFile.finame)+"\n"+mediaAndFile.timestamp );
             if (mediaAndFile.imgPath != null) {
                 if(mediaAndFile.imgPath.compareTo("")!=0){
                     binding.btnItem.setOnClickListener(new View.OnClickListener() {
@@ -146,6 +202,21 @@ public class MediaAndFileAdapter extends RecyclerView.Adapter<MediaAndFileAdapte
             }
             if (mediaAndFile.vidPath != null) {
                 if (mediaAndFile.vidPath.compareTo("") != 0) {
+
+//
+//                    Thread t2=new Thread(()->{
+//                        String url = mediaAndFile.vidPath;
+//// Create a MediaMetaDataRetriever
+//                        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+//// Set video url as data source
+//                        retriever.setDataSource(url, new HashMap<String, String>());
+//// Get frame at 2nd second as Bitmap image
+//                        Bitmap bitmap = retriever.getFrameAtTime(2000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC);
+//// Display the Bitmap image in an ImageView
+//                        Bitmap rescalebitmap=scaleDown(bitmap,250,true);
+//                        binding.btnItem.setImageBitmap(rescalebitmap);
+//                    });
+//                    t2.start();
                     binding.btnItem.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -180,4 +251,5 @@ public class MediaAndFileAdapter extends RecyclerView.Adapter<MediaAndFileAdapte
             }
         }
     }
+
 }

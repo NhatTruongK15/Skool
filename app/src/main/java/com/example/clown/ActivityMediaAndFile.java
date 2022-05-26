@@ -33,6 +33,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -68,6 +69,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -113,7 +116,7 @@ public class ActivityMediaAndFile extends AppCompatActivity {
 
         recyclerView=(RecyclerView) findViewById(R.id.rcvMediaAndFile);
 
-        LinearLayoutManager layoutManager=new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false);
+        GridLayoutManager layoutManager=new GridLayoutManager(this,3);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(new MediaAndFileAdapter(this,mediaandfile));
@@ -136,7 +139,7 @@ public class ActivityMediaAndFile extends AppCompatActivity {
         preferenceManager = new PreferenceManager(getApplicationContext());
         chatMessages = new ArrayList<>();
         database = FirebaseFirestore.getInstance();
-        showToast("pre is: "+preferenceManager.getString(Constants.KEY_USER_ID));
+//        showToast("pre is: "+preferenceManager.getString(Constants.KEY_USER_ID));
     }
 
     private void loadReceiverDetails() {
@@ -146,7 +149,7 @@ public class ActivityMediaAndFile extends AppCompatActivity {
         if (bundle != null) {
             currentUserId = bundle.getString("receiverId");
         }
-        showToast("recv is: "+currentUserId);
+//        showToast("recv is: "+currentUserId);
     }
     private void checkConversation() {
         if (chatMessages.size() != 0) {
@@ -197,10 +200,8 @@ public class ActivityMediaAndFile extends AppCompatActivity {
                     chatMessage.message_img_link=documentChange.getDocument().getString(Constants.KEY_MESSAGE_IMAGE_LINK);
                     chatMessage.finame=documentChange.getDocument().getString(Constants.KEY_MESSAGE_FINAME);
                     if(documentChange.getDocument().getString(Constants.KEY_MESSAGE_FINAME)!=null){
-                        mediaandfile.add(new MediaAndFile(chatMessage.videoPath,chatMessage.message_img_link,chatMessage.filePath,chatMessage.finame));
-                        showToast(documentChange.getDocument().getString(Constants.KEY_MESSAGE_FINAME));
-                        showToast("stop");
-
+                        SimpleDateFormat sdf=new SimpleDateFormat("dd/MM/yyyy");
+                        mediaandfile.add(new MediaAndFile(chatMessage.videoPath,chatMessage.message_img_link,chatMessage.filePath,chatMessage.finame, sdf.format(chatMessage.dateObject)));
                     }
                     else{
                     }

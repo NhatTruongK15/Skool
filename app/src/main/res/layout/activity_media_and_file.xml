@@ -106,7 +106,7 @@
             android:overScrollMode="always"
             android:padding="@dimen/_20sdp"
 
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager" />
 
         <ProgressBar
             android:id="@+id/progressBar"
