@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.clown.R;
 import com.example.clown.activities.FileDisplayActivitiy;
+import com.example.clown.databinding.ItemMediaAndFileBinding;
 import com.example.clown.models.MediaAndFile;
 
 import java.util.List;
@@ -26,17 +27,24 @@ public class MediaAndFileAdapter extends RecyclerView.Adapter<MediaAndFileAdapte
         this.mediaandfile = mediaandfile;
     }
 
+    public MediaAndFileAdapter(ItemMediaAndFileBinding inflate) {
+
+    }
+
     @Override
     public int getItemCount() {
         return mediaandfile == null ? 0 : mediaandfile.size();
     }
 
+    @NonNull
     @Override
-    public MediaAndFileAdapter.MediaAndFileViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView;
-        itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_media_and_file, parent, false);
+    public MediaAndFileViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
-        return new MediaAndFileViewHolder(itemView);
+        return new MediaAndFileAdapter.MediaAndFileViewHolder(
+                ItemMediaAndFileBinding.inflate(
+                        LayoutInflater.from(parent.getContext()), parent, false
+                )
+        );
     }
 
     @Override
@@ -47,59 +55,61 @@ public class MediaAndFileAdapter extends RecyclerView.Adapter<MediaAndFileAdapte
 
     @Override
     public void onBindViewHolder(MediaAndFileAdapter.MediaAndFileViewHolder holder, int position) {
-        String vidPath=mediaandfile.get(position).getVidPath();
-        String imgPath=mediaandfile.get(position).getImgPath();
-        String filePath=mediaandfile.get(position).getFilePath();
-        String finame=mediaandfile.get(position).getFiname();
+        holder.setData(mediaandfile.get(position));
+//        String vidPath=mediaandfile.get(position).getVidPath();
+//        String imgPath=mediaandfile.get(position).getImgPath();
+//        String filePath=mediaandfile.get(position).getFilePath();
+//        String finame=mediaandfile.get(position).getFiname();
+//
+//        if (imgPath != null) {
+//            holder.imgbtnItem.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    Context context = view.getContext();
+//                    Intent intent = new Intent(context, FileDisplayActivitiy.class);
+//                    intent.putExtra("imgPath", imgPath);
+//                    intent.putExtra("finame", finame);
+//                    intent.putExtra("fiPath", "");
+//                    intent.putExtra("vidPath", "");
+//                    context.startActivity(intent);
+//                }
+//            });
+//            return;
+//        }
+//        if(vidPath!=null){
+//            if (vidPath.compareTo("") != 0) {
+//                holder.imgbtnItem.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        Context context = v.getContext();
+//                        Intent intent = new Intent(context, FileDisplayActivitiy.class);
+//                        intent.putExtra("vidPath", vidPath);
+//                        intent.putExtra("finame", finame);
+//                        intent.putExtra("fiPath", "");
+//                        intent.putExtra("imgPath", "");
+//                        context.startActivity(intent);
+//                    }
+//                });
+//            }
+//        }
+//        if(filePath!=null){
+//            if (filePath.compareTo("") != 0) {
+//                holder.imgbtnItem.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        Context context = v.getContext();
+//                        Intent intent = new Intent(context, FileDisplayActivitiy.class);
+//                        intent.putExtra("fiPath", filePath);
+//                        intent.putExtra("finame", finame);
+//                        intent.putExtra("imgPath", "");
+//                        intent.putExtra("vidPath", "");
+//                        context.startActivity(intent);
+//                    }
+//                });
+//            }
+//
+//        }
 
-        if (imgPath != null) {
-            holder.imgbtnItem.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Context context = view.getContext();
-                    Intent intent = new Intent(context, FileDisplayActivitiy.class);
-                    intent.putExtra("imgPath", imgPath);
-                    intent.putExtra("finame", finame);
-                    intent.putExtra("fiPath", "");
-                    intent.putExtra("vidPath", "");
-                    context.startActivity(intent);
-                }
-            });
-            return;
-        }
-        if(vidPath!=null){
-            if (vidPath.compareTo("") != 0) {
-                holder.imgbtnItem.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Context context = v.getContext();
-                        Intent intent = new Intent(context, FileDisplayActivitiy.class);
-                        intent.putExtra("vidPath", vidPath);
-                        intent.putExtra("finame", finame);
-                        intent.putExtra("fiPath", "");
-                        intent.putExtra("imgPath", "");
-                        context.startActivity(intent);
-                    }
-                });
-            }
-        }
-        if(filePath!=null){
-            if (filePath.compareTo("") != 0) {
-                holder.imgbtnItem.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Context context = v.getContext();
-                        Intent intent = new Intent(context, FileDisplayActivitiy.class);
-                        intent.putExtra("fiPath", filePath);
-                        intent.putExtra("finame", finame);
-                        intent.putExtra("imgPath", "");
-                        intent.putExtra("vidPath", "");
-                        context.startActivity(intent);
-                    }
-                });
-            }
-
-        }
     }
 
     /**
@@ -107,14 +117,67 @@ public class MediaAndFileAdapter extends RecyclerView.Adapter<MediaAndFileAdapte
      */
     public static class MediaAndFileViewHolder extends RecyclerView.ViewHolder {
 
-        private ImageButton imgbtnItem;
+        private ItemMediaAndFileBinding binding;
 
-        private  TextView textView;
-        public MediaAndFileViewHolder(View itemView) {
-            super(itemView);
-            imgbtnItem = (ImageButton) itemView.findViewById(R.id.imgbtnItem);
+        public MediaAndFileViewHolder(ItemMediaAndFileBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
 
-            textView=(TextView) itemView.findViewById(R.id.txtvItem);
+        }
+
+        void setData(MediaAndFile mediaAndFile) {
+            if (mediaAndFile.imgPath != null) {
+                if(mediaAndFile.imgPath.compareTo("")!=0){
+                    binding.btnItem.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Context context = view.getContext();
+                            Intent intent = new Intent(context, FileDisplayActivitiy.class);
+                            intent.putExtra("imgPath", mediaAndFile.imgPath);
+                            intent.putExtra("finame", mediaAndFile.finame);
+                            intent.putExtra("fiPath", "");
+                            intent.putExtra("vidPath", "");
+                            context.startActivity(intent);
+                        }
+                    });
+                    return;
+                }
+
+            }
+            if (mediaAndFile.vidPath != null) {
+                if (mediaAndFile.vidPath.compareTo("") != 0) {
+                    binding.btnItem.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Context context = v.getContext();
+                            Intent intent = new Intent(context, FileDisplayActivitiy.class);
+                            intent.putExtra("vidPath", mediaAndFile.vidPath);
+                            intent.putExtra("finame", mediaAndFile.finame);
+                            intent.putExtra("fiPath", "");
+                            intent.putExtra("imgPath", "");
+                            context.startActivity(intent);
+                        }
+                    });
+                    return;
+                }
+            }
+            if (mediaAndFile.filePath != null) {
+                if (mediaAndFile.filePath.compareTo("") != 0) {
+                    binding.btnItem.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Context context = v.getContext();
+                            Intent intent = new Intent(context, FileDisplayActivitiy.class);
+                            intent.putExtra("fiPath", mediaAndFile.filePath);
+                            intent.putExtra("finame", mediaAndFile.finame);
+                            intent.putExtra("imgPath", "");
+                            intent.putExtra("vidPath", "");
+                            context.startActivity(intent);
+                        }
+                    });
+                }
+
+            }
         }
     }
 }
