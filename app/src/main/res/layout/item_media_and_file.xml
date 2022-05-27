@@ -32,17 +32,18 @@
         >
     </TextView>
 
-    <Button
+    <ImageButton
         android:id="@+id/btnItem"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/_60sdp"
+        android:layout_height="@dimen/_60sdp"
         android:layout_marginStart="5dp"
         android:layout_marginTop="5dp"
-        android:width="@dimen/_50sdp"
-        android:height="@dimen/_80sdp"
-        android:textColor="#FFFFFF"
-        android:textSize="@dimen/_5sdp"
+        android:width="@dimen/_60sdp"
+        android:height="@dimen/_60sdp"
+
 
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+    <!--        android:textColor="#FFFFFF"-->
+    <!--        android:textSize="@dimen/_5sdp"-->
 </androidx.constraintlayout.widget.ConstraintLayout>

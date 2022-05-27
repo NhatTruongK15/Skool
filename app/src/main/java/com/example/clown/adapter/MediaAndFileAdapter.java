@@ -1,11 +1,18 @@
 package com.example.clown.adapter;
 
+import static com.example.clown.utilities.Constants.HD_RES;
 import static com.example.clown.utilities.Constants.HD_RES_860;
 
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.media.MediaMetadataRetriever;
+import android.media.ThumbnailUtils;
+import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,13 +20,22 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DecodeFormat;
+import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
+import com.bumptech.glide.load.resource.bitmap.VideoBitmapDecoder;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.example.clown.R;
 import com.example.clown.activities.FileDisplayActivitiy;
 import com.example.clown.databinding.ItemMediaAndFileBinding;
 import com.example.clown.models.MediaAndFile;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.HashMap;
 import java.util.List;
 
@@ -135,9 +151,10 @@ public class MediaAndFileAdapter extends RecyclerView.Adapter<MediaAndFileAdapte
 
         }
 
-        public String filetype(String file){
+        public String filetype(String file) {
             return file.substring(file.lastIndexOf("."));
         }
+
         public String checkFileType(String file) {
             String result = "";
             switch (filetype(file)) {
@@ -181,9 +198,11 @@ public class MediaAndFileAdapter extends RecyclerView.Adapter<MediaAndFileAdapte
         }
 
         void setData(MediaAndFile mediaAndFile) {
-            binding.btnItem.setText(checkFileType(mediaAndFile.finame)+"\n"+mediaAndFile.timestamp );
+//            binding.btnItem.setText(checkFileType(mediaAndFile.finame)+"\n"+mediaAndFile.timestamp );
             if (mediaAndFile.imgPath != null) {
-                if(mediaAndFile.imgPath.compareTo("")!=0){
+                if (mediaAndFile.imgPath.compareTo("") != 0) {
+
+                    getImgThumbnailFromURL(mediaAndFile.imgPath);
                     binding.btnItem.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -203,20 +222,7 @@ public class MediaAndFileAdapter extends RecyclerView.Adapter<MediaAndFileAdapte
             if (mediaAndFile.vidPath != null) {
                 if (mediaAndFile.vidPath.compareTo("") != 0) {
 
-//
-//                    Thread t2=new Thread(()->{
-//                        String url = mediaAndFile.vidPath;
-//// Create a MediaMetaDataRetriever
-//                        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-//// Set video url as data source
-//                        retriever.setDataSource(url, new HashMap<String, String>());
-//// Get frame at 2nd second as Bitmap image
-//                        Bitmap bitmap = retriever.getFrameAtTime(2000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC);
-//// Display the Bitmap image in an ImageView
-//                        Bitmap rescalebitmap=scaleDown(bitmap,250,true);
-//                        binding.btnItem.setImageBitmap(rescalebitmap);
-//                    });
-//                    t2.start();
+                    getVidThumbnailFromURL(mediaAndFile.vidPath);
                     binding.btnItem.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -234,6 +240,7 @@ public class MediaAndFileAdapter extends RecyclerView.Adapter<MediaAndFileAdapte
             }
             if (mediaAndFile.filePath != null) {
                 if (mediaAndFile.filePath.compareTo("") != 0) {
+                    getFileThumbnailFromURL(mediaAndFile.filePath);
                     binding.btnItem.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -249,6 +256,94 @@ public class MediaAndFileAdapter extends RecyclerView.Adapter<MediaAndFileAdapte
                 }
 
             }
+        }
+
+        public String getThumbnailInDir(String dir) {
+            String path = null;
+
+            return path;
+        }
+
+        public void getVidThumbnailFromURL(String url) {
+//// Create a MediaMetaDataRetriever
+//            MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+//// Set video url as data source
+//            retriever.setDataSource(url, new HashMap<String, String>());
+//// Get frame at 2nd second as Bitmap image
+//            Bitmap source = retriever.getFrameAtTime(20000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC);
+//// Display the Bitmap image in an ImageView
+//            Bitmap rescalebitmap = scaleDown(source, 300, true);
+//            FileOutputStream outputstream = null;
+//            File file = Environment.getExternalStorageDirectory();
+//            File dir = new File(file.getAbsolutePath() + "//myThumbnails");
+//            dir.mkdir();
+//            String filename = String.format("%d.bmp", System.currentTimeMillis());
+//            File outFile = new File(dir, filename);
+//            try {
+//                outputstream = new FileOutputStream(outFile);
+//            } catch (Exception ex) {
+//
+//            }
+//            rescalebitmap.compress(Bitmap.CompressFormat.PNG, 100, outputstream);
+//            try {
+//                outputstream.flush();
+//            } catch (Exception ex) {
+//
+//            }
+//            try {
+//                outputstream.close();
+//            } catch (Exception ex) {
+//
+//            }
+
+//            BitmapPool bitmapPool = Glide.get(itemView.getContext()).getBitmapPool();
+//            int microSecond = 1000000;// 1th second as an example
+//            BitmapDrawable bitmapDrawable=new BitmapDrawable();
+//            Bitmap bitmap=bitmapDrawable.getBitmap();
+//            Glide.with(itemView.getContext())
+//                    .load(url)
+//                    .override(300,300)// Example
+//                    .into(binding.btnItem);
+        }
+        public void getImgThumbnailFromURL(String url) {
+
+            Glide.with(itemView.getContext())
+                    .asBitmap()
+                    .load(url)
+                    .into(new CustomTarget<Bitmap>() {
+                        @Override
+                        public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                            Bitmap scale=scaleDown(resource,350,true);
+                            binding.btnItem.setImageBitmap(scale);
+                        }
+                        @Override
+                        public void onLoadCleared(@Nullable Drawable placeholder) {
+                        }
+                    });
+        }
+
+        public void getFileThumbnailFromURL(String url) {
+            Bitmap icon = BitmapFactory.decodeResource(itemView.getResources(),
+                    R.mipmap.documentfiledocpaper2562);
+            Bitmap scale=resizeBitmap(icon);
+            binding.btnItem.setImageBitmap(scale);
+        }
+
+
+        private static final float PREFERRED_WIDTH = 200;
+        private static final float PREFERRED_HEIGHT = 180;
+        public static Bitmap resizeBitmap(Bitmap bitmap) {
+            int width = bitmap.getWidth();
+            int height = bitmap.getHeight();
+            float scaleWidth = PREFERRED_WIDTH / width;
+            float scaleHeight = PREFERRED_HEIGHT / height;
+
+            Matrix matrix = new Matrix();
+            matrix.postScale(scaleWidth, scaleHeight);
+            Bitmap resizedBitmap = Bitmap.createBitmap(
+                    bitmap, 0, 0, width, height, matrix, false);
+            bitmap.recycle();
+            return resizedBitmap;
         }
     }
 
