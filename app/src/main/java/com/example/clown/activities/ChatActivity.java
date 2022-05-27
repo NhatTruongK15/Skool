@@ -48,6 +48,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.example.clown.ActivityMediaAndFile;
 import com.example.clown.adapter.ChatAdapter;
 import com.example.clown.agora.AgoraService;
 import com.example.clown.adapter.UsersAdapter;
@@ -209,7 +210,7 @@ public class ChatActivity extends FirestoreBaseActivity {
         int previewHeight = bitmap.getHeight() * previewWidth / bitmap.getWidth();
         Bitmap previewBitmap = Bitmap.createScaledBitmap(resizeBitmap(bitmap), previewWidth, previewHeight, false);
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        previewBitmap.compress(Bitmap.CompressFormat.JPEG,95,byteArrayOutputStream);
+        previewBitmap.compress(Bitmap.CompressFormat.JPEG,100,byteArrayOutputStream);
         byte[] bytes = byteArrayOutputStream.toByteArray();
         return Base64.encodeToString(bytes, Base64.DEFAULT);
     }
@@ -300,8 +301,7 @@ public class ChatActivity extends FirestoreBaseActivity {
 
     public Boolean isUploadingFile=false;
 
-    private void loading(Boolean isLoading)
-    {
+    private void loading(Boolean isLoading){
         if(isLoading){
             binding.progressBar.setVisibility(View.VISIBLE);
         }else
@@ -569,6 +569,9 @@ public class ChatActivity extends FirestoreBaseActivity {
                 .whereEqualTo(Constants.KEY_SENDER_ID, receiverUser.id)
                 .whereEqualTo(Constants.KEY_RECEIVER_ID, preferenceManager.getString(Constants.KEY_USER_ID))
                 .addSnapshotListener(eventListener);
+//        showToast( preferenceManager.getString(Constants.KEY_USER_ID));
+//        showToast( receiverUser.id);
+
     }
 
     private final EventListener<QuerySnapshot> eventListener = ((value, error) -> {
@@ -609,9 +612,6 @@ public class ChatActivity extends FirestoreBaseActivity {
     });
 
 
-
-
-
     private void loadReceiverDetails() {
         receiverUser = (User) getIntent().getSerializableExtra(Constants.KEY_USER);
         binding.textName.setText(receiverUser.name);
@@ -622,6 +622,7 @@ public class ChatActivity extends FirestoreBaseActivity {
         binding.layoutSend.setOnClickListener(v -> sendMessage());
 
 
+
         activityResultLauncher=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
             @Override
             public void onActivityResult(ActivityResult result) {
@@ -630,13 +631,21 @@ public class ChatActivity extends FirestoreBaseActivity {
                 loading(true);
                 isUploadingFile=true;
                 SendFileToDatabase(fileuri,finame);
-
 //                binding.inputMessage.setText(finame);
             }
         });
         binding.layoutFile.setOnClickListener(v -> pickFile());
 
         binding.imageCall.setOnClickListener(v -> startCall());
+
+        binding.imageInfo.setOnClickListener(v->openFileAndMediaActivity());
+    }
+
+    private void openFileAndMediaActivity() {
+        Context context = this;
+        Intent intent = new Intent(context, ActivityMediaAndFile.class);
+        intent.putExtra("receiverId", receiverUser.id);
+        context.startActivity(intent);
     }
 
     private void startCall() {

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:id="@+id/itemMediaAndFileContainer"
+    android:padding="@dimen/_4sdp"
+
+    >
+
+    <TextView
+        android:id="@+id/txtvLink"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="5dp"
+        android:textColor="@color/primary_dark"
+        app:layout_constraintStart_toEndOf="@+id/txtvItem"
+        app:layout_constraintTop_toBottomOf="@+id/txtvItem">
+
+    </TextView>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:id="@+id/txtvItem"
+        android:textColor="@color/primary_dark"
+        >
+    </TextView>
+
+    <ImageButton
+        android:id="@+id/btnItem"
+        android:layout_width="@dimen/_60sdp"
+        android:layout_height="@dimen/_60sdp"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="5dp"
+        android:width="@dimen/_60sdp"
+        android:height="@dimen/_60sdp"
+
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+    <!--        android:textColor="#FFFFFF"-->
+    <!--        android:textSize="@dimen/_5sdp"-->
+</androidx.constraintlayout.widget.ConstraintLayout>
