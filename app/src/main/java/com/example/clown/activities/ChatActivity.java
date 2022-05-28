@@ -383,6 +383,7 @@ public class ChatActivity extends FirestoreBaseActivity {
             isnotVid=false;
             return;
         }
+        String temp=binding.inputMessage.getText().toString();
         if(fileuri!=null) {
             if (checkFileType(finame).compareTo("vid") == 0) {
 //                loading(true);
@@ -413,6 +414,8 @@ public class ChatActivity extends FirestoreBaseActivity {
             }
             message.put(Constants.KEY_MESSAGE_FILE,filelink);
             message.put(Constants.KEY_MESSAGE_IMAGE, "");
+            binding.inputMessage.setText(preferenceManager.getString(Constants.KEY_NAME)+" đã gửi 1 video");
+
         }
         else{
             message.put(Constants.KEY_MESSAGE_VIDEO,"");
@@ -421,6 +424,7 @@ public class ChatActivity extends FirestoreBaseActivity {
         if(encodedImage!=null){
             message.put(Constants.KEY_MESSAGE_IMAGE,encodedImage);
             message.put(Constants.KEY_MESSAGE_IMAGE_LINK,imglink);
+            binding.inputMessage.setText(preferenceManager.getString(Constants.KEY_NAME)+" đã gửi 1 ảnh");
         }
         else{
             message.put(Constants.KEY_MESSAGE_IMAGE,"");
@@ -434,6 +438,9 @@ public class ChatActivity extends FirestoreBaseActivity {
 
         database.collection(Constants.KEY_COLLECTION_CHAT).add(message);
         if (conversationId != null) {
+            if(finame==null){
+                binding.inputMessage.setText(temp);
+            }
             updateConversation(binding.inputMessage.getText().toString());
         } else {
             HashMap<String, Object> conversation = new HashMap<>();
@@ -462,7 +469,6 @@ public class ChatActivity extends FirestoreBaseActivity {
                 data.put(Constants.KEY_MESSAGE_IMAGE_LINK,imglink);
                 data.put(Constants.KEY_MESSAGE_IMAGE_FINAME,finame);
                 data.put(Constants.KEY_MESSAGE_FINAME,finame);
-
                 data.put(Constants.KEY_MESSAGE_VIDEO,filelink);
                 data.put(Constants.KEY_MESSAGE_FILE,filelink);
 
