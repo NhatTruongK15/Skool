@@ -126,13 +126,13 @@ public class ChatAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 binding.vidMessage.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                     @Override
                     public void onCompletion(MediaPlayer mp) {
-                        Toast.makeText(itemView.getContext(), "Thank You...!!!", Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(itemView.getContext(), "Thank You...!!!", Toast.LENGTH_SHORT).show();
                     }
                 });
                 binding.vidMessage.setOnErrorListener(new MediaPlayer.OnErrorListener() {
                     @Override
                     public boolean onError(MediaPlayer mp, int what, int extra) {
-                        Toast.makeText(itemView.getContext(), "Oops An Error Occur While Playing Video...!!!", Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(itemView.getContext(), "Oops An Error Occur While Playing Video...!!!", Toast.LENGTH_SHORT).show();
                         return false;
                     }
                 });
@@ -252,13 +252,13 @@ public class ChatAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 binding.vidMessage.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                     @Override
                     public void onCompletion(MediaPlayer mp) {
-                        Toast.makeText(itemView.getContext(), "Thank You...!!!", Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(itemView.getContext(), "Thank You...!!!", Toast.LENGTH_SHORT).show();
                     }
                 });
                 binding.vidMessage.setOnErrorListener(new MediaPlayer.OnErrorListener() {
                     @Override
                     public boolean onError(MediaPlayer mp, int what, int extra) {
-                        Toast.makeText(itemView.getContext(), "Oops An Error Occur While Playing Video...!!!", Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(itemView.getContext(), "Oops An Error Occur While Playing Video...!!!", Toast.LENGTH_SHORT).show();
                         return false;
                     }
                 });

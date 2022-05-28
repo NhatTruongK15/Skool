@@ -242,13 +242,13 @@ public class FileDisplayActivitiy extends AppCompatActivity {
             videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mp) {
-                    Toast.makeText(getApplicationContext(), "Thank You...!!!", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getApplicationContext(), "Thank You...!!!", Toast.LENGTH_SHORT).show();
                 }
             });
             videoView.setOnErrorListener(new MediaPlayer.OnErrorListener() {
                 @Override
                 public boolean onError(MediaPlayer mp, int what, int extra) {
-                    Toast.makeText(getApplicationContext(), "Oops An Error Occur While Playing Video...!!!", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getApplicationContext(), "Oops An Error Occur While Playing Video...!!!", Toast.LENGTH_SHORT).show();
                     return false;
                 }
             });
