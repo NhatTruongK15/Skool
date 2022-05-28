@@ -306,10 +306,15 @@ public class MediaAndFileAdapter extends RecyclerView.Adapter<MediaAndFileAdapte
 //                    .into(binding.btnItem);
 
 
-            Bitmap icon = BitmapFactory.decodeResource(itemView.getResources(),
-                    R.mipmap.playinterfacevideoarrowbutton128w);
-            Bitmap scale=resizeBitmap(icon);
-            binding.btnItem.setImageBitmap(scale);
+//            Bitmap icon = BitmapFactory.decodeResource(itemView.getResources(),
+//                    R.mipmap.playinterfacevideoarrowbutton128w);
+//            Bitmap scale=resizeBitmap(icon);
+//            binding.btnItem.setImageBitmap(scale);
+
+
+            BitmapDrawable bitmapDrawable=new BitmapDrawable();
+            Bitmap bitmap=bitmapDrawable.getBitmap();
+            Glide.with(itemView).load(url).into(binding.imgItem);
         }
         public void getImgThumbnailFromURL(String url) {
 
@@ -320,7 +325,7 @@ public class MediaAndFileAdapter extends RecyclerView.Adapter<MediaAndFileAdapte
                         @Override
                         public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
                             Bitmap scale=resizeBitmap(resource);
-                            binding.btnItem.setImageBitmap(scale);
+                            binding.imgItem.setImageBitmap(scale);
                         }
                         @Override
                         public void onLoadCleared(@Nullable Drawable placeholder) {
@@ -332,7 +337,9 @@ public class MediaAndFileAdapter extends RecyclerView.Adapter<MediaAndFileAdapte
             Bitmap icon = BitmapFactory.decodeResource(itemView.getResources(),
                     R.mipmap.documentfiledocpaper2562);
             Bitmap scale=resizeBitmap(icon);
-            binding.btnItem.setImageBitmap(scale);
+            binding.imgItem.setImageBitmap(scale);
+//            Glide.with(itemView).load(url).into(binding.imgItem);
+
         }
 
 
