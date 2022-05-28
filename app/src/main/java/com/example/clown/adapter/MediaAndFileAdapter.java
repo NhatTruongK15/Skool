@@ -304,6 +304,12 @@ public class MediaAndFileAdapter extends RecyclerView.Adapter<MediaAndFileAdapte
 //                    .load(url)
 //                    .override(300,300)// Example
 //                    .into(binding.btnItem);
+
+
+            Bitmap icon = BitmapFactory.decodeResource(itemView.getResources(),
+                    R.mipmap.playinterfacevideoarrowbutton128w);
+            Bitmap scale=resizeBitmap(icon);
+            binding.btnItem.setImageBitmap(scale);
         }
         public void getImgThumbnailFromURL(String url) {
 
@@ -313,7 +319,7 @@ public class MediaAndFileAdapter extends RecyclerView.Adapter<MediaAndFileAdapte
                     .into(new CustomTarget<Bitmap>() {
                         @Override
                         public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                            Bitmap scale=scaleDown(resource,350,true);
+                            Bitmap scale=resizeBitmap(resource);
                             binding.btnItem.setImageBitmap(scale);
                         }
                         @Override
@@ -330,8 +336,8 @@ public class MediaAndFileAdapter extends RecyclerView.Adapter<MediaAndFileAdapte
         }
 
 
-        private static final float PREFERRED_WIDTH = 200;
-        private static final float PREFERRED_HEIGHT = 180;
+        private static final float PREFERRED_WIDTH = 300;
+        private static final float PREFERRED_HEIGHT = 300;
         public static Bitmap resizeBitmap(Bitmap bitmap) {
             int width = bitmap.getWidth();
             int height = bitmap.getHeight();
