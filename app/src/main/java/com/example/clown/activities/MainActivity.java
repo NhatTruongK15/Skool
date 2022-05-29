@@ -175,6 +175,12 @@ public class MainActivity extends FirestoreBaseActivity implements ConversationL
         unbindAgoraService();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadUserDetails();
+    }
+
     private void init() {
         conversations = new ArrayList<>();
         conversationAdapter = new RecentConversationAdapter(conversations, this);
@@ -210,6 +216,12 @@ public class MainActivity extends FirestoreBaseActivity implements ConversationL
             intent.putExtra(Constants.KEY_DOCUMENT_REFERENCE_ID,getUser());
             startActivity(intent);
         });
+
+        binding.imageProfile.setOnClickListener(v -> {
+            Intent intent = new Intent(getApplicationContext(),MyProfileActivity.class);
+            intent.putExtra(Constants.KEY_DOCUMENT_REFERENCE_ID,getUser());
+            startActivity(intent);
+        });
     }
 
     private void loadUserDetails() {
@@ -218,7 +230,7 @@ public class MainActivity extends FirestoreBaseActivity implements ConversationL
         Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
         binding.imageProfile.setImageBitmap(bitmap);
         binding.Phone.setText(preferenceManager.getString(Constants.KEY_PHONE_NUMBER));
-        binding.Email.setText(preferenceManager.getString(Constants.KEY_EMAIL));
+        //binding.Email.setText(preferenceManager.getString(Constants.KEY_EMAIL));
     }
 
     private void showToast(String message) {

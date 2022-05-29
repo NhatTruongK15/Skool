@@ -124,7 +124,8 @@ public class SignInActivity extends AgoraBaseActivity {
         FirebaseFirestore database = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
         //-----------------------------------------------------
-    //region old one login using mail
+
+        //region old one login using mail
         /*
         auth.signInWithEmailAndPassword(binding.inputEmail.getText().toString(), binding.inputPassword.getText().toString())
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -229,55 +230,5 @@ public class SignInActivity extends AgoraBaseActivity {
         }
     }
 
-    private void verifyPhoneNumberWithCode(String verificationId, String code) {
-        // [START verify_with_code]
-        PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationId, code);
-        // [END verify_with_code]
-    }
-
-    private void signInWithPhoneAuthCredential(PhoneAuthCredential credential) {
-        FirebaseFirestore database = FirebaseFirestore.getInstance();
-
-        auth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d("Register state", "signInWithCredential:success");
-
-                            FirebaseUser user = auth.getCurrentUser();
-
-                            database.collection(Constants.KEY_COLLECTION_USERS)
-                                    .whereEqualTo(Constants.KEY_USER_ID, auth.getCurrentUser().getUid())
-                                    /*.whereEqualTo(Constants.KEY_PASSWORD, binding.inputPassword.getText().toString())*/
-                                    .get()
-                                    .addOnCompleteListener(querySnapshotTask -> {
-                                        if (querySnapshotTask.isSuccessful() && querySnapshotTask.getResult() != null && querySnapshotTask.getResult().getDocuments().size() > 0) {
-                                            DocumentSnapshot documentSnapshot = querySnapshotTask.getResult().getDocuments().get(0);
-                                            preferenceManager.putBoolean(Constants.KEY_IS_SIGNED_IN, true);
-                                            preferenceManager.putString(Constants.KEY_DOCUMENT_REFERENCE_ID, documentSnapshot.getId());
-                                            preferenceManager.putString(Constants.KEY_USER_ID, documentSnapshot.getString(Constants.KEY_USER_ID));
-                                            preferenceManager.putString(Constants.KEY_NAME, documentSnapshot.getString(Constants.KEY_NAME));
-                                            preferenceManager.putString(Constants.KEY_IMAGE, documentSnapshot.getString(Constants.KEY_IMAGE));
-                                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                                            // intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                            startActivity(intent);
-                                            finish();
-                                        } else {
-                                            loading(false);
-                                            showToast("Unable to sign in");
-                                        }
-                                    });
-                        } else {
-                            // Sign in failed, display a message and update the UI
-                            Log.w("Register state", "signInWithCredential:failure", task.getException());
-                            if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
-                                // The verification code entered was invalid
-                            }
-                        }
-                    }
-                });
-    }
 }
 

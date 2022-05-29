@@ -3,16 +3,16 @@
     package="com.example.clown">
 
     <uses-permission android:name="android.permission.READ_CONTACTS" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION" />
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.CAMERA"></uses-permission>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"></uses-permission>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"></uses-permission>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"></uses-permission>
-    <uses-permission android:name="android.permission.INTERNET"></uses-permission>
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
@@ -28,18 +28,25 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Clown">
         <activity
+            android:name=".activities.EditUserProfileActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.MyProfileActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.CallActivity"
             android:exported="false" />
         <activity
             android:name=".activities.CallReceivedActivity"
             android:exported="false" />
         <activity
-            android:name=".ActivityMediaAndFile"
+            android:name=".activities.ActivityMediaAndFile"
             android:exported="false" />
-        <activity android:name=".activities.FriendAddingActivity"
-            android:exported="false"/>
         <activity
-            android:name=".PhoneContactListActivity"
+            android:name=".activities.FriendAddingActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.PhoneContactListActivity"
             android:exported="false" />
         <activity
             android:name=".activities.GroupActivity"
@@ -53,7 +60,7 @@
         <activity
             android:name=".activities.ChatActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustResize"/>
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".activities.UsersActivity"
             android:exported="false" />
@@ -77,6 +84,7 @@
         <activity
             android:name=".activities.FileDisplayActivitiy"
             android:exported="true" />
+
         <service
             android:name=".firebase.MessagingService"
             android:exported="false">
@@ -84,7 +92,9 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-        <service android:name=".agora.AgoraService" android:exported="false"/>
+        <service
+            android:name=".agora.AgoraService"
+            android:exported="false" />
     </application>
 
 </manifest>

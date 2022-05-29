@@ -6,12 +6,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
-import com.example.clown.PhoneContactListActivity;
-import com.example.clown.R;
 import com.example.clown.databinding.ActivityFriendAddingBinding;
-import com.example.clown.databinding.ActivityMainBinding;
 import com.example.clown.models.User;
-import com.example.clown.utilities.Constants;
 import com.example.clown.utilities.PreferenceManager;
 
 public class FriendAddingActivity extends AppCompatActivity {
