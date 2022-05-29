@@ -203,10 +203,10 @@ public class ChatActivity extends FirestoreBaseActivity {
         }
     }
 
-    private Bitmap getBitmapFromEncodeString(String encodeImage) {
-        if(encodeImage != null)
+    private Bitmap getBitmapFromEncodeString(String encodedImage) {
+        if(encodedImage != null)
         {
-            byte[] bytes = Base64.decode(encodeImage, Base64.DEFAULT);
+            byte[] bytes = Base64.decode(encodedImage, Base64.DEFAULT);
             return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
         }
         else
@@ -667,7 +667,6 @@ public class ChatActivity extends FirestoreBaseActivity {
     private void setListener() {
         binding.imageBack.setOnClickListener(v -> onBackPressed());
         binding.layoutSend.setOnClickListener(v -> sendMessage());
-
 
         activityResultLauncher=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
             @Override

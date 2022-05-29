@@ -1,4 +1,4 @@
-package com.example.clown;
+package com.example.clown.activities;
 
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
