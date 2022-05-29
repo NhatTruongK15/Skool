@@ -7,6 +7,7 @@ import static com.example.clown.utilities.Constants.PIC_HOLDER;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -31,6 +32,7 @@ import com.example.clown.databinding.ItemContainerSentMessageBinding;
 import com.example.clown.models.ChatMessage;
 
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 import java.util.List;
 import android.content.Intent;
 
@@ -52,6 +54,7 @@ public class ChatAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder> 
         this.receiverProfileImage = receiverProfileImage;
 
     }
+
 
     @NonNull
     @Override
@@ -241,6 +244,7 @@ public class ChatAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder> 
             binding.textDateTime.setText(chatMessage.dateTime);
             binding.imgMessage.setImageBitmap(chatMessage.message_img);
             binding.textMessage.setText(chatMessage.message);
+            binding.imageProfile.setImageBitmap(receiverProfileImage);
 
             if (chatMessage.videoPath != null && chatMessage.videoPath.compareTo("") != 0) {
                 binding.textMessage.setVisibility(View.GONE);
@@ -323,6 +327,7 @@ public class ChatAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder> 
             }
 
         }
+
 
     }
 
