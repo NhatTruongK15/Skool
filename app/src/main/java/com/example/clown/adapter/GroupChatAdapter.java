@@ -58,8 +58,8 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.User
 
         void setUserData(User user)
         {
-            binding.textName.setText(user.name);
-            binding.imageProfile.setImageBitmap(getUserImage(user.image));
+            binding.textName.setText(user.getName());
+            binding.imageProfile.setImageBitmap(getUserImage(user.getRawImage()));
             binding.getRoot().setOnClickListener(v -> groupChatListener.onGroupChatClicked(user));
         }
     }

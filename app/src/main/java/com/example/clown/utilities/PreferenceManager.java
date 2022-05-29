@@ -3,6 +3,9 @@ package com.example.clown.utilities;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.example.clown.models.User;
+import com.google.gson.Gson;
+
 public class PreferenceManager {
     private final SharedPreferences sharedPreferences;
 
@@ -23,6 +26,23 @@ public class PreferenceManager {
         return sharedPreferences.getBoolean(key,false);
     }
 
+    public void putUser( User value)
+    {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(value);
+        editor.putString(Constants.KEY_USER, json);
+        editor.apply();
+    }
+
+    public User getUser()
+    {
+        Gson gson = new Gson();
+        String json = sharedPreferences.getString(Constants.KEY_USER, null);
+        User obj = gson.fromJson(json, User.class);
+        return obj;
+    }
+
     public void putString(String key, String value)
     {
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -41,4 +61,6 @@ public class PreferenceManager {
         editor.clear();
         editor.apply();
     }
+
+
 }

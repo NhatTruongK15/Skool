@@ -20,15 +20,22 @@ public class UsersActivity extends FirestoreBaseActivity implements UserListener
 
     private ActivityUsersBinding binding;
     private PreferenceManager preferenceManager;
+    private User currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Init();
+
+        setListener();
+        getUsers();
+    }
+
+    private void Init(){
         binding = ActivityUsersBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         preferenceManager = new PreferenceManager(getApplicationContext());
-        setListener();
-        getUsers();
+        currentUser = preferenceManager.getUser();
     }
 
     private void setListener()
@@ -52,11 +59,11 @@ public class UsersActivity extends FirestoreBaseActivity implements UserListener
                                 continue;
                             }
                             User user = new User();
-                            user.name = queryDocumentSnapshot.getString(Constants.KEY_NAME);
-                            user.email = queryDocumentSnapshot.getString(Constants.KEY_EMAIL);
-                            user.image = queryDocumentSnapshot.getString(Constants.KEY_IMAGE);
-                            user.token = queryDocumentSnapshot.getString(Constants.KEY_FCM_TOKEN);
-                            user.id = queryDocumentSnapshot.getId();
+                            user.setName(queryDocumentSnapshot.getString(Constants.KEY_NAME));
+                            user.setEmail(queryDocumentSnapshot.getString(Constants.KEY_EMAIL));
+                            user.setRawImage(queryDocumentSnapshot.getString(Constants.KEY_IMAGE));
+                            user.setToken(queryDocumentSnapshot.getString(Constants.KEY_FCM_TOKEN));
+                            user.setId(queryDocumentSnapshot.getId());
                             users.add(user);
                         }
                         if(users.size() > 0)

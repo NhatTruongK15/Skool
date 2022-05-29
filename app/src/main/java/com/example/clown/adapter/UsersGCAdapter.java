@@ -59,9 +59,9 @@ public class UsersGCAdapter extends RecyclerView.Adapter<UsersGCAdapter.UserView
 
         void setUserData(User user)
         {
-            binding.textName.setText(user.name);
-            binding.textEmail.setText(user.email);
-            binding.imageProfile.setImageBitmap(getUserImage(user.image));
+            binding.textName.setText(user.getName());
+            binding.textEmail.setText(user.getEmail());
+            binding.imageProfile.setImageBitmap(getUserImage(user.getRawImage()));
             binding.getRoot().setOnClickListener(v -> {
                 userGCListener.onUserGCClicked(user);
             });

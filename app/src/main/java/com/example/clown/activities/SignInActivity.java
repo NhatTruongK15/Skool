@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import com.example.clown.agora.AgoraService;
 import com.example.clown.databinding.ActivitySignInBinding;
+import com.example.clown.models.User;
 import com.example.clown.utilities.Constants;
 import com.example.clown.utilities.PreferenceManager;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -81,7 +82,7 @@ public class SignInActivity extends AgoraBaseActivity {
         bindAgoraService();
 
         // check if we've already logged in
-        if (preferenceManager.getBoolean(Constants.KEY_IS_SIGNED_IN)) {
+        if (preferenceManager.getBoolean(Constants.KEY_AVAILABILITY)) {
             mIsLoggedIn = true;
             toAgoraService(Constants.MSG_AGORA_LOG_IN, null);
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
@@ -123,6 +124,7 @@ public class SignInActivity extends AgoraBaseActivity {
         //old one-------------------------------------------------------
         FirebaseFirestore database = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
+        FirebaseUser authUser = auth.getInstance().getCurrentUser();
         //-----------------------------------------------------
 
         //region old one login using mail
@@ -178,13 +180,23 @@ public class SignInActivity extends AgoraBaseActivity {
                         DocumentSnapshot documentSnapshot = querySnapshotTask.getResult().getDocuments().get(0);
 
                         mIsLoggedIn = true;
+
+                        User currentUser = new User();
+                        currentUser.setId(documentSnapshot.getId());
+                        currentUser.setAvailability(1);
+                        currentUser.setName(documentSnapshot.getString(Constants.KEY_NAME));
+                        currentUser.setPhoneNumber(documentSnapshot.getString(Constants.KEY_PHONE_NUMBER));
+                        currentUser.setEmail(documentSnapshot.getString(Constants.KEY_EMAIL));
+                        currentUser.setRawImage(documentSnapshot.getString(Constants.KEY_IMAGE));
+
+                        preferenceManager.putUser(currentUser);
                         preferenceManager.putBoolean(Constants.KEY_IS_SIGNED_IN, true);
-                        preferenceManager.putString(Constants.KEY_DOCUMENT_REFERENCE_ID, documentSnapshot.getId());
+                       /* preferenceManager.putString(Constants.KEY_DOCUMENT_REFERENCE_ID, documentSnapshot.getId());
                         preferenceManager.putString(Constants.KEY_PHONE_NUMBER, documentSnapshot.getString(Constants.KEY_PHONE_NUMBER));
                         preferenceManager.putString(Constants.KEY_EMAIL, documentSnapshot.getString(Constants.KEY_EMAIL));
                         preferenceManager.putString(Constants.KEY_USER_ID, documentSnapshot.getString(Constants.KEY_USER_ID));
                         preferenceManager.putString(Constants.KEY_NAME, documentSnapshot.getString(Constants.KEY_NAME));
-                        preferenceManager.putString(Constants.KEY_IMAGE, documentSnapshot.getString(Constants.KEY_IMAGE));
+                        preferenceManager.putString(Constants.KEY_IMAGE, documentSnapshot.getString(Constants.KEY_IMAGE));*/
 
                         String userId = documentSnapshot.getId();
                         Bundle bundle = new Bundle();

@@ -50,6 +50,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -64,7 +65,6 @@ public class MainActivity extends FirestoreBaseActivity implements ConversationL
     public User getUser() {
         return user;
     }
-
     public void setUser(User user) {
         this.user = user;
     }
@@ -176,6 +176,7 @@ public class MainActivity extends FirestoreBaseActivity implements ConversationL
     @Override
     protected void onResume() {
         super.onResume();
+        user = preferenceManager.getUser();
         loadUserDetails();
     }
 
@@ -184,6 +185,8 @@ public class MainActivity extends FirestoreBaseActivity implements ConversationL
         conversationAdapter = new RecentConversationAdapter(conversations, this);
         binding.conversationRecyclerView.setAdapter(conversationAdapter);
         database = FirebaseFirestore.getInstance();
+
+       user = preferenceManager.getUser();
 
     }
     private void setListener() {
@@ -223,12 +226,19 @@ public class MainActivity extends FirestoreBaseActivity implements ConversationL
     }
 
     private void loadUserDetails() {
-        binding.name.setText(preferenceManager.getString(Constants.KEY_NAME));
+       /* binding.name.setText(preferenceManager.getString(Constants.KEY_NAME));
         byte[] bytes = Base64.decode(preferenceManager.getString(Constants.KEY_IMAGE), Base64.DEFAULT);
         Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
         binding.imageProfile.setImageBitmap(bitmap);
         binding.Phone.setText(preferenceManager.getString(Constants.KEY_PHONE_NUMBER));
-        //binding.Email.setText(preferenceManager.getString(Constants.KEY_EMAIL));
+        //binding.Email.setText(preferenceManager.getString(Constants.KEY_EMAIL));*/
+
+
+        binding.name.setText(user.getName());
+        byte[] bytes = Base64.decode(user.getRawImage(), Base64.DEFAULT);
+        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+        binding.imageProfile.setImageBitmap(bitmap);
+        binding.Phone.setText(user.getPhoneNumber());
     }
 
     private void showToast(String message) {
@@ -239,10 +249,10 @@ public class MainActivity extends FirestoreBaseActivity implements ConversationL
     private void listenConversation() {
             loadGroupConversation();
             database.collection(Constants.KEY_COLLECTION_CONVERSATIONS)
-                    .whereEqualTo(Constants.KEY_SENDER_ID, preferenceManager.getString(Constants.KEY_DOCUMENT_REFERENCE_ID))
+                    .whereEqualTo(Constants.KEY_SENDER_ID, user.getId())
                     .addSnapshotListener(eventListener);
             database.collection(Constants.KEY_COLLECTION_CONVERSATIONS)
-                    .whereEqualTo(Constants.KEY_RECEIVER_ID, preferenceManager.getString(Constants.KEY_DOCUMENT_REFERENCE_ID))
+                    .whereEqualTo(Constants.KEY_RECEIVER_ID, user.getId())
                     .addSnapshotListener(eventListener);
 
     }
@@ -269,7 +279,8 @@ public class MainActivity extends FirestoreBaseActivity implements ConversationL
                 .addOnCompleteListener(task -> {
                     if(task.isSuccessful() && task.getResult() != null){
                         for(QueryDocumentSnapshot queryDocumentSnapshot: task.getResult()) {
-                            if(!checkGroupConversation(queryDocumentSnapshot.getId()) && queryDocumentSnapshot.get(Constants.KEY_SENDER_ID) != preferenceManager.getString(Constants.KEY_SENDER_ID))
+                            if(!checkGroupConversation(queryDocumentSnapshot.getId())
+                                    && queryDocumentSnapshot.get(Constants.KEY_SENDER_ID) != preferenceManager.getString(Constants.KEY_SENDER_ID))
                                 continue;
                             else{
                                 List<String> memberIdList =  convertObjectToList(queryDocumentSnapshot.get(Constants.KEY_GROUP_MEMBERS));
@@ -288,7 +299,7 @@ public class MainActivity extends FirestoreBaseActivity implements ConversationL
     private void showMessageForGroup(List<String> list,QueryDocumentSnapshot queryDocumentSnapshot){
         for (String memberId: list)
         {
-            if(memberId.equals(preferenceManager.getString(Constants.KEY_DOCUMENT_REFERENCE_ID))){
+            if(memberId.equals(user.getId())){
                 database.collection(Constants.KEY_COLLECTION_CONVERSATIONS)
                         .document(queryDocumentSnapshot.getId())
                         .get()
@@ -367,7 +378,7 @@ public class MainActivity extends FirestoreBaseActivity implements ConversationL
 
     private ChatMessage isGroupConversationAdded(DocumentSnapshot documentSnapshot) {
 
-        String senderId = preferenceManager.getString(Constants.KEY_DOCUMENT_REFERENCE_ID);
+        String senderId = user.getId();
         String receiverId = documentSnapshot.getId();
         ChatMessage chatMessage = new ChatMessage();
         chatMessage.senderId = senderId;
@@ -391,7 +402,7 @@ public class MainActivity extends FirestoreBaseActivity implements ConversationL
         if (documentChange.getType() == DocumentChange.Type.ADDED) {
             chatMessage.senderId = senderId;
             chatMessage.receiverId = receiverId;
-            if (preferenceManager.getString(Constants.KEY_DOCUMENT_REFERENCE_ID).equals(senderId)) {
+            if (user.getId().equals(senderId)) {
                 chatMessage.conversationImage = documentChange.getDocument().getString(Constants.KEY_RECEIVER_IMAGE);
                 chatMessage.conversationName = documentChange.getDocument().getString(Constants.KEY_RECEIVER_NAME);
                 chatMessage.conversationId = documentChange.getDocument().getString(Constants.KEY_RECEIVER_ID);
@@ -427,7 +438,7 @@ public class MainActivity extends FirestoreBaseActivity implements ConversationL
         FirebaseFirestore database = FirebaseFirestore.getInstance();
         DocumentReference documentReference =
                 database.collection(Constants.KEY_COLLECTION_USERS).document(
-                        preferenceManager.getString(Constants.KEY_DOCUMENT_REFERENCE_ID)
+                        user.getId()
                 );
         documentReference.update(Constants.KEY_FCM_TOKEN, token)
                 .addOnFailureListener(e -> showToast("Failed"));
@@ -439,7 +450,7 @@ public class MainActivity extends FirestoreBaseActivity implements ConversationL
         FirebaseFirestore database = FirebaseFirestore.getInstance();
         DocumentReference documentReference =
                 database.collection(Constants.KEY_COLLECTION_USERS).document(
-                        preferenceManager.getString(Constants.KEY_DOCUMENT_REFERENCE_ID)
+                        user.getId()
                 );
         HashMap<String, Object> updates = new HashMap<>();
         updates.put(Constants.KEY_FCM_TOKEN, FieldValue.delete());

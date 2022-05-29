@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.example.clown.R;
 import com.example.clown.databinding.ActivityEditUserProfileBinding;
 import com.example.clown.databinding.ActivityMyProfileBinding;
+import com.example.clown.models.User;
 import com.example.clown.utilities.Constants;
 import com.example.clown.utilities.PreferenceManager;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -23,7 +24,7 @@ public class EditUserProfileActivity extends AppCompatActivity {
     private PreferenceManager preferenceManager;
     private FirebaseFirestore database;
     private String type;
-
+    private User currentUser;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,7 +44,7 @@ public class EditUserProfileActivity extends AppCompatActivity {
                     case "email":
                         if(isValidSignInDetails()){
                             database.collection(Constants.KEY_COLLECTION_USERS)
-                                    .document(preferenceManager.getString(Constants.KEY_USER_ID))
+                                    .document(currentUser.getId())
                                     .update(
                                             Constants.KEY_EMAIL, binding.newValueForProfile.getText().toString()
                                     );
@@ -62,6 +63,7 @@ public class EditUserProfileActivity extends AppCompatActivity {
         binding = ActivityEditUserProfileBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         preferenceManager = new PreferenceManager(getApplicationContext());
+        currentUser = preferenceManager.getUser();
         database = FirebaseFirestore.getInstance();
 
         type = getIntent().getExtras().getString(Constants.KEY_EDIT_PROFILETYPE);

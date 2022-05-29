@@ -53,6 +53,7 @@ public class GroupChatActivity extends FirestoreBaseActivity implements GroupCha
     private ActivityGroupChatBinding binding;
     private PreferenceManager preferenceManager;
     HashMap<String,Object> createGroupChat;
+    User currentUser;
     List<User>  usersGroupChat = new ArrayList<>();
     List<User> users = new ArrayList<>();
     private String groupId;
@@ -62,14 +63,17 @@ public class GroupChatActivity extends FirestoreBaseActivity implements GroupCha
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_group_chat);
-        binding = ActivityGroupChatBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
-        preferenceManager = new PreferenceManager(getApplicationContext());
+        Init();
         getUsers();
         setListener();
     }
 
+    void Init(){
+        binding = ActivityGroupChatBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        preferenceManager = new PreferenceManager(getApplicationContext());
+        currentUser = preferenceManager.getUser();
+    }
 
 
     private void getUserForGroupList(List<User> user,int viewType){
@@ -110,7 +114,7 @@ public class GroupChatActivity extends FirestoreBaseActivity implements GroupCha
     private void getUsersID(List<String> usersId, List<User> usersGroupChat) {
         for (User user:usersGroupChat
              ) {
-            usersId.add(user.id);
+            usersId.add(user.getId());
         }
     }
 
@@ -130,11 +134,11 @@ public class GroupChatActivity extends FirestoreBaseActivity implements GroupCha
                                 continue;
                             }
                             User user = new User();
-                            user.name = queryDocumentSnapshot.getString(Constants.KEY_NAME);
-                            user.email = queryDocumentSnapshot.getString(Constants.KEY_EMAIL);
-                            user.image = queryDocumentSnapshot.getString(Constants.KEY_IMAGE);
-                            user.token = queryDocumentSnapshot.getString(Constants.KEY_FCM_TOKEN);
-                            user.id = queryDocumentSnapshot.getId();
+                            user.setName(queryDocumentSnapshot.getString(Constants.KEY_NAME));
+                            user.setEmail(queryDocumentSnapshot.getString(Constants.KEY_EMAIL));
+                            user.setRawImage(queryDocumentSnapshot.getString(Constants.KEY_IMAGE));
+                            user.setToken(queryDocumentSnapshot.getString(Constants.KEY_FCM_TOKEN));
+                            user.setId(queryDocumentSnapshot.getId());
                             users.add(user);
                         }
                         if(users.size() > 0)

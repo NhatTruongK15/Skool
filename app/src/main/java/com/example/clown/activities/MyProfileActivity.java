@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.example.clown.databinding.ActivityMyProfileBinding;
+import com.example.clown.models.User;
 import com.example.clown.utilities.Constants;
 import com.example.clown.utilities.PreferenceManager;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -32,6 +33,7 @@ public class MyProfileActivity extends AppCompatActivity {
     private PreferenceManager preferenceManager;
     private FirebaseFirestore database;
     private String encodedImage;
+    private User currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +46,7 @@ public class MyProfileActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        currentUser = preferenceManager.getUser();
         LoadUserDetails();
     }
 
@@ -75,6 +78,8 @@ public class MyProfileActivity extends AppCompatActivity {
         binding = ActivityMyProfileBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         preferenceManager = new PreferenceManager(getApplicationContext());
+        currentUser = preferenceManager.getUser();
+
         database = FirebaseFirestore.getInstance();
 
         loading(false);
@@ -82,13 +87,13 @@ public class MyProfileActivity extends AppCompatActivity {
     }
 
     private void LoadUserDetails() {
-        binding.name.setText(preferenceManager.getString(Constants.KEY_NAME));
-        byte[] bytes = Base64.decode(preferenceManager.getString(Constants.KEY_IMAGE), Base64.DEFAULT);
+        binding.name.setText(currentUser.getName());
+        byte[] bytes = Base64.decode(currentUser.getRawImage(), Base64.DEFAULT);
         Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
 
         binding.headerBackground.setImageBitmap(bitmap);
-        binding.tvProfilePhoneNumber.setText(preferenceManager.getString(Constants.KEY_PHONE_NUMBER));
-        binding.tvProfileEmail.setText(preferenceManager.getString(Constants.KEY_EMAIL));
+        binding.tvProfilePhoneNumber.setText(currentUser.getPhoneNumber());
+        binding.tvProfileEmail.setText(currentUser.getEmail());
 
 
     }
@@ -158,13 +163,14 @@ public class MyProfileActivity extends AppCompatActivity {
                             Bitmap bitmap2 = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
 
                             database.collection(Constants.KEY_COLLECTION_USERS)
-                                    .document(preferenceManager.getString(Constants.KEY_USER_ID))
+                                    .document(currentUser.getId())
                                     .update(
                                             Constants.KEY_IMAGE, encodedImage
                                     );
 
                             //preference manager
-                            preferenceManager.putString(Constants.KEY_IMAGE,encodedImage);
+                            currentUser.setRawImage(encodedImage);
+                            preferenceManager.putUser(currentUser);
                             LoadUserDetails();
                         } catch (FileNotFoundException e) {
                             e.printStackTrace();
