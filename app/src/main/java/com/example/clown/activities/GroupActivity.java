@@ -24,6 +24,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 
@@ -32,6 +33,8 @@ public class GroupActivity extends AppCompatActivity {
     private FirebaseFirestore database = FirebaseFirestore.getInstance();
     private ActivityGroupBinding binding;
     private String encodedImage;
+    private String documentId;
+    private User currentUser;
     private PreferenceManager preferenceManager;
 
     @Override
@@ -48,16 +51,22 @@ public class GroupActivity extends AppCompatActivity {
         binding.btnAddGroupMember.setOnClickListener(view -> {
             if(binding.etGroupName.getText().toString().trim() == "") { Toast.makeText(GroupActivity.this,"Vui lòng nhập tên nhóm!",Toast.LENGTH_SHORT).show();}
 
+            currentUser = new User();
+
             //Them thong tin vao database
             Intent intent = getIntent();
             HashMap<String,Object> createGroupChat = (HashMap<String, Object>) intent.getSerializableExtra(Constants.KEY_HASH_MAP_GROUP_MEMBERS);
-            String documentId = (String) intent.getSerializableExtra(Constants.KEY_DOCUMENT_ID);
+            documentId = (String) intent.getSerializableExtra(Constants.KEY_DOCUMENT_ID);
             createGroupChat.put(Constants.KEY_RECEIVER_IMAGE,encodedImage);
             createGroupChat.put(Constants.KEY_GROUP_NAME,binding.etGroupName.getText().toString().trim());
             database.collection(Constants.KEY_COLLECTION_CONVERSATIONS).document(documentId).set(createGroupChat);
 
-            Intent intent1 = new Intent(getApplicationContext(),ChatActivity.class);
-            startActivity(intent1);
+            //Information for receiver
+            currentUser.id = documentId;
+            currentUser.image = encodedImage;
+            currentUser.name = binding.etGroupName.getText().toString().trim();
+
+            methodSwitchToChat();
 
         });
         binding.imageBack.setOnClickListener(v -> onBackPressed());
@@ -66,6 +75,17 @@ public class GroupActivity extends AppCompatActivity {
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             pickImage.launch(intent);
         });
+    }
+
+    private void methodSwitchToChat() {
+
+        ArrayList<String> adminList = (ArrayList<String>) getIntent().getSerializableExtra(Constants.KEY_LIST_GROUP_ADMIN);
+        ArrayList<String> memberList = (ArrayList<String>) getIntent().getSerializableExtra(Constants.KEY_LIST_GROUP_MEMBER);
+        Intent intent1 = new Intent(getApplicationContext(),ChatActivity.class);
+        intent1.putExtra(Constants.KEY_USER,currentUser);
+        intent1.putExtra(Constants.KEY_LIST_GROUP_ADMIN,adminList);
+        intent1.putExtra(Constants.KEY_LIST_GROUP_MEMBER,memberList);
+        startActivity(intent1);
     }
 
     private final ActivityResultLauncher<Intent> pickImage = registerForActivityResult(

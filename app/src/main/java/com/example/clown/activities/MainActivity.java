@@ -73,6 +73,8 @@ public class MainActivity extends FirestoreBaseActivity implements ConversationL
     private ActivityMainBinding binding;
     private PreferenceManager preferenceManager;
     private List<ChatMessage> conversations;
+    private List<String> memberIdList;// use this???
+    private List<String> adminIdList;
     private RecentConversationAdapter conversationAdapter;
     private FirebaseFirestore database;
 
@@ -283,8 +285,8 @@ public class MainActivity extends FirestoreBaseActivity implements ConversationL
                                     && queryDocumentSnapshot.get(Constants.KEY_SENDER_ID) != preferenceManager.getString(Constants.KEY_SENDER_ID))
                                 continue;
                             else{
-                                List<String> memberIdList =  convertObjectToList(queryDocumentSnapshot.get(Constants.KEY_GROUP_MEMBERS));
-                                List<String> adminIdList =  convertObjectToList(queryDocumentSnapshot.get(Constants.KEY_GROUP_ADMIN));
+                                memberIdList =  convertObjectToList(queryDocumentSnapshot.get(Constants.KEY_GROUP_MEMBERS));
+                                adminIdList =  convertObjectToList(queryDocumentSnapshot.get(Constants.KEY_GROUP_ADMIN));
 
                                 showMessageForGroup(memberIdList,queryDocumentSnapshot);
                                 showMessageForGroup(adminIdList,queryDocumentSnapshot);
@@ -470,6 +472,8 @@ public class MainActivity extends FirestoreBaseActivity implements ConversationL
         Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
         setUser(user);
         intent.putExtra(Constants.KEY_USER, user);
+        intent.putExtra(Constants.KEY_LIST_GROUP_ADMIN,(ArrayList<String>)adminIdList);
+        intent.putExtra(Constants.KEY_LIST_GROUP_MEMBER,(ArrayList<String>)memberIdList);
         startActivity(intent);
     }
 

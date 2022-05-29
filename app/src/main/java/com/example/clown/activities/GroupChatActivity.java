@@ -13,7 +13,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.clown.R;
-import com.example.clown.adapter.GroupChatAdapter;
+import com.example.clown.adapter.GroupAddMemberAdapter;
+import com.example.clown.adapter.GroupAddMemberAdapter;
 import com.example.clown.adapter.RecentConversationAdapter;
 import com.example.clown.adapter.UsersAdapter;
 import com.example.clown.adapter.UsersGCAdapter;
@@ -53,9 +54,8 @@ public class GroupChatActivity extends FirestoreBaseActivity implements GroupCha
     private ActivityGroupChatBinding binding;
     private PreferenceManager preferenceManager;
     HashMap<String,Object> createGroupChat;
-    User currentUser;
-    List<User>  usersGroupChat = new ArrayList<>();
-    List<User> users = new ArrayList<>();
+    List<User>  listMember = new ArrayList<>();
+    List<User> listUser = new ArrayList<>();
     private String groupId;
     private int VIEW_OF_USERS = 1;
     private int VIEW_OF_GROUP_USERS = 0;
@@ -63,25 +63,22 @@ public class GroupChatActivity extends FirestoreBaseActivity implements GroupCha
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Init();
+        setContentView(R.layout.activity_group_chat);
+        binding = ActivityGroupChatBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        preferenceManager = new PreferenceManager(getApplicationContext());
         getUsers();
         setListener();
     }
 
-    void Init(){
-        binding = ActivityGroupChatBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
-        preferenceManager = new PreferenceManager(getApplicationContext());
-        currentUser = preferenceManager.getUser();
-    }
 
 
-    private void getUserForGroupList(List<User> user,int viewType){
+    private void methodSetAdapterForList(List<User> user,int viewType){
         if (viewType == 0){
-            GroupChatAdapter groupChatAdapter = new GroupChatAdapter(user, GroupChatActivity.this);
+            GroupAddMemberAdapter groupChatAdapter = new GroupAddMemberAdapter(user, GroupChatActivity.this);
             binding.listUserAdded.setAdapter(groupChatAdapter);}
         else if (viewType == 1){
-            UsersGCAdapter usersGCAdapter = new UsersGCAdapter(users, GroupChatActivity.this);
+            UsersGCAdapter usersGCAdapter = new UsersGCAdapter(listUser, GroupChatActivity.this);
             binding.listFriend.setAdapter(usersGCAdapter);}
     }
 
@@ -89,32 +86,37 @@ public class GroupChatActivity extends FirestoreBaseActivity implements GroupCha
     private void setListener() {
         binding.imageBack.setOnClickListener(view -> { onBackPressed(); });
         binding.btnAdd.setOnClickListener(view ->{
-            CreateGroup();
+            List<String> listMemberId = new ArrayList<>();
+            List<String> arrTempForListAdmin = new ArrayList<>();
+            arrTempForListAdmin.add(preferenceManager.getString(Constants.KEY_DOCUMENT_REFERENCE_ID));
+
+            CreateGroup(listMemberId,arrTempForListAdmin);
+
             Intent intent = new Intent(getApplicationContext(),GroupActivity.class);
             intent.putExtra(Constants.KEY_DOCUMENT_ID,groupId);
             intent.putExtra(Constants.KEY_HASH_MAP_GROUP_MEMBERS,createGroupChat);
+            intent.putExtra(Constants.KEY_LIST_GROUP_ADMIN,(ArrayList<String>) arrTempForListAdmin);
+            intent.putExtra(Constants.KEY_LIST_GROUP_MEMBER,(ArrayList<String>)listMemberId);
             startActivity(intent);
             });
     }
 
-    private void CreateGroup() {
+    private void CreateGroup(List<String> listMemberId,List<String> arrTempForListAdmin) {
         createGroupChat = new HashMap<>();
         groupId = "" + System.currentTimeMillis();
-        List<String> usersId = new ArrayList<>();
-        String[] array = {preferenceManager.getString(Constants.KEY_DOCUMENT_REFERENCE_ID),""};
-        getUsersID(usersId,usersGroupChat);
+        methodGetIdFromUser(listMemberId,listMember);
         createGroupChat.put(Constants.KEY_LAST_MESSAGE,"");
-        createGroupChat.put(Constants.KEY_GROUP_ADMIN, Arrays.asList(array));
-        createGroupChat.put(Constants.KEY_GROUP_MEMBERS,usersId);
+        createGroupChat.put(Constants.KEY_GROUP_ADMIN, arrTempForListAdmin);
+        createGroupChat.put(Constants.KEY_GROUP_MEMBERS,listMemberId);
         createGroupChat.put(Constants.KEY_SENDER_ID,preferenceManager.getString(Constants.KEY_DOCUMENT_REFERENCE_ID));
         createGroupChat.put(Constants.KEY_RECEIVER_ID,groupId);
         createGroupChat.put(Constants.KEY_TIMESTAMP,new Date());
     }
 
-    private void getUsersID(List<String> usersId, List<User> usersGroupChat) {
+    private void methodGetIdFromUser(List<String> listMemberId, List<User> usersGroupChat) {
         for (User user:usersGroupChat
              ) {
-            usersId.add(user.getId());
+            listMemberId.add(user.id);
         }
     }
 
@@ -134,16 +136,16 @@ public class GroupChatActivity extends FirestoreBaseActivity implements GroupCha
                                 continue;
                             }
                             User user = new User();
-                            user.setName(queryDocumentSnapshot.getString(Constants.KEY_NAME));
-                            user.setEmail(queryDocumentSnapshot.getString(Constants.KEY_EMAIL));
-                            user.setRawImage(queryDocumentSnapshot.getString(Constants.KEY_IMAGE));
-                            user.setToken(queryDocumentSnapshot.getString(Constants.KEY_FCM_TOKEN));
-                            user.setId(queryDocumentSnapshot.getId());
-                            users.add(user);
+                            user.name = queryDocumentSnapshot.getString(Constants.KEY_NAME);
+                            user.email = queryDocumentSnapshot.getString(Constants.KEY_EMAIL);
+                            user.image = queryDocumentSnapshot.getString(Constants.KEY_IMAGE);
+                            user.token = queryDocumentSnapshot.getString(Constants.KEY_FCM_TOKEN);
+                            user.id = queryDocumentSnapshot.getId();
+                            listUser.add(user);
                         }
-                        if(users.size() > 0)
+                        if(listUser.size() > 0)
                         {
-                            UsersGCAdapter usersGCAdapter = new UsersGCAdapter(users, GroupChatActivity.this);
+                            UsersGCAdapter usersGCAdapter = new UsersGCAdapter(listUser, GroupChatActivity.this);
                             binding.listFriend.setAdapter(usersGCAdapter);
                             binding.listFriend.setVisibility(View.VISIBLE);
 
@@ -179,10 +181,10 @@ public class GroupChatActivity extends FirestoreBaseActivity implements GroupCha
 
     @Override
     public void onGroupChatClicked(User user) {
-        usersGroupChat.remove(user);
-        users.add(user);
-        getUserForGroupList(users,VIEW_OF_USERS);
-        getUserForGroupList(usersGroupChat,VIEW_OF_GROUP_USERS);
+        listMember.remove(user);
+        listUser.add(user);
+        methodSetAdapterForList(listUser,VIEW_OF_USERS);
+        methodSetAdapterForList(listMember,VIEW_OF_GROUP_USERS);
     }
 
     @Override
@@ -192,12 +194,12 @@ public class GroupChatActivity extends FirestoreBaseActivity implements GroupCha
 
     @Override
     public void onUserGCClicked(User user) {
-        users.remove(user);
+        listUser.remove(user);
 
 
-        getUserForGroupList(users,VIEW_OF_USERS);
-        usersGroupChat.add(user);
-        getUserForGroupList(usersGroupChat,VIEW_OF_GROUP_USERS);
+        methodSetAdapterForList(listUser,VIEW_OF_USERS);
+        listMember.add(user);
+        methodSetAdapterForList(listMember,VIEW_OF_GROUP_USERS);
 
     }
 }

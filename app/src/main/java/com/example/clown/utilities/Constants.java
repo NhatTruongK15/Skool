@@ -1,9 +1,13 @@
 package com.example.clown.utilities;
 
 import java.security.PublicKey;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class Constants {
+    public static final String KEY_LIST_GROUP_ADMIN = "adminList";
+    public static final String KEY_LIST_GROUP_MEMBER = "memberList";
     public static final String KEY_GROUP_NAME = "groupname";
     public static final String KEY_HASH_MAP_GROUP_MEMBERS = "hashmap";
     public static final String KEY_GROUP_MEMBERS = "members";
