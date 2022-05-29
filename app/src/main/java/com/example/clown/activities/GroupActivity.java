@@ -34,7 +34,7 @@ public class GroupActivity extends AppCompatActivity {
     private ActivityGroupBinding binding;
     private String encodedImage;
     private String documentId;
-    private User currentUser;
+    private User currentGroup;
     private PreferenceManager preferenceManager;
 
     @Override
@@ -51,7 +51,7 @@ public class GroupActivity extends AppCompatActivity {
         binding.btnAddGroupMember.setOnClickListener(view -> {
             if(binding.etGroupName.getText().toString().trim() == "") { Toast.makeText(GroupActivity.this,"Vui lòng nhập tên nhóm!",Toast.LENGTH_SHORT).show();}
 
-            currentUser = new User();
+            currentGroup = new User();
 
             //Them thong tin vao database
             Intent intent = getIntent();
@@ -61,10 +61,11 @@ public class GroupActivity extends AppCompatActivity {
             createGroupChat.put(Constants.KEY_GROUP_NAME,binding.etGroupName.getText().toString().trim());
             database.collection(Constants.KEY_COLLECTION_CONVERSATIONS).document(documentId).set(createGroupChat);
 
+
             //Information for receiver
-            currentUser.id = documentId;
-            currentUser.image = encodedImage;
-            currentUser.name = binding.etGroupName.getText().toString().trim();
+            currentGroup.setId(documentId);
+            currentGroup.setRawImage(encodedImage);
+            currentGroup.setName(binding.etGroupName.getText().toString().trim());
 
             methodSwitchToChat();
 
@@ -82,7 +83,7 @@ public class GroupActivity extends AppCompatActivity {
         ArrayList<String> adminList = (ArrayList<String>) getIntent().getSerializableExtra(Constants.KEY_LIST_GROUP_ADMIN);
         ArrayList<String> memberList = (ArrayList<String>) getIntent().getSerializableExtra(Constants.KEY_LIST_GROUP_MEMBER);
         Intent intent1 = new Intent(getApplicationContext(),ChatActivity.class);
-        intent1.putExtra(Constants.KEY_USER,currentUser);
+        intent1.putExtra(Constants.KEY_USER,currentGroup);
         intent1.putExtra(Constants.KEY_LIST_GROUP_ADMIN,adminList);
         intent1.putExtra(Constants.KEY_LIST_GROUP_MEMBER,memberList);
         startActivity(intent1);

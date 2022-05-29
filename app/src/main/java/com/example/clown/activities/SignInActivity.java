@@ -82,7 +82,7 @@ public class SignInActivity extends AgoraBaseActivity {
         bindAgoraService();
 
         // check if we've already logged in
-        if (preferenceManager.getBoolean(Constants.KEY_AVAILABILITY)) {
+        if (preferenceManager.getBoolean(Constants.KEY_IS_SIGNED_IN)) {
             mIsLoggedIn = true;
             toAgoraService(Constants.MSG_AGORA_LOG_IN, null);
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
