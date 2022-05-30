@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Base64;
 import android.view.InputQueue;
 import android.view.View;
@@ -38,7 +40,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.gson.Gson;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -104,6 +108,12 @@ public class GroupChatActivity extends FirestoreBaseActivity implements GroupCha
             intent.putExtra(Constants.KEY_HASH_MAP_GROUP_MEMBERS, createGroupChat);
             intent.putExtra(Constants.KEY_LIST_GROUP_ADMIN, (ArrayList<String>) arrTempForListAdmin);
             intent.putExtra(Constants.KEY_LIST_GROUP_MEMBER, (ArrayList<String>) listMemberId);
+
+            Bundle args = new Bundle();
+            args.putSerializable("ARRAYLIST",(Serializable)listMember);
+            intent.putExtra("BUNDLE",args);
+
+
             startActivity(intent);
         });
     }
@@ -122,7 +132,8 @@ public class GroupChatActivity extends FirestoreBaseActivity implements GroupCha
 
     private void methodGetIdFromUser(List<String> listMemberId, List<User> usersGroupChat) {
         for (User user : usersGroupChat
-        ) {
+        )
+        {
             listMemberId.add(user.getId());
 
         }
@@ -143,7 +154,7 @@ public class GroupChatActivity extends FirestoreBaseActivity implements GroupCha
                             }
                             User user = new User();
                             user = queryDocumentSnapshot.toObject(User.class);
-user.setId(queryDocumentSnapshot.getString(Constants.KEY_USER_ID));
+                            user.setId(queryDocumentSnapshot.getString(Constants.KEY_USER_ID));
                             listUser.add(user);
                         }
                         if (listUser.size() > 0) {

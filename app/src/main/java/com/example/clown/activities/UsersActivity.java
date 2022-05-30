@@ -50,7 +50,7 @@ public class UsersActivity extends FirestoreBaseActivity implements UserListener
                 .get()
                 .addOnCompleteListener(task -> {
                     loading(false);
-                    String currentUserId = preferenceManager.getString(Constants.KEY_DOCUMENT_REFERENCE_ID);
+                    String currentUserId = currentUser.getId();
                     if(task.isSuccessful() && task.getResult() != null)
                     {
                         List<User> users = new ArrayList<>();
