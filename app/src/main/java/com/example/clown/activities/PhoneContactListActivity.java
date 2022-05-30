@@ -1,4 +1,4 @@
-package com.example.clown;
+package com.example.clown.activities;
 
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
@@ -158,7 +158,7 @@ public class PhoneContactListActivity extends AppCompatActivity implements UserL
         FirebaseFirestore database = FirebaseFirestore.getInstance();
         List<User> newUsersList = new ArrayList<>();
         for (User user : users) {
-            if (user.phoneNumber != null && user.phoneNumber.contains(phoneNumb)) {
+            if (user.getPhoneNumber() != null && user.getPhoneNumber().contains(phoneNumb)) {
                 newUsersList.add(user);
             }
         }
@@ -187,12 +187,12 @@ public class PhoneContactListActivity extends AppCompatActivity implements UserL
                                 continue;
                             }
                             User user = new User();
-                            user.name = queryDocumentSnapshot.getString(Constants.KEY_NAME);
-                            user.email = queryDocumentSnapshot.getString(Constants.KEY_EMAIL);
-                            user.image = queryDocumentSnapshot.getString(Constants.KEY_IMAGE);
-                            user.token = queryDocumentSnapshot.getString(Constants.KEY_FCM_TOKEN);
-                            user.phoneNumber = queryDocumentSnapshot.getString(Constants.KEY_PHONE_NUMBER);
-                            user.id = queryDocumentSnapshot.getId();
+                            user.setName(queryDocumentSnapshot.getString(Constants.KEY_NAME));
+                            user.setEmail(queryDocumentSnapshot.getString(Constants.KEY_EMAIL));
+                            user.setRawImage(queryDocumentSnapshot.getString(Constants.KEY_IMAGE));
+                            user.setToken(queryDocumentSnapshot.getString(Constants.KEY_FCM_TOKEN));
+                            user.setPhoneNumber(queryDocumentSnapshot.getString(Constants.KEY_PHONE_NUMBER));
+                            user.setId(queryDocumentSnapshot.getId());
                             users.add(user);
                         }
                         if (users.size() > 0) {

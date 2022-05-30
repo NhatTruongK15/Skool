@@ -35,9 +35,9 @@ public class MessagingService extends FirebaseMessagingService {
         super.onMessageReceived(message);
 
         User user = new User();
-        user.id = message.getData().get(Constants.KEY_DOCUMENT_REFERENCE_ID);
-        user.name = message.getData().get(Constants.KEY_NAME);
-        user.token = message.getData().get(Constants.KEY_FCM_TOKEN);
+        user.setId(message.getData().get(Constants.KEY_DOCUMENT_REFERENCE_ID));
+        user.setName(message.getData().get(Constants.KEY_NAME));
+        user.setToken( message.getData().get(Constants.KEY_FCM_TOKEN));
 
         int notificationId = new Random().nextInt();
         String channelId = "chat_message";
@@ -56,7 +56,7 @@ public class MessagingService extends FirebaseMessagingService {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, channelId);
         builder.setSmallIcon(R.drawable.ic_notification);
-        builder.setContentTitle(user.name);
+        builder.setContentTitle(user.getName());
         builder.setContentText(message.getData().get(Constants.KEY_MESSAGE));
         builder.setStyle(new NotificationCompat.BigTextStyle().bigText(
                 message.getData().get(Constants.KEY_MESSAGE)

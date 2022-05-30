@@ -1,9 +1,15 @@
 package com.example.clown.utilities;
 
 import java.security.PublicKey;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class Constants {
+    public static final String KEY_LIST_GROUP_ADMIN = "adminList";
+    public static final String KEY_LIST_GROUP_MEMBER = "memberList";
+    public static final String KEY_GROUP_NAME = "groupname";
+    public static final String KEY_HASH_MAP_GROUP_MEMBERS = "hashmap";
     public static final String KEY_GROUP_MEMBERS = "members";
     public static final String KEY_GROUP_ADMIN = "admin";
     public static final String KEY_DOCUMENT_ID = "documentId";
@@ -18,6 +24,7 @@ public class Constants {
     public static final String KEY_USER_ID = "userID"; // authencation ID not use anymore
     public static final String KEY_IMAGE = "image";
     public static final String KEY_FCM_TOKEN = "fcmToken";
+    public static final String KEY_EDIT_PROFILETYPE = "editProfileType";
     public static final String KEY_USER = "user";
     public static final String KEY_COLLECTION_CHAT = "chat";
     public static final String KEY_SENDER_ID ="senderId";

@@ -132,8 +132,6 @@
 
     <!--nav bar Layout-->
         <!--menu sidebar-->
-
-
             <com.google.android.material.navigation.NavigationView
                 android:id="@+id/NavMenubarLayout"
                 android:layout_width="@dimen/_240sdp"
@@ -167,7 +165,7 @@
                             android:id="@+id/name"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="10dp"
+                            android:layout_marginTop="30dp"
                             android:text="Name"
                             android:textColor="@color/white"
                             android:textStyle="bold" />
@@ -179,13 +177,7 @@
                             android:text="Phone Number"
                             android:textColor="#AE9F9F"
                             android:textStyle="bold" />
-                        <TextView
-                            android:id="@+id/Email"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Email"
-                            android:textColor="#AE9F9F"
-                            android:textStyle="bold" />
+                        />
                     </LinearLayout>
 
                     <View
@@ -195,6 +187,7 @@
                         android:background="#E0A96D" />
 
                     <LinearLayout
+                        android:id="@+id/llcNewGroup"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="#17212b"

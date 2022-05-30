@@ -24,6 +24,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.clown.R;
 import com.example.clown.adapter.RecentConversationAdapter;
+import com.example.clown.adapter.UsersGCAdapter;
 import com.example.clown.agora.AgoraService;
 import com.example.clown.databinding.ActivityMainBinding;
 import com.example.clown.listeners.ConversationListener;
@@ -33,26 +34,37 @@ import com.example.clown.models.GroupUser;
 import com.example.clown.models.User;
 import com.example.clown.utilities.Constants;
 import com.example.clown.utilities.PreferenceManager;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.core.Tag;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends FirestoreBaseActivity implements ConversationListener, GroupChatListener {
 
     public User getUser() {
         return user;
     }
-
     public void setUser(User user) {
         this.user = user;
     }
@@ -61,6 +73,8 @@ public class MainActivity extends FirestoreBaseActivity implements ConversationL
     private ActivityMainBinding binding;
     private PreferenceManager preferenceManager;
     private List<ChatMessage> conversations;
+    private List<String> memberIdList;// use this???
+    private List<String> adminIdList;
     private RecentConversationAdapter conversationAdapter;
     private FirebaseFirestore database;
 
@@ -161,12 +175,21 @@ public class MainActivity extends FirestoreBaseActivity implements ConversationL
         unbindAgoraService();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        user = preferenceManager.getUser();
+        loadUserDetails();
+    }
+
     private void init() {
         conversations = new ArrayList<>();
         conversationAdapter = new RecentConversationAdapter(conversations, this);
         binding.conversationRecyclerView.setAdapter(conversationAdapter);
         database = FirebaseFirestore.getInstance();
-        binding.NavMenubarLayout.setVisibility(View.GONE);
+
+       user = preferenceManager.getUser();
+
     }
     private void setListener() {
         binding.imageSignOut.setOnClickListener(v -> signOut());
@@ -179,7 +202,6 @@ public class MainActivity extends FirestoreBaseActivity implements ConversationL
             @Override
             public void onClick(View v) {
                DrawerLayout drawerLayout = binding.drawerLayout;
-
                 drawerLayout.openDrawer(GravityCompat.START);
             }
         });
@@ -192,15 +214,33 @@ public class MainActivity extends FirestoreBaseActivity implements ConversationL
                 startActivity(intent);
             }
         });
+        binding.llcNewGroup.setOnClickListener(v -> {
+            Intent intent = new Intent(getApplicationContext(),GroupChatActivity.class);
+            intent.putExtra(Constants.KEY_DOCUMENT_REFERENCE_ID,getUser());
+            startActivity(intent);
+        });
+
+        binding.imageProfile.setOnClickListener(v -> {
+            Intent intent = new Intent(getApplicationContext(),MyProfileActivity.class);
+            intent.putExtra(Constants.KEY_DOCUMENT_REFERENCE_ID,getUser());
+            startActivity(intent);
+        });
     }
 
     private void loadUserDetails() {
-        binding.name.setText(preferenceManager.getString(Constants.KEY_NAME));
+       /* binding.name.setText(preferenceManager.getString(Constants.KEY_NAME));
         byte[] bytes = Base64.decode(preferenceManager.getString(Constants.KEY_IMAGE), Base64.DEFAULT);
         Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
         binding.imageProfile.setImageBitmap(bitmap);
         binding.Phone.setText(preferenceManager.getString(Constants.KEY_PHONE_NUMBER));
-        binding.Email.setText(preferenceManager.getString(Constants.KEY_EMAIL));
+        //binding.Email.setText(preferenceManager.getString(Constants.KEY_EMAIL));*/
+
+
+        binding.name.setText(user.getName());
+        byte[] bytes = Base64.decode(user.getRawImage(), Base64.DEFAULT);
+        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+        binding.imageProfile.setImageBitmap(bitmap);
+        binding.Phone.setText(user.getPhoneNumber());
     }
 
     private void showToast(String message) {
@@ -209,13 +249,73 @@ public class MainActivity extends FirestoreBaseActivity implements ConversationL
     }
 
     private void listenConversation() {
-        database.collection(Constants.KEY_COLLECTION_CONVERSATIONS)
-                .whereEqualTo(Constants.KEY_SENDER_ID, preferenceManager.getString(Constants.KEY_DOCUMENT_REFERENCE_ID))
-                .addSnapshotListener(eventListener);
-        database.collection(Constants.KEY_COLLECTION_CONVERSATIONS)
-                .whereEqualTo(Constants.KEY_RECEIVER_ID, preferenceManager.getString(Constants.KEY_DOCUMENT_REFERENCE_ID))
-                .addSnapshotListener(eventListener);
+            loadGroupConversation();
+            database.collection(Constants.KEY_COLLECTION_CONVERSATIONS)
+                    .whereEqualTo(Constants.KEY_SENDER_ID, user.getId())
+                    .addSnapshotListener(eventListener);
+            database.collection(Constants.KEY_COLLECTION_CONVERSATIONS)
+                    .whereEqualTo(Constants.KEY_RECEIVER_ID, user.getId())
+                    .addSnapshotListener(eventListener);
+
     }
+
+    public static List<String> convertObjectToList(Object obj) {
+        List<String> list = new ArrayList<>();
+        if (obj.getClass().isArray()) {
+            list = Arrays.asList((String[])obj);
+        } else if (obj instanceof Collection) {
+            list = new ArrayList<>((Collection<String>)obj);
+        }
+        return list;
+    }
+
+    private void loadGroupConversation() {
+        database.collection(Constants.KEY_COLLECTION_CONVERSATIONS)
+                .get()
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(getApplicationContext(),"Failed",Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnCompleteListener(task -> {
+                    if(task.isSuccessful() && task.getResult() != null){
+                        for(QueryDocumentSnapshot queryDocumentSnapshot: task.getResult()) {
+                            if(!checkGroupConversation(queryDocumentSnapshot.getId())
+                                    && queryDocumentSnapshot.get(Constants.KEY_SENDER_ID) != preferenceManager.getString(Constants.KEY_SENDER_ID))
+                                continue;
+                            else{
+                                memberIdList =  convertObjectToList(queryDocumentSnapshot.get(Constants.KEY_GROUP_MEMBERS));
+                                adminIdList =  convertObjectToList(queryDocumentSnapshot.get(Constants.KEY_GROUP_ADMIN));
+
+                                showMessageForGroup(memberIdList,queryDocumentSnapshot);
+                                showMessageForGroup(adminIdList,queryDocumentSnapshot);
+
+                            }
+                        }
+                    }
+                });
+
+    }
+
+    private void showMessageForGroup(List<String> list,QueryDocumentSnapshot queryDocumentSnapshot){
+        for (String memberId: list)
+        {
+            if(memberId.equals(user.getId())){
+                database.collection(Constants.KEY_COLLECTION_CONVERSATIONS)
+                        .document(queryDocumentSnapshot.getId())
+                        .get()
+                        .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                            @Override
+                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                conversations.add(isGroupConversationAdded(documentSnapshot));
+                                showMessageList(conversations);
+                            }
+                        });
+            }
+        }
+    }
+
 
     private final EventListener<QuerySnapshot> eventListener = (value, error) -> {
         if (error != null) {
@@ -223,45 +323,113 @@ public class MainActivity extends FirestoreBaseActivity implements ConversationL
         }
         if (value != null) {
             for (DocumentChange documentChange : value.getDocumentChanges()) {
-                if (documentChange.getType() == DocumentChange.Type.ADDED) {
-                    String senderId = documentChange.getDocument().getString(Constants.KEY_SENDER_ID);
-                    String receiverId = documentChange.getDocument().getString(Constants.KEY_RECEIVER_ID);
-                    ChatMessage chatMessage = new ChatMessage();
-                    chatMessage.senderId = senderId;
-                    chatMessage.receiverId = receiverId;
-                    if (preferenceManager.getString(Constants.KEY_USER_ID).equals(senderId)) {
-                        chatMessage.conversationImage = documentChange.getDocument().getString(Constants.KEY_RECEIVER_IMAGE);
-                        chatMessage.conversationName = documentChange.getDocument().getString(Constants.KEY_RECEIVER_NAME);
-                        chatMessage.conversationId = documentChange.getDocument().getString(Constants.KEY_RECEIVER_ID);
-                    } else {
-                        chatMessage.conversationImage = documentChange.getDocument().getString(Constants.KEY_SENDER_IMAGE);
-                        chatMessage.conversationName = documentChange.getDocument().getString(Constants.KEY_SENDER_NAME);
-                        chatMessage.conversationId = documentChange.getDocument().getString(Constants.KEY_SENDER_ID);
-
-                    }
-                    chatMessage.message = documentChange.getDocument().getString(Constants.KEY_LAST_MESSAGE);
-                    chatMessage.dateObject = documentChange.getDocument().getDate(Constants.KEY_TIMESTAMP);
-
-                    conversations.add(chatMessage);
-                } else if (documentChange.getType() == DocumentChange.Type.MODIFIED) {
-                    for (int i = 0; i < conversations.size(); i++) {
-                        String senderId = documentChange.getDocument().getString(Constants.KEY_SENDER_ID);
-                        String receiverId = documentChange.getDocument().getString(Constants.KEY_RECEIVER_ID);
-                        if (conversations.get(i).senderId.equals(senderId) && conversations.get(i).receiverId.equals(receiverId)) {
-                            conversations.get(i).message = documentChange.getDocument().getString(Constants.KEY_LAST_MESSAGE);
-                            conversations.get(i).dateObject = documentChange.getDocument().getDate(Constants.KEY_TIMESTAMP);
-                            break;
-                        }
+                if(documentChange.getType() == DocumentChange.Type.ADDED){
+                    if(checkGroupConversation(documentChange.getDocument().getId())) {
+                        //conversations.add(isGroupConversationAdded(documentChange));
+                    } else{
+                        conversations.add(isUserConversationAdded(documentChange));
                     }
                 }
+                else if(documentChange.getType() == DocumentChange.Type.MODIFIED){
+                    if(checkGroupConversation(documentChange.getDocument().getId())) {
+                        conversations = isGroupConversationModified(documentChange);
+                    } else{
+                        conversations = isUserConversationModified(documentChange);
+                    }
+                }
+
             }
-            Collections.sort(conversations, (obj1, obj2) -> obj2.dateObject.compareTo(obj1.dateObject));
-            conversationAdapter.notifyDataSetChanged();
-            binding.conversationRecyclerView.smoothScrollToPosition(0);
-            binding.conversationRecyclerView.setVisibility(View.VISIBLE);
-            binding.progressBar.setVisibility(View.GONE);
+            showMessageList(conversations);
         }
     };
+
+    private void showMessageList(List<ChatMessage> conversations){
+        Collections.sort(conversations, (obj1, obj2) -> obj2.dateObject.compareTo(obj1.dateObject));
+        conversationAdapter.notifyDataSetChanged();
+        binding.conversationRecyclerView.smoothScrollToPosition(0);
+        binding.conversationRecyclerView.setVisibility(View.VISIBLE);
+        binding.progressBar.setVisibility(View.GONE);
+    }
+
+    private List<ChatMessage> isUserConversationModified(DocumentChange documentChange) {
+        String senderId = documentChange.getDocument().getString(Constants.KEY_SENDER_ID);
+        String receiverId = documentChange.getDocument().getString(Constants.KEY_RECEIVER_ID);
+        for (int i = 0; i < conversations.size(); i++) {
+            if (conversations.get(i).senderId.equals(senderId) && conversations.get(i).receiverId.equals(receiverId)) {
+                conversations.get(i).message = documentChange.getDocument().getString(Constants.KEY_LAST_MESSAGE);
+                conversations.get(i).dateObject = documentChange.getDocument().getDate(Constants.KEY_TIMESTAMP);
+                break;
+            }
+        }
+        return conversations;
+    }
+
+    private List<ChatMessage> isGroupConversationModified(DocumentChange documentChange) {
+        String senderId = documentChange.getDocument().getString(Constants.KEY_SENDER_ID);
+        String receiverId = documentChange.getDocument().getString(Constants.KEY_RECEIVER_ID);
+        for (int i = 0; i < conversations.size(); i++) {
+            if (conversations.get(i).receiverId.equals(receiverId)) {
+                conversations.get(i).message = documentChange.getDocument().getString(Constants.KEY_LAST_MESSAGE);
+                conversations.get(i).dateObject = documentChange.getDocument().getDate(Constants.KEY_TIMESTAMP);
+                break;
+            }
+        }
+        return conversations;
+    }
+
+
+    private ChatMessage isGroupConversationAdded(DocumentSnapshot documentSnapshot) {
+
+        String senderId = user.getId();
+        String receiverId = documentSnapshot.getId();
+        ChatMessage chatMessage = new ChatMessage();
+        chatMessage.senderId = senderId;
+        chatMessage.receiverId = receiverId;
+        chatMessage.conversationImage = documentSnapshot.getString(Constants.KEY_RECEIVER_IMAGE);
+        chatMessage.conversationName = documentSnapshot.getString(Constants.KEY_GROUP_NAME);
+        chatMessage.conversationId = documentSnapshot.getId();
+        if (documentSnapshot.getString(Constants.KEY_SENDER_ID).equals(senderId)) {
+            chatMessage.message = "You: " + documentSnapshot.getString(Constants.KEY_LAST_MESSAGE);
+        } else {
+            chatMessage.message = documentSnapshot.getString(Constants.KEY_LAST_MESSAGE);
+        }
+            chatMessage.dateObject = documentSnapshot.getDate(Constants.KEY_TIMESTAMP);
+        return chatMessage;
+    }
+
+    private ChatMessage isUserConversationAdded(DocumentChange documentChange) {
+        String senderId = documentChange.getDocument().getString(Constants.KEY_SENDER_ID);
+        String receiverId = documentChange.getDocument().getString(Constants.KEY_RECEIVER_ID);
+        ChatMessage chatMessage = new ChatMessage();
+        if (documentChange.getType() == DocumentChange.Type.ADDED) {
+            chatMessage.senderId = senderId;
+            chatMessage.receiverId = receiverId;
+            if (user.getId().equals(senderId)) {
+                chatMessage.conversationImage = documentChange.getDocument().getString(Constants.KEY_RECEIVER_IMAGE);
+                chatMessage.conversationName = documentChange.getDocument().getString(Constants.KEY_RECEIVER_NAME);
+                chatMessage.conversationId = documentChange.getDocument().getString(Constants.KEY_RECEIVER_ID);
+            } else {
+                chatMessage.conversationImage = documentChange.getDocument().getString(Constants.KEY_SENDER_IMAGE);
+                chatMessage.conversationName = documentChange.getDocument().getString(Constants.KEY_SENDER_NAME);
+                chatMessage.conversationId = documentChange.getDocument().getString(Constants.KEY_SENDER_ID);
+
+            }
+            chatMessage.message = documentChange.getDocument().getString(Constants.KEY_LAST_MESSAGE);
+            chatMessage.dateObject = documentChange.getDocument().getDate(Constants.KEY_TIMESTAMP);
+
+        }
+        return chatMessage;
+    }
+
+    private boolean checkGroupConversation(String id) {
+        try{
+            double val = Double.parseDouble(id);
+            return true;
+        }
+        catch (Exception e){
+            return false;
+        }
+    }
 
     private void getToken() {
         FirebaseMessaging.getInstance().getToken().addOnSuccessListener(this::updateToken);
@@ -272,7 +440,7 @@ public class MainActivity extends FirestoreBaseActivity implements ConversationL
         FirebaseFirestore database = FirebaseFirestore.getInstance();
         DocumentReference documentReference =
                 database.collection(Constants.KEY_COLLECTION_USERS).document(
-                        preferenceManager.getString(Constants.KEY_DOCUMENT_REFERENCE_ID)
+                        user.getId()
                 );
         documentReference.update(Constants.KEY_FCM_TOKEN, token)
                 .addOnFailureListener(e -> showToast("Failed"));
@@ -284,7 +452,7 @@ public class MainActivity extends FirestoreBaseActivity implements ConversationL
         FirebaseFirestore database = FirebaseFirestore.getInstance();
         DocumentReference documentReference =
                 database.collection(Constants.KEY_COLLECTION_USERS).document(
-                        preferenceManager.getString(Constants.KEY_DOCUMENT_REFERENCE_ID)
+                        user.getId()
                 );
         HashMap<String, Object> updates = new HashMap<>();
         updates.put(Constants.KEY_FCM_TOKEN, FieldValue.delete());
@@ -304,15 +472,15 @@ public class MainActivity extends FirestoreBaseActivity implements ConversationL
         Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
         setUser(user);
         intent.putExtra(Constants.KEY_USER, user);
+        intent.putExtra(Constants.KEY_LIST_GROUP_ADMIN,(ArrayList<String>)adminIdList);
+        intent.putExtra(Constants.KEY_LIST_GROUP_MEMBER,(ArrayList<String>)memberIdList);
         startActivity(intent);
     }
 
 
     @Override
     public void onGroupChatClicked(GroupUser groupUser) {
-        Intent intent = new Intent(getApplicationContext(), GChatActivity.class);
-        intent.putExtra(Constants.KEY_USER, groupUser);
-        startActivity(intent);
+
     }
 
     @Override

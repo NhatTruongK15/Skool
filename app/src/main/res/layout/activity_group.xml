@@ -6,45 +6,55 @@
     android:layout_height="match_parent"
     android:background="@android:color/holo_green_light"
     tools:context=".activities.GroupActivity">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/imageBack"
+        android:layout_width="@dimen/_30sdp"
+        android:layout_height="@dimen/_30sdp"
+        android:layout_marginStart="@dimen/_16sdp"
+        android:layout_marginLeft="@dimen/_16sdp"
+        android:layout_marginTop="@dimen/_12sdp"
+        android:background="@drawable/background_icon"
+        android:padding="@dimen/_6sdp"
+        android:src="@drawable/ic_back"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:tint="@color/white"/>
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/select_user"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_14ssp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/imageBack"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/imageBack" />
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btnAddGroupMember"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_marginBottom="@dimen/_10sdp"
         android:layout_marginEnd="@dimen/_10sdp"
-        android:src="@drawable/ic_add"
+        android:src="@drawable/ic_action_add_group"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         />
-
-    <EditText
-        android:id="@+id/txtSearchMember"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="@dimen/_10sdp"
-        android:layout_marginEnd="@dimen/_10ssp"
-        android:background="@drawable/background_search"
-        android:hint="Tìm kiếm tên nhóm"
-        android:inputType="text"
-        android:paddingStart="@dimen/_16sdp"
-        android:paddingEnd="@dimen/_16sdp"
-        android:textColor="@android:color/black"
-        android:textColorHint="@android:color/black"
-        app:layout_constraintBottom_toBottomOf="@+id/btnAddGroupMember"
-        app:layout_constraintEnd_toStartOf="@id/btnAddGroupMember"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/btnAddGroupMember"
-        app:layout_constraintVertical_bias="0.0" />
 
     <FrameLayout
         android:id="@+id/frameLayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="@dimen/_16sdp"
         android:background="@drawable/background_content_bottom"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnAddGroupMember">
+        app:layout_constraintTop_toBottomOf="@+id/llAddNameNImage"
+        app:layout_constraintVertical_bias="0.0"
+        android:layout_marginTop="@dimen/_10sdp"
+        tools:layout_editor_absoluteX="16dp">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/userRecyclerView"
@@ -75,5 +85,35 @@
             android:textSize="@dimen/_12ssp"
             android:visibility="gone" />
 
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/llAddNameNImage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/imageBack"
+        tools:layout_editor_absoluteX="3dp"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:orientation="horizontal">
+
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:id="@+id/imageProfile"
+            android:layout_width="@dimen/_60sdp"
+            android:layout_height="@dimen/_60sdp"
+            android:background="@drawable/background_image"
+            android:backgroundTint="#44A3CD"
+            android:scaleType="center"
+            android:src="@drawable/ic_add_group_image"
+            android:layout_marginLeft="@dimen/_10sdp"
+            app:riv_oval="true" />
+
+        <EditText
+            android:id="@+id/etGroupName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Tên nhóm"
+            android:layout_marginLeft="@dimen/_80sdp"
+            android:layout_marginRight="@dimen/_20sdp"
+            android:layout_gravity="center|left"/>
     </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

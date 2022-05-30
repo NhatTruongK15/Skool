@@ -14,4 +14,32 @@
     <string name="select_user">Select User</string>
     <string name="online">Online</string>
     <string name="mobile">Mobile</string>
+
+    <!--Contacts Activity-->
+    <string name="tab_item_friends_title">Friends</string>
+    <string name="tab_item_phone_contacts_title">Phone Contacts</string>
+    <string name="tab_item_pending_requests_title">Pending Requests</string>
+
+    <!--Friend List Item-->
+    <string name="username_hint">Username</string>
+    <string name="phone_number_hint">Phone Number</string>
+    <string name="status_online">Online</string>
+    <string name="status_offline">Offline</string>
+    <string name="search_hint">Enter a phone number</string>
+
+    <!--User Profile Item-->
+    <string name="account_section">Account</string>
+    <string name="personal_section">Personal</string>
+    <string name="settings_section">Settings</string>
+    <string name="email_hint">Email</string>
+    <string name="first_name_hint">First Name</string>
+    <string name="last_name_hint">Last Name</string>
+    <string name="date_of_birth_hint">Date of Birth</string>
+    <string name="gender_hint">Gender</string>
+    <string name="bio_hint_1">Bio</string>
+    <string name="bio_hint_2">Say somethings about yourself</string>
+    <string name="notifications_and_sounds">Notifications and Sounds</string>
+    <string name="conversation">Conversation</string>
+    <string name="block_messages">Block Messages</string>
+    <string name="unfriend">Un-friend</string>
 </resources>

@@ -168,12 +168,13 @@
         android:background="@drawable/background_chat_input"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent">
+
         <androidx.appcompat.widget.AppCompatImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="65dp"
+            android:layout_height="63dp"
             android:padding="@dimen/_8sdp"
             android:src="@drawable/ic_emoji"
-            app:tint="@color/white"/>
+            app:tint="@color/white" />
 
     </FrameLayout>
 

@@ -1,0 +1,391 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.MyProfileActivity"
+    android:orientation="vertical">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_370sdp">
+        <View
+            android:id="@+id/viewBackground"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@drawable/background_content_top"
+
+            app:layout_constraintTop_toTopOf="parent"
+            tools:layout_editor_absoluteX="0dp" />
+
+        <ImageView
+            android:id="@+id/headerBackground"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_320sdp"
+            android:background="@color/primary"
+            android:src="@drawable/default_avatar"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imageInfo"
+            android:layout_width="@dimen/_30sdp"
+            android:layout_height="@dimen/_30sdp"
+            android:layout_marginTop="@dimen/_12sdp"
+            android:layout_marginEnd="@dimen/_16sdp"
+            android:layout_marginRight="@dimen/_16sdp"
+            android:padding="@dimen/_4sdp"
+            android:src="@drawable/ic_info"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/white" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imageBack"
+            android:layout_width="@dimen/_30sdp"
+            android:layout_height="@dimen/_30sdp"
+            android:layout_marginStart="@dimen/_16sdp"
+            android:layout_marginLeft="@dimen/_16sdp"
+            android:layout_marginTop="@dimen/_12sdp"
+            android:padding="@dimen/_5sdp"
+            android:src="@drawable/ic_back"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/white">
+
+        </androidx.appcompat.widget.AppCompatImageView>
+
+        <TextView
+            android:id="@+id/name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_15sdp"
+            android:layout_marginTop="@dimen/_280sdp"
+
+            android:text="Name"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_25sdp"
+
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:layout_editor_absoluteY="360dp" />
+        <!--android:background="#E0A96D"-->
+        <View
+            android:id="@+id/mySeperator2"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#DEDEDE"
+
+            app:layout_constraintTop_toBottomOf="@id/headerBackground"
+            app:layout_constraintVertical_bias="0.015"
+            tools:layout_editor_absoluteX="0dp" />
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="@dimen/_25sdp"
+            android:layout_height="@dimen/_25sdp"
+            app:layout_constraintBottom_toBottomOf="@id/viewBackground"
+            app:layout_constraintEnd_toEndOf="@id/viewBackground"
+            app:layout_constraintStart_toStartOf="@id/viewBackground"
+            app:layout_constraintTop_toTopOf="@id/viewBackground" />
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/ChangeImage"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_40sdp"
+            android:background="@color/primary"
+
+            app:layout_constraintTop_toBottomOf="@id/mySeperator2"
+            tools:layout_editor_absoluteX="0dp">
+
+            <ImageView
+                android:id="@+id/CameraIcon"
+                android:layout_width="@dimen/_30sdp"
+                android:layout_height="@dimen/_30sdp"
+                android:layout_marginStart="@dimen/_20sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginBottom="@dimen/_10sdp"
+                android:focusableInTouchMode="false"
+                android:minWidth="@dimen/_40sdp"
+                android:minHeight="@dimen/_40sdp"
+
+                android:src="@drawable/ic_camera"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/TextViewContact1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/_10sdp"
+                android:focusableInTouchMode="false"
+                android:text="Set Profile Photo"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_15sdp"
+
+                android:textStyle="normal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.107"
+                app:layout_constraintStart_toEndOf="@id/CameraIcon"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <View
+            android:id="@+id/mySeperator3"
+            android:layout_width="match_parent"
+            android:layout_height="10dp"
+
+            android:background="#DEDEDE"
+
+            app:layout_constraintTop_toBottomOf="@id/ChangeImage"
+            app:layout_constraintVertical_bias="0.002"
+            tools:layout_editor_absoluteX="0dp" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:isScrollContainer="true"
+            android:orientation="vertical">
+
+            <!--region ++++++++-ACCOUNT-++++++++-->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/_12sdp"
+                android:text="@string/account_section"
+                android:textColor="@color/text_description"
+                android:textSize="@dimen/_12ssp"
+                android:textStyle="bold" />
+
+            <!--Phone Number-->
+            <LinearLayout
+                android:id="@+id/ChangePhone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvProfilePhoneNumber"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/_12sdp"
+                    android:hint="@string/phone_number_hint"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/black"
+                    android:textSize="@dimen/_13ssp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/_12sdp"
+                    android:text="@string/phone_number_hint"
+                    tools:ignore="TextContrastCheck" />
+            </LinearLayout>
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_1sdp"
+                android:layout_marginHorizontal="@dimen/_12sdp"
+                android:layout_marginTop="@dimen/_6sdp"
+                android:background="@color/separator_1" />
+
+            <!--Email-->
+            <LinearLayout
+                android:id="@+id/ChangeEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvProfileEmail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/_12sdp"
+                    android:layout_marginTop="@dimen/_12sdp"
+                    android:hint="@string/email_hint"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/black"
+                    android:textSize="@dimen/_13ssp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/_12sdp"
+                    android:text="@string/email_hint"
+                    android:textColor="#757575"
+                    tools:ignore="TextContrastCheck" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_15sdp"
+                android:layout_marginTop="@dimen/_6sdp"
+                android:background="@color/separator_2" />
+            <!--endregion-->
+
+            <!--region ++++++++-PERSONAL-++++++++-->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/_12sdp"
+                android:text="@string/personal_section"
+                android:textColor="@color/text_description"
+                android:textSize="@dimen/_12ssp"
+                android:textStyle="bold" />
+
+            <!--First Name-->
+            <TextView
+                android:id="@+id/tvFirstName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_12sdp"
+                android:hint="@string/first_name_hint"
+                android:textColor="@color/black"
+                android:textColorHint="@color/black"
+                android:textSize="@dimen/_13ssp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_12sdp"
+                android:text="@string/first_name_hint"
+                android:textColor="#757575"
+                tools:ignore="TextContrastCheck" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_1sdp"
+                android:layout_marginHorizontal="@dimen/_12sdp"
+                android:layout_marginTop="@dimen/_6sdp"
+                android:background="@color/separator_1" />
+
+            <!--Last Name-->
+            <TextView
+                android:id="@+id/tvLastName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_12sdp"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:hint="@string/last_name_hint"
+                android:textColor="@color/black"
+                android:textColorHint="@color/black"
+                android:textSize="@dimen/_13ssp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_12sdp"
+                android:text="@string/last_name_hint"
+                tools:ignore="TextContrastCheck" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_1sdp"
+                android:layout_marginHorizontal="@dimen/_12sdp"
+                android:layout_marginTop="@dimen/_6sdp"
+                android:background="@color/separator_1" />
+
+            <!--Date of Birth-->
+            <TextView
+                android:id="@+id/tvProfileDateOfBirth"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_12sdp"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:hint="@string/date_of_birth_hint"
+                android:textColor="@color/black"
+                android:textColorHint="@color/black"
+                android:textSize="@dimen/_13ssp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_12sdp"
+                android:text="@string/date_of_birth_hint"
+                android:textColor="#757575"
+                tools:ignore="TextContrastCheck" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_1sdp"
+                android:layout_marginHorizontal="@dimen/_12sdp"
+                android:layout_marginTop="@dimen/_6sdp"
+                android:background="@color/separator_1" />
+
+            <!--Gender-->
+            <TextView
+                android:id="@+id/tvProfileGender"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_12sdp"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:hint="@string/gender_hint"
+                android:textColor="@color/black"
+                android:textColorHint="@color/black"
+                android:textSize="@dimen/_13ssp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_12sdp"
+                android:text="@string/gender_hint"
+                android:textColor="#757575"
+                tools:ignore="TextContrastCheck" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_1sdp"
+                android:layout_marginHorizontal="@dimen/_12sdp"
+                android:layout_marginTop="@dimen/_6sdp"
+                android:background="@color/separator_1" />
+
+            <!--Bio-->
+            <TextView
+                android:id="@+id/tvProfileBio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_12sdp"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:hint="@string/bio_hint_1"
+                android:textColor="@color/black"
+                android:textColorHint="@color/black"
+                android:textSize="@dimen/_13ssp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_12sdp"
+                android:text="@string/bio_hint_1"
+                android:textColor="#757575"
+                tools:ignore="TextContrastCheck" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_15sdp"
+                android:layout_marginTop="@dimen/_6sdp"
+                android:background="@color/separator_2" />
+            <!--endregion-->
+        </LinearLayout>
+    </ScrollView>
+
+
+</LinearLayout>

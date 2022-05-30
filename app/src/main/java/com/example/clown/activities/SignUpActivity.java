@@ -9,6 +9,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -22,6 +23,7 @@ import android.widget.Toast;
 
 import com.example.clown.R;
 import com.example.clown.agora.AgoraService;
+import com.example.clown.models.User;
 import com.example.clown.utilities.Constants;
 import com.example.clown.databinding.ActivitySignUpBinding;
 import com.example.clown.utilities.PreferenceManager;
@@ -155,7 +157,7 @@ public class SignUpActivity extends AgoraBaseActivity {
         //set default avatar
         Bitmap icon = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.default_avatar);
         binding.imageProfile.setImageBitmap(icon);
-        encodedImage = encodeImage(icon);
+        encodedImage = encodeImageSuper(icon);
     }
 
     @Override
@@ -231,7 +233,7 @@ public class SignUpActivity extends AgoraBaseActivity {
         binding.layoutImage.setOnClickListener(v -> {
             Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            pickImage.launch(intent);
+            PickImage.launch(intent);
         });
 
         binding.confirmButton.setOnClickListener(new View.OnClickListener() {
@@ -258,6 +260,7 @@ public class SignUpActivity extends AgoraBaseActivity {
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }
 
+
     //region Images handing references
     private String encodeImage(Bitmap bitmap) {
         int previewWidth = 150;
@@ -268,8 +271,38 @@ public class SignUpActivity extends AgoraBaseActivity {
         byte[] bytes = byteArrayOutputStream.toByteArray();
         return Base64.encodeToString(bytes, Base64.DEFAULT);
     }
+    private String encodeImageSuper(Bitmap bitmap){
+        int previewWidth = 720;
+        int previewHeight = 720;
+        //int previewHeight = bitmap.getHeight() * previewWidth / bitmap.getWidth();
+        Bitmap previewBitmap = Bitmap.createScaledBitmap(resizeBitmap(bitmap), previewWidth, previewHeight, false);
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        previewBitmap.compress(Bitmap.CompressFormat.JPEG,80,byteArrayOutputStream);
+        byte[] bytes = byteArrayOutputStream.toByteArray();
+        return Base64.encodeToString(bytes, Base64.DEFAULT);
+    }
 
-    private final ActivityResultLauncher<Intent> pickImage = registerForActivityResult(
+    private static final float PREFERRED_WIDTH = 720;
+    private static final float PREFERRED_HEIGHT = 720;
+    public static Bitmap resizeBitmap(Bitmap bitmap) {
+        int width = bitmap.getWidth();
+        int height = bitmap.getHeight();
+        float scaleWidth = PREFERRED_WIDTH / width;
+        float scaleHeight = PREFERRED_HEIGHT / height;
+
+        Matrix matrix = new Matrix();
+        matrix.postScale(scaleWidth, scaleHeight);
+        Bitmap resizedBitmap = Bitmap.createBitmap(
+                bitmap, 0, 0, width, height, matrix, false);
+      /*  if (resizedBitmap != null && !resizedBitmap.isRecycled()) {
+            resizedBitmap.recycle();
+            resizedBitmap = null;
+        }*/
+        bitmap.recycle();
+        return resizedBitmap;
+    }
+
+    private final ActivityResultLauncher<Intent> PickImage = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(), result -> {
                 if (result.getResultCode() == RESULT_OK) {
                     if (result.getData() != null) {
@@ -279,7 +312,7 @@ public class SignUpActivity extends AgoraBaseActivity {
                             Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
                             binding.imageProfile.setImageBitmap(bitmap);
                             //binding.textAddImage.setVisibility(View.GONE);
-                            encodedImage = encodeImage(bitmap);
+                            encodedImage = encodeImageSuper(bitmap);
                         } catch (FileNotFoundException e) {
                             e.printStackTrace();
                         }
@@ -324,14 +357,24 @@ public class SignUpActivity extends AgoraBaseActivity {
                                     .set(userInput)
                                     .addOnSuccessListener(documentReference -> {
                                         loading(binding.buttonSignUp, binding.progressBar, false);
+
+                                        User user = new User();
+                                        user.setId(currentUser.getUid());
+                                        user.setName(binding.inputName.getText().toString());
+                                        user.setPhoneNumber(binding.inputPhoneNumb.getText().toString());
+                                        user.setRawImage(encodedImage);
+                                        user.setEmail(binding.inputEmail.getText().toString());
+
+
                                         preferenceManager.putBoolean(Constants.KEY_IS_SIGNED_IN, true);
-                                        preferenceManager.putString(Constants.KEY_USER_ID, currentUser.getUid());
+                                        preferenceManager.putUser(user);
+/*                                      preferenceManager.putString(Constants.KEY_USER_ID, currentUser.getUid());
                                         preferenceManager.putString(Constants.KEY_PHONE_NUMBER, binding.inputPhoneNumb.getText().toString());
                                         preferenceManager.putString(Constants.KEY_EMAIL, binding.inputEmail.getText().toString());
 
                                         preferenceManager.putString(Constants.KEY_DOCUMENT_REFERENCE_ID, currentUser.getUid());
                                         preferenceManager.putString(Constants.KEY_NAME, binding.inputName.getText().toString());
-                                        preferenceManager.putString(Constants.KEY_IMAGE, encodedImage);
+                                        preferenceManager.putString(Constants.KEY_IMAGE, encodedImage);*/
 
                                         // LOGIN AGORA SERVER
                                         String userId = currentUser.getUid();

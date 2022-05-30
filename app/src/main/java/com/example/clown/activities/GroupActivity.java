@@ -1,9 +1,17 @@
 package com.example.clown.activities;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.util.Base64;
+import android.view.View;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.clown.R;
@@ -11,11 +19,22 @@ import com.example.clown.databinding.ActivityGroupBinding;
 import com.example.clown.models.User;
 import com.example.clown.utilities.Constants;
 import com.example.clown.utilities.PreferenceManager;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 
 public class GroupActivity extends AppCompatActivity {
 
+    private FirebaseFirestore database = FirebaseFirestore.getInstance();
     private ActivityGroupBinding binding;
+    private String encodedImage;
+    private String documentId;
+    private User currentGroup;
     private PreferenceManager preferenceManager;
 
     @Override
@@ -30,9 +49,70 @@ public class GroupActivity extends AppCompatActivity {
 
     private void setListener() {
         binding.btnAddGroupMember.setOnClickListener(view -> {
-            Intent intent = new Intent(getApplicationContext(),GroupChatActivity.class);
-            intent.putExtra(Constants.KEY_USER,preferenceManager.getString(Constants.KEY_USER));
-            startActivity(intent);
+            if(binding.etGroupName.getText().toString().trim() == "") { Toast.makeText(GroupActivity.this,"Vui lòng nhập tên nhóm!",Toast.LENGTH_SHORT).show();}
+
+            currentGroup = new User();
+
+            //Them thong tin vao database
+            Intent intent = getIntent();
+            HashMap<String,Object> createGroupChat = (HashMap<String, Object>) intent.getSerializableExtra(Constants.KEY_HASH_MAP_GROUP_MEMBERS);
+            documentId = (String) intent.getSerializableExtra(Constants.KEY_DOCUMENT_ID);
+            createGroupChat.put(Constants.KEY_RECEIVER_IMAGE,encodedImage);
+            createGroupChat.put(Constants.KEY_GROUP_NAME,binding.etGroupName.getText().toString().trim());
+            database.collection(Constants.KEY_COLLECTION_CONVERSATIONS).document(documentId).set(createGroupChat);
+
+
+            //Information for receiver
+            currentGroup.setId(documentId);
+            currentGroup.setRawImage(encodedImage);
+            currentGroup.setName(binding.etGroupName.getText().toString().trim());
+
+            methodSwitchToChat();
+
         });
+        binding.imageBack.setOnClickListener(v -> onBackPressed());
+        binding.imageProfile.setOnClickListener(v -> {
+            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            pickImage.launch(intent);
+        });
+    }
+
+    private void methodSwitchToChat() {
+
+        ArrayList<String> adminList = (ArrayList<String>) getIntent().getSerializableExtra(Constants.KEY_LIST_GROUP_ADMIN);
+        ArrayList<String> memberList = (ArrayList<String>) getIntent().getSerializableExtra(Constants.KEY_LIST_GROUP_MEMBER);
+        Intent intent1 = new Intent(getApplicationContext(),ChatActivity.class);
+        intent1.putExtra(Constants.KEY_USER,currentGroup);
+        intent1.putExtra(Constants.KEY_LIST_GROUP_ADMIN,adminList);
+        intent1.putExtra(Constants.KEY_LIST_GROUP_MEMBER,memberList);
+        startActivity(intent1);
+    }
+
+    private final ActivityResultLauncher<Intent> pickImage = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(), result -> {
+                if (result.getResultCode() == RESULT_OK) {
+                    if (result.getData() != null) {
+                        Uri imageUri = result.getData().getData();
+                        try {
+                            InputStream inputStream = getContentResolver().openInputStream(imageUri);
+                            Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                            binding.imageProfile.setImageBitmap(bitmap);
+                            encodedImage = encodeImage(bitmap);
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            });
+
+    private String encodeImage(Bitmap bitmap) {
+        int previewWidth = 150;
+        int previewHeight = bitmap.getHeight() * previewWidth / bitmap.getWidth();
+        Bitmap previewBitmap = Bitmap.createScaledBitmap(bitmap, previewWidth, previewHeight, false);
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        previewBitmap.compress(Bitmap.CompressFormat.JPEG, 50, byteArrayOutputStream);
+        byte[] bytes = byteArrayOutputStream.toByteArray();
+        return Base64.encodeToString(bytes, Base64.DEFAULT);
     }
 }

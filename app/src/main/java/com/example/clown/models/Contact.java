@@ -9,5 +9,4 @@ public class Contact {
         public String mobileNumber;
         public Bitmap photo;
         public Uri photoURI;
-
 }
