@@ -9,25 +9,28 @@ import com.google.gson.Gson;
 public class PreferenceManager {
     private final SharedPreferences sharedPreferences;
 
-    public PreferenceManager(Context context)
-    {
+    public PreferenceManager(Context context) {
         sharedPreferences = context.getSharedPreferences(Constants.KEY_REFERENCE_NAME, Context.MODE_PRIVATE);
     }
 
-    public void putBoolean(String key,Boolean value)
-    {
+    public void clear() {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.clear();
+        editor.apply();
+    }
+
+    // region -------------- ACCESSORS --------------
+    public void putBoolean(String key,Boolean value) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putBoolean(key,value);
         editor.apply();
     }
 
-    public Boolean getBoolean(String key)
-    {
+    public Boolean getBoolean(String key) {
         return sharedPreferences.getBoolean(key,false);
     }
 
-    public void putUser( User value)
-    {
+    public void putUser( User value) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         Gson gson = new Gson();
         String json = gson.toJson(value);
@@ -35,32 +38,20 @@ public class PreferenceManager {
         editor.apply();
     }
 
-    public User getUser()
-    {
+    public User getUser() {
         Gson gson = new Gson();
         String json = sharedPreferences.getString(Constants.KEY_USER, null);
-        User obj = gson.fromJson(json, User.class);
-        return obj;
+        return gson.fromJson(json, User.class);
     }
 
-    public void putString(String key, String value)
-    {
+    public void putString(String key, String value) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(key, value);
         editor.apply();
     }
 
-    public String getString(String key)
-    {
+    public String getString(String key) {
         return sharedPreferences.getString(key, null);
     }
-
-    public void clear()
-    {
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.clear();
-        editor.apply();
-    }
-
-
+    // endregion
 }

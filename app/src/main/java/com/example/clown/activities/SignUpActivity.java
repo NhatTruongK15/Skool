@@ -3,7 +3,6 @@ package com.example.clown.activities;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -22,7 +21,6 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.clown.R;
-import com.example.clown.agora.AgoraService;
 import com.example.clown.models.User;
 import com.example.clown.utilities.Constants;
 import com.example.clown.databinding.ActivitySignUpBinding;
@@ -46,7 +44,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -156,7 +153,6 @@ public class SignUpActivity extends AgoraBaseActivity {
 
         //set default avatar
         Bitmap icon = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.default_avatar);
-        binding.imageProfile.setImageBitmap(icon);
         encodedImage = encodeImageSuper(icon);
     }
 

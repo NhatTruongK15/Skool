@@ -8,6 +8,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ActivityManager;
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -25,6 +27,7 @@ import android.widget.Toast;
 import com.example.clown.agora.AgoraService;
 import com.example.clown.databinding.ActivitySignInBinding;
 import com.example.clown.models.User;
+import com.example.clown.services.MyJobService;
 import com.example.clown.utilities.Constants;
 import com.example.clown.utilities.PreferenceManager;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -41,6 +44,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import io.agora.rtm.RtmClient;
 
 public class SignInActivity extends AgoraBaseActivity {
+    private static final int JOB_ID = 613;
     private ActivitySignInBinding binding;
     private PreferenceManager preferenceManager;
     private ActivityResultLauncher<Intent> launcher;
@@ -53,6 +57,8 @@ public class SignInActivity extends AgoraBaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        //startJobService();
+        
         launcher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
             @Override
             public void onActivityResult(ActivityResult result) {
@@ -67,6 +73,17 @@ public class SignInActivity extends AgoraBaseActivity {
         setContentView(binding.getRoot());
         setListener();
         mIsLoggedIn = false;
+    }
+
+    private void startJobService() {
+        ComponentName componentName =  new ComponentName(this, MyJobService.class);
+        JobInfo jobInfo = new JobInfo.Builder(JOB_ID, componentName)
+                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+                .setPersisted(true)
+                .build();
+
+        JobScheduler jobScheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
+        jobScheduler.schedule(jobInfo);
     }
 
     @Override
