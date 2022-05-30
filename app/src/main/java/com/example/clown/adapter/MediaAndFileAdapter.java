@@ -240,7 +240,7 @@ public class MediaAndFileAdapter extends RecyclerView.Adapter<MediaAndFileAdapte
             }
             if (mediaAndFile.filePath != null) {
                 if (mediaAndFile.filePath.compareTo("") != 0) {
-                    getFileThumbnailFromURL(mediaAndFile.filePath);
+                    getFileThumbnailFromURL(mediaAndFile.finame);
                     binding.btnItem.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -333,13 +333,15 @@ public class MediaAndFileAdapter extends RecyclerView.Adapter<MediaAndFileAdapte
                     });
         }
 
-        public void getFileThumbnailFromURL(String url) {
-            Bitmap icon = BitmapFactory.decodeResource(itemView.getResources(),
-                    R.mipmap.documentfiledocpaper2562);
-            Bitmap scale=resizeBitmap(icon);
-            binding.imgItem.setImageBitmap(scale);
+        public void getFileThumbnailFromURL(String text) {
+//            Bitmap icon = BitmapFactory.decodeResource(itemView.getResources(),
+//                    R.mipmap.documentfiledocpaper2562);
+//            Bitmap scale=resizeBitmap(icon);
+//            binding.imgItem.setImageBitmap(scale);
+
 //            Glide.with(itemView).load(url).into(binding.imgItem);
 
+            binding.txtItem.setText(text);
         }
 
 
