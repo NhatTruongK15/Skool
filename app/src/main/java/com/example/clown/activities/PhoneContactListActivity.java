@@ -8,32 +8,21 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
-import android.content.ContentResolver;
-import android.content.ContentUris;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.view.View;
 import android.widget.ArrayAdapter;
 
-import com.example.clown.activities.ChatActivity;
 import com.example.clown.adapter.UsersAdapter;
 import com.example.clown.databinding.ActivityPhoneContactListBinding;
 import com.example.clown.listeners.UserListener;
-import com.example.clown.models.Contact;
 import com.example.clown.models.User;
 import com.example.clown.utilities.Constants;
 import com.example.clown.utilities.PreferenceManager;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -192,7 +181,7 @@ public class PhoneContactListActivity extends AppCompatActivity implements UserL
                             user.setRawImage(queryDocumentSnapshot.getString(Constants.KEY_IMAGE));
                             user.setToken(queryDocumentSnapshot.getString(Constants.KEY_FCM_TOKEN));
                             user.setPhoneNumber(queryDocumentSnapshot.getString(Constants.KEY_PHONE_NUMBER));
-                            user.setId(queryDocumentSnapshot.getId());
+                            user.setUserID(queryDocumentSnapshot.getId());
                             users.add(user);
                         }
                         if (users.size() > 0) {

@@ -163,7 +163,7 @@ public class MyProfileActivity extends AppCompatActivity {
                             Bitmap bitmap2 = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
 
                             database.collection(Constants.KEY_COLLECTION_USERS)
-                                    .document(currentUser.getId())
+                                    .document(currentUser.getUserID())
                                     .update(
                                             Constants.KEY_IMAGE, encodedImage
                                     );

@@ -1,7 +1,11 @@
 package com.example.clown.activities;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,11 +17,12 @@ import com.example.clown.utilities.PreferenceManager;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class BaseActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
-    protected static BaseApplication mBaseApplication;
     protected static PreferenceManager mPreferenceManager;
+    protected BaseApplication mBaseApplication;
     protected static User mCurrentUser;
+
     protected static boolean mIsInitialized = false;
-    protected static boolean mIsSignedIn = false;
+    protected static boolean mIsSignedIn;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -29,17 +34,6 @@ public class BaseActivity extends AppCompatActivity implements SharedPreferences
     protected void onDestroy() {
         super.onDestroy();
         clearReferences();
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        updateUserAvailability();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
     }
 
     @Override
@@ -69,23 +63,45 @@ public class BaseActivity extends AppCompatActivity implements SharedPreferences
 
     private void baseInit() {
         if (!mIsInitialized) {
-            mBaseApplication = (BaseApplication) getApplicationContext();
             mPreferenceManager = new PreferenceManager(getApplicationContext());
+            mBaseApplication = (BaseApplication) getApplicationContext();
+
+            if (mPreferenceManager.getBoolean(Constants.KEY_IS_SIGNED_IN) != null)
+                mIsSignedIn = mPreferenceManager.getBoolean(Constants.KEY_IS_SIGNED_IN);
+
             mIsInitialized = true;
         }
     }
 
     private void clearReferences() {
-        AppCompatActivity currentActivity = mBaseApplication.getCurrentActivity();
+        Activity currentActivity = mBaseApplication.getCurrentActivity();
         if (this.equals(currentActivity))
             mBaseApplication.setCurrentActivity(null);
     }
 
-    private void updateUserAvailability() {
+    protected void updateUserAvailability() {
+        if (mCurrentUser == null) return;
+
         FirebaseFirestore
                 .getInstance()
                 .collection(Constants.KEY_COLLECTION_USERS)
-                .document(mCurrentUser.getId())
-                .update(Constants.KEY_AVAILABILITY, true);
+                .document(mCurrentUser.getUserID())
+                .update(Constants.KEY_AVAILABILITY, mIsSignedIn);
+    }
+
+    protected boolean startActivity(Class<?> targetActivity, @Nullable Bundle transferData) {
+        try {
+            Intent intent = new Intent(getApplicationContext(), targetActivity);
+            intent.putExtra(Constants.KEY_TRANSFER_DATA, transferData);
+            startActivity(intent);
+            return true;
+        } catch (Exception ex) {
+            Log.e("[ERROR] ", ex.getMessage());
+            return false;
+        }
+    }
+
+    protected void showToast(String message) {
+        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }
 }

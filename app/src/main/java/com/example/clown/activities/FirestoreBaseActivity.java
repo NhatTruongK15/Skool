@@ -1,7 +1,6 @@
 package com.example.clown.activities;
 
 import android.os.Bundle;
-import android.os.Message;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,7 +21,7 @@ public class FirestoreBaseActivity extends AppCompatActivity {
         currentUser = preferenceManager.getUser();
         FirebaseFirestore database = FirebaseFirestore.getInstance();
         documentReference = database.collection(Constants.KEY_COLLECTION_USERS)
-                .document(currentUser.getId());
+                .document(currentUser.getUserID());
     }
 
     @Override

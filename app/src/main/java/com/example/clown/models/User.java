@@ -12,7 +12,7 @@ public class User implements Serializable {
     private String image;
     private String email;
     private String token;
-    private String id;
+    private String userID;
     private int availability;
     private String phoneNumber;
     private ArrayList<String> friendsList = new ArrayList<>();
@@ -89,12 +89,12 @@ public class User implements Serializable {
         this.email = email;
     }
 
-    public String getId() {
-        return id;
+    public String getUserID() {
+        return userID;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setUserID(String userID) {
+        this.userID = userID;
     }
     //endregion
 }

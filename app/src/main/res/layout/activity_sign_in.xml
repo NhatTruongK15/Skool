@@ -34,7 +34,7 @@
             android:textSize="@dimen/_12ssp"
             android:textStyle="bold" />
         <EditText
-            android:id="@+id/inputEmail"
+            android:id="@+id/inputPhoneNumberOrEmail"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_45sdp"
             android:layout_marginTop="@dimen/_40sdp"

@@ -15,22 +15,15 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.clown.R;
 import com.example.clown.adapter.UsersAdapter;
-import com.example.clown.adapter.UsersGCAdapter;
 import com.example.clown.databinding.ActivityGroupBinding;
-import com.example.clown.listeners.GroupChatListener;
-import com.example.clown.listeners.UserGCListener;
 import com.example.clown.listeners.UserListener;
-import com.example.clown.models.GroupUser;
 import com.example.clown.models.User;
 import com.example.clown.utilities.Constants;
 import com.example.clown.utilities.PreferenceManager;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
@@ -110,7 +103,7 @@ public class GroupActivity extends FirestoreBaseActivity implements UserListener
 
 
             //Information for receiver
-            currentGroup.setId(documentId);
+            currentGroup.setUserID(documentId);
             currentGroup.setRawImage(encodedImage);
             currentGroup.setName(binding.etGroupName.getText().toString().trim());
 

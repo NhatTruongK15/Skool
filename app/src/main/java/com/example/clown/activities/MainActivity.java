@@ -243,10 +243,10 @@ public class MainActivity extends FirestoreBaseActivity implements ConversationL
     private void listenConversation() {
             loadGroupConversation();
             database.collection(Constants.KEY_COLLECTION_CONVERSATIONS)
-                    .whereEqualTo(Constants.KEY_SENDER_ID, user.getId())
+                    .whereEqualTo(Constants.KEY_SENDER_ID, user.getUserID())
                     .addSnapshotListener(eventListener);
             database.collection(Constants.KEY_COLLECTION_CONVERSATIONS)
-                    .whereEqualTo(Constants.KEY_RECEIVER_ID, user.getId())
+                    .whereEqualTo(Constants.KEY_RECEIVER_ID, user.getUserID())
                     .addSnapshotListener(eventListener);
 
     }
@@ -293,7 +293,7 @@ public class MainActivity extends FirestoreBaseActivity implements ConversationL
     private void showMessageForGroup(List<String> list,QueryDocumentSnapshot queryDocumentSnapshot){
         for (String memberId: list)
         {
-            if(memberId.equals(user.getId())){
+            if(memberId.equals(user.getUserID())){
                 database.collection(Constants.KEY_COLLECTION_CONVERSATIONS)
                         .document(queryDocumentSnapshot.getId())
                         .get()
@@ -372,7 +372,7 @@ public class MainActivity extends FirestoreBaseActivity implements ConversationL
 
     private ChatMessage isGroupConversationAdded(DocumentSnapshot documentSnapshot) {
 
-        String senderId = user.getId();
+        String senderId = user.getUserID();
         String receiverId = documentSnapshot.getId();
         ChatMessage chatMessage = new ChatMessage();
         chatMessage.senderId = senderId;
@@ -396,7 +396,7 @@ public class MainActivity extends FirestoreBaseActivity implements ConversationL
         if (documentChange.getType() == DocumentChange.Type.ADDED) {
             chatMessage.senderId = senderId;
             chatMessage.receiverId = receiverId;
-            if (user.getId().equals(senderId)) {
+            if (user.getUserID().equals(senderId)) {
                 chatMessage.conversationImage = documentChange.getDocument().getString(Constants.KEY_RECEIVER_IMAGE);
                 chatMessage.conversationName = documentChange.getDocument().getString(Constants.KEY_RECEIVER_NAME);
                 chatMessage.conversationId = documentChange.getDocument().getString(Constants.KEY_RECEIVER_ID);
@@ -432,7 +432,7 @@ public class MainActivity extends FirestoreBaseActivity implements ConversationL
         FirebaseFirestore database = FirebaseFirestore.getInstance();
         DocumentReference documentReference =
                 database.collection(Constants.KEY_COLLECTION_USERS).document(
-                        user.getId()
+                        user.getUserID()
                 );
         documentReference.update(Constants.KEY_FCM_TOKEN, token)
                 .addOnFailureListener(e -> showToast("Failed"));
@@ -444,7 +444,7 @@ public class MainActivity extends FirestoreBaseActivity implements ConversationL
         FirebaseFirestore database = FirebaseFirestore.getInstance();
         DocumentReference documentReference =
                 database.collection(Constants.KEY_COLLECTION_USERS).document(
-                        user.getId()
+                        user.getUserID()
                 );
         HashMap<String, Object> updates = new HashMap<>();
         updates.put(Constants.KEY_FCM_TOKEN, FieldValue.delete());

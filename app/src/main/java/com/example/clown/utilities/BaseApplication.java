@@ -1,17 +1,18 @@
 package com.example.clown.utilities;
 
+import android.app.Activity;
 import android.app.Application;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 public class BaseApplication extends Application {
-    private AppCompatActivity mCurrentActivity = null;
+    private Activity mCurrentActivity = null;
 
-    public AppCompatActivity getCurrentActivity() {
+    public Activity getCurrentActivity() {
         return mCurrentActivity;
     }
 
-    public void setCurrentActivity(AppCompatActivity mCurrentActivity){
+    public void setCurrentActivity(Activity mCurrentActivity){
         this.mCurrentActivity = mCurrentActivity;
     }
 

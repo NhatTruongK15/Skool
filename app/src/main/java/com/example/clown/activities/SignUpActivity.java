@@ -355,7 +355,7 @@ public class SignUpActivity extends AgoraBaseActivity {
                                         loading(binding.buttonSignUp, binding.progressBar, false);
 
                                         User user = new User();
-                                        user.setId(currentUser.getUid());
+                                        user.setUserID(currentUser.getUid());
                                         user.setName(binding.inputName.getText().toString());
                                         user.setPhoneNumber(binding.inputPhoneNumb.getText().toString());
                                         user.setRawImage(encodedImage);
@@ -476,7 +476,7 @@ public class SignUpActivity extends AgoraBaseActivity {
                                         loading(false);
                                         preferenceManager.putBoolean(Constants.KEY_IS_SIGNED_IN, true);
                                         preferenceManager.putString(Constants.KEY_USER_ID,currentUser.getUid() );
-                                        preferenceManager.putString(Constants.KEY_DOCUMENT_REFERENCE_ID,documentReference.getId());
+                                        preferenceManager.putString(Constants.KEY_DOCUMENT_REFERENCE_ID,documentReference.getUserID());
                                         preferenceManager.putString(Constants.KEY_NAME, binding.inputName.getText().toString());
                                         preferenceManager.putString(Constants.KEY_IMAGE,encodedImage);
                                         Intent intent = new Intent(getApplicationContext(), MainActivity.class);

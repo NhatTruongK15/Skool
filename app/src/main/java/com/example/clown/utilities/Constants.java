@@ -63,7 +63,6 @@ public class Constants {
     public static final String KEY_RTC_CHANNEL_ID="rtcChannelId";
     public static final String KEY_IS_CALLER="isCaller";
 
-
     public static final int EXPIRED_TIME_STAMP = 3600;
     public static final int MSG_REGISTER_CLIENT = 0;
     public static final int MSG_UNREGISTER_CLIENT = 1;
@@ -77,6 +76,16 @@ public class Constants {
     public static final int MSG_AGORA_REMOTE_INVITATION_REFUSED = 9;
     public static final int MSG_AGORA_REMOTE_INVITATION_CANCELED = 10;
     public static final int MSG_AGORA_REMOTE_INVITATION_FAILED = 11;
+
+    // Base Activity
+    public static final String KEY_TRANSFER_DATA = "transferData";
+
+    // SignIn Activity
+    public static final String TOAST_EMPTY_EMAIL_OR_PHONE_NUMBER = "Empty email or phone number!";
+    public static final String TOAST_INVALID_EMAIL_OR_PHONE_NUMBER = "Invalid email or phone number!";
+    public static final String TOAST_EMPTY_PASSWORD = "Empty password!";
+    public static final String TOAST_SIGN_IN_FAILED = "Failed to sign in!";
+    public static final String TOAST_SIGN_IN_SUCCESSFULLY = "Sign in successfully!";
 
     public static final int HD_RES_860=860;
     public static final int HD_RES=860;
