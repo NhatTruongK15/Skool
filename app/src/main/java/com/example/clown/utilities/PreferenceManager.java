@@ -2,11 +2,14 @@ package com.example.clown.utilities;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.example.clown.models.User;
 import com.google.gson.Gson;
 
 public class PreferenceManager {
+    public static final String TAG = PreferenceManager.class.getName();
+
     private final SharedPreferences sharedPreferences;
 
     public PreferenceManager(Context context) {
@@ -19,8 +22,18 @@ public class PreferenceManager {
         editor.apply();
     }
 
+    public void registerChangesListener(SharedPreferences.OnSharedPreferenceChangeListener listener) {
+        Log.e(TAG, "PreferenceManager listener registered!");
+        sharedPreferences.registerOnSharedPreferenceChangeListener(listener);
+    }
+
+    public void unRegisterChangesListener(SharedPreferences.OnSharedPreferenceChangeListener listener) {
+        Log.e(TAG, "PreferenceManager listener unregistered!");
+        sharedPreferences.unregisterOnSharedPreferenceChangeListener(listener);
+    }
+
     // region -------------- ACCESSORS --------------
-    public void putBoolean(String key,Boolean value) {
+    public void putBoolean(String key, Boolean value) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putBoolean(key,value);
         editor.apply();
@@ -30,7 +43,7 @@ public class PreferenceManager {
         return sharedPreferences.getBoolean(key,false);
     }
 
-    public void putUser( User value) {
+    public void putUser(User value) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         Gson gson = new Gson();
         String json = gson.toJson(value);

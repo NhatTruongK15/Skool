@@ -14,6 +14,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 public class SignInActivity extends BaseActivity {
     private static final String TAG = SignInActivity.class.getName();
+
     private ActivitySignInBinding mBinding;
     private String mEmailOrPhoneNumber;
     private String mPassword;
@@ -31,20 +32,36 @@ public class SignInActivity extends BaseActivity {
     private void onSignedIn() {
         Log.e(TAG, "Already signed in!");
         updateUserAvailability();
-        startActivity(MainActivity.class, null);
+        startActivity(TAG, MainActivity.class, null);
         finish();
     }
 
     private void Init() {
         mBinding = ActivitySignInBinding.inflate(getLayoutInflater());
         setContentView(mBinding.getRoot());
+
         mPreferenceManager.putBoolean(Constants.KEY_IS_SIGNED_IN, false);
     }
 
     private void setListeners() {
-        mBinding.textCreateNewAccount.setOnClickListener(v -> startActivity(SignUpActivity.class, null));
-        mBinding.forgetPasswordText.setOnClickListener(v -> startActivity(ResetPasswordActivity.class, null));
+        mBinding.textCreateNewAccount.setOnClickListener(v -> startActivity(TAG, SignUpActivity.class, null));
+        mBinding.forgetPasswordText.setOnClickListener(v -> startActivity(TAG, ResetPasswordActivity.class, null));
         mBinding.buttonSignIn.setOnClickListener(v -> signIn());
+    }
+
+    private void signIn() {
+        if (isValidSignInDetails()) {
+            loading(true);
+
+            // Try to sign in
+            FirebaseFirestore
+                    .getInstance()
+                    .collection(Constants.KEY_COLLECTION_USERS)
+                    .whereEqualTo(Constants.KEY_PHONE_NUMBER, mEmailOrPhoneNumber)
+                    .whereEqualTo(Constants.KEY_PASSWORD, mPassword)
+                    .get()
+                    .addOnCompleteListener(this::onSignIn);
+        }
     }
 
     private Boolean isValidSignInDetails() {
@@ -79,21 +96,6 @@ public class SignInActivity extends BaseActivity {
         mBinding.buttonSignIn.setVisibility(nBtnVisibility);
     }
 
-    private void signIn() {
-        if (isValidSignInDetails()) {
-            loading(true);
-
-            // Try to sign in
-            FirebaseFirestore
-                    .getInstance()
-                    .collection(Constants.KEY_COLLECTION_USERS)
-                    .whereEqualTo(Constants.KEY_PHONE_NUMBER, mEmailOrPhoneNumber)
-                    .whereEqualTo(Constants.KEY_PASSWORD, mPassword)
-                    .get()
-                    .addOnCompleteListener(this::onSignIn);
-        }
-    }
-
     private void onSignIn(Task<QuerySnapshot> task) {
         if (task.isSuccessful() && task.getResult() != null) {
             Log.e(TAG, "Signed in successfully!");
@@ -106,7 +108,8 @@ public class SignInActivity extends BaseActivity {
             updateUserAvailability();
 
             // Go to main activity
-            startActivity(MainActivity.class, null);
+            startActivity(TAG, MainActivity.class, null);
+            showToast(Constants.TOAST_SIGN_IN_SUCCESSFULLY);
             finish();
             return;
         }
@@ -115,16 +118,4 @@ public class SignInActivity extends BaseActivity {
         loading(false);
         showToast(Constants.TOAST_SIGN_IN_FAILED);
     }
-
-    /*private void startJobService() {
-        ComponentName componentName =  new ComponentName(this, MyJobService.class);
-        JobInfo jobInfo = new JobInfo.Builder(JOB_ID, componentName)
-                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
-                .setPersisted(true)
-                .build();
-
-        JobScheduler jobScheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
-        jobScheduler.schedule(jobInfo);
-    }*/
 }
-

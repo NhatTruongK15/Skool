@@ -1,24 +1,32 @@
 <resources>
     <string name="app_name">Clown</string>
     <string name="welcome_back">Welcome Back!</string>
-    <string name="login_to_continue">Login to continue</string>
     <string name="email">Email</string>
-    <string name="password">Password</string>
-    <string name="sign_in">Sign In</string>
-    <string name="create_new_account">Create New Account</string>
     <string name="add_image">Add Image</string>
     <string name="name">Name</string>
     <string name="confirm_password">Confirm Password</string>
     <string name="sign_up">Sign Up</string>
-    <string name="by_order_of_the_peaky_blinder">By order of the peaky blinder</string>
     <string name="select_user">Select User</string>
     <string name="online">Online</string>
     <string name="mobile">Mobile</string>
 
+    <!--Sign In Activity-->
+    <string name="by_order_of_the_peaky_blinder">By order of the peaky blinder</string>
+    <string name="login_to_continue_hint">Login to continue</string>
+    <string name="phone_number_or_email_hint">Phone Number or Email</string>
+    <string name="password_hint">Password</string>
+    <string name="forget_password_option">Forget Password?</string>
+    <string name="create_new_account_option">Create New Account</string>
+    <string name="sign_in_button">Sign In</string>
+
     <!--Contacts Activity-->
+    <string name="title_contacts">Contacts</string>
     <string name="tab_item_friends_title">Friends</string>
     <string name="tab_item_phone_contacts_title">Phone Contacts</string>
     <string name="tab_item_pending_requests_title">Pending Requests</string>
+    <string name="fragment_friends_title">Friends</string>
+    <string name="fragment_pending_requests_title">Pending Requests</string>
+    <string name="fragment_phone_contacts_title">Phone Contacts</string>
 
     <!--Friend List Item-->
     <string name="username_hint">Username</string>

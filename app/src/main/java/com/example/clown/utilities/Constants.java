@@ -1,9 +1,6 @@
 package com.example.clown.utilities;
 
-import java.security.PublicKey;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class Constants {
     public static final String KEY_LIST_GROUP_ADMIN = "adminList";
@@ -86,6 +83,10 @@ public class Constants {
     public static final String TOAST_EMPTY_PASSWORD = "Empty password!";
     public static final String TOAST_SIGN_IN_FAILED = "Failed to sign in!";
     public static final String TOAST_SIGN_IN_SUCCESSFULLY = "Sign in successfully!";
+
+    // Main Activity
+    public static final String TOAST_ON_SIGN_OUT = "Signing out...";
+    public static final String TOAST_UPDATE_FCM_TOKEN_FAILED = "Update FcmToken failed!";
 
     public static final int HD_RES_860=860;
     public static final int HD_RES=860;

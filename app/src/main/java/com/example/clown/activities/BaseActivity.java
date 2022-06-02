@@ -19,10 +19,12 @@ import com.google.firebase.firestore.FirebaseFirestore;
 public class BaseActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
     protected static PreferenceManager mPreferenceManager;
     protected BaseApplication mBaseApplication;
-    protected static User mCurrentUser;
+    protected User mCurrentUser;
 
     protected static boolean mIsInitialized = false;
     protected static boolean mIsSignedIn;
+
+    public User getCurrentUser() { return mCurrentUser; }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -49,6 +51,12 @@ public class BaseActivity extends AppCompatActivity implements SharedPreferences
     }
 
     @Override
+    protected void onStop() {
+        super.onStop();
+        mPreferenceManager.unRegisterChangesListener(this);
+    }
+
+    @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         switch (key) {
             case Constants.KEY_IS_SIGNED_IN:
@@ -62,15 +70,14 @@ public class BaseActivity extends AppCompatActivity implements SharedPreferences
     }
 
     private void baseInit() {
-        if (!mIsInitialized) {
+        if (!mIsInitialized)
             mPreferenceManager = new PreferenceManager(getApplicationContext());
-            mBaseApplication = (BaseApplication) getApplicationContext();
 
-            if (mPreferenceManager.getBoolean(Constants.KEY_IS_SIGNED_IN) != null)
-                mIsSignedIn = mPreferenceManager.getBoolean(Constants.KEY_IS_SIGNED_IN);
-
-            mIsInitialized = true;
-        }
+        mBaseApplication = (BaseApplication) getApplicationContext();
+        mPreferenceManager.registerChangesListener(this);
+        mCurrentUser = mPreferenceManager.getUser();
+        mIsSignedIn = mPreferenceManager.getBoolean(Constants.KEY_IS_SIGNED_IN);
+        mIsInitialized = true;
     }
 
     private void clearReferences() {
@@ -89,8 +96,9 @@ public class BaseActivity extends AppCompatActivity implements SharedPreferences
                 .update(Constants.KEY_AVAILABILITY, mIsSignedIn);
     }
 
-    protected boolean startActivity(Class<?> targetActivity, @Nullable Bundle transferData) {
+    protected boolean startActivity(String TAG, Class<?> targetActivity, @Nullable Bundle transferData) {
         try {
+            Log.e(TAG, targetActivity.getName() + " started!");
             Intent intent = new Intent(getApplicationContext(), targetActivity);
             intent.putExtra(Constants.KEY_TRANSFER_DATA, transferData);
             startActivity(intent);

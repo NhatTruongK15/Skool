@@ -9,28 +9,28 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.clown.databinding.ItemContainerRecentConversationBinding;
+import com.example.clown.databinding.ItemConversationBinding;
 import com.example.clown.listeners.ConversationListener;
 import com.example.clown.models.ChatMessage;
 import com.example.clown.models.User;
 
 import java.util.List;
 
-public class RecentConversationAdapter extends RecyclerView.Adapter<RecentConversationAdapter.ConversationViewHolder> {
+public class ConversationAdapter extends RecyclerView.Adapter<ConversationAdapter.ConversationViewHolder> {
 
     private final List<ChatMessage> chatMessages;
     private final ConversationListener conversationListener;
 
-    public RecentConversationAdapter(List<ChatMessage> chatMessages, ConversationListener conversationListenerl) {
+    public ConversationAdapter(List<ChatMessage> chatMessages, ConversationListener conversationListener) {
         this.chatMessages = chatMessages;
-        this.conversationListener = conversationListenerl;
+        this.conversationListener = conversationListener;
     }
 
     @NonNull
     @Override
     public ConversationViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         return new ConversationViewHolder(
-                ItemContainerRecentConversationBinding.inflate(
+                ItemConversationBinding.inflate(
                         LayoutInflater.from(parent.getContext()),
                         parent,false
                 )
@@ -48,11 +48,11 @@ public class RecentConversationAdapter extends RecyclerView.Adapter<RecentConver
     }
 
     class ConversationViewHolder extends RecyclerView.ViewHolder {
-        ItemContainerRecentConversationBinding binding;
+        ItemConversationBinding binding;
 
-        ConversationViewHolder(ItemContainerRecentConversationBinding itemContainerRecentConversationBinding){
-            super(itemContainerRecentConversationBinding.getRoot());
-            binding = itemContainerRecentConversationBinding;
+        ConversationViewHolder(ItemConversationBinding itemConversationBinding){
+            super(itemConversationBinding.getRoot());
+            binding = itemConversationBinding;
         }
 
         void setData(ChatMessage chatMessage)

@@ -30,6 +30,17 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Clown">
         <activity
+            android:name=".activities.FriendProfileActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.ContactsActivity"
+            android:exported="false"
+            android:parentActivityName=".activities.MainActivity">
+            <meta-data
+                android:name="androidx.support.PARENT_ACTIVITY"
+                android:value=".activities.MainActivity" />
+        </activity>
+        <activity
             android:name=".activities.EditUserProfileActivity"
             android:exported="false" />
         <activity
@@ -99,7 +110,7 @@
             android:exported="false" />
         <service
             android:name=".services.MyJobService"
-            android:permission="android.permission.BIND_JOB_SERVICE"/>
+            android:permission="android.permission.BIND_JOB_SERVICE" />
     </application>
 
 </manifest>

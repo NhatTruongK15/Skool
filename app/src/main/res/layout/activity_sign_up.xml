@@ -21,7 +21,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_20sdp"
-            android:text="@string/create_new_account"
+            android:text="@string/create_new_account_option"
             android:textColor="@color/primary_text"
             android:textSize="@dimen/_18ssp"
             android:textStyle="bold" />
@@ -103,7 +103,7 @@
                 android:layout_height="@dimen/_45sdp"
                 android:layout_marginTop="@dimen/_16sdp"
                 android:background="@drawable/background_input"
-                android:hint="@string/password"
+                android:hint="@string/password_hint"
                 android:imeOptions="actionNext"
                 android:importantForAutofill="no"
                 android:inputType="textPassword"
@@ -157,7 +157,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_1sdp"
-                android:text="@string/sign_in"
+                android:text="@string/sign_in_button"
                 android:textColor="@color/primary"
                 android:textSize="@dimen/_13ssp"
                 android:textStyle="bold" />
