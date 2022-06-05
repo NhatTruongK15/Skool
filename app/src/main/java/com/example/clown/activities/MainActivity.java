@@ -20,6 +20,7 @@ public class MainActivity extends BaseActivity {
 
     private ActivityMainBinding binding;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,7 +66,7 @@ public class MainActivity extends BaseActivity {
         if (position == 0)
             tab.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_chat_bubble));
         else
-            tab.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_group));
+            tab.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_forum));
     }
 
     private void loadCurrentUserDetails() {

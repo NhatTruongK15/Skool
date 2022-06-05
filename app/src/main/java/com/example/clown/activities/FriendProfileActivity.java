@@ -4,13 +4,15 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 
+import com.example.clown.databinding.ActivityFriendProfileBinding;
+
 public class FriendProfileActivity extends AppCompatActivity {
-    private com.example.clown.databinding.ActivityFriendProfileBinding
+    private ActivityFriendProfileBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        setContentView(R.layout.activity_friend_profile);
+        binding = ActivityFriendProfileBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
     }
 }

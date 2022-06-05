@@ -6,6 +6,7 @@ import android.util.Base64;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 public class User implements Serializable {
     private String name;
@@ -15,8 +16,8 @@ public class User implements Serializable {
     private String userID;
     private boolean availability;
     private String phoneNumber;
-    private ArrayList<String> friendsList = new ArrayList<>();
-    private ArrayList<String> pendingRequests = new ArrayList<>();
+    private List<String> friendsList;
+    private ArrayList<String> pendingRequests;
 
     //region #Accessors
     public String getName() { return name; }
@@ -39,8 +40,8 @@ public class User implements Serializable {
     public String getPhoneNumber() { return phoneNumber; }
     public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
 
-    public ArrayList<String> getFriendsList() { return friendsList; }
-    public void setFriendsList(ArrayList<String> friendsList) { this.friendsList = friendsList; }
+    public List<String> getFriendsList() { return friendsList; }
+    public void setFriendsList(List<String> friendsList) { this.friendsList = friendsList; }
 
     public ArrayList<String> getPendingRequests() { return pendingRequests; }
     public void setPendingRequests(ArrayList<String> pendingRequests) { this.pendingRequests = pendingRequests; }

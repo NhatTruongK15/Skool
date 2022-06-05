@@ -1,40 +1,30 @@
 package com.example.clown.adapter;
 
 import static com.example.clown.utilities.Constants.HD_RES;
-import static com.example.clown.utilities.Constants.HD_RES_860;
-import static com.example.clown.utilities.Constants.PIC_HOLDER;
 
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.util.Base64;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.MediaController;
-import android.widget.Toast;
 
-import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.clown.R;
 import com.example.clown.activities.FileDisplayActivitiy;
-import com.example.clown.activities.MainActivity;
 import com.example.clown.databinding.ItemContainerReceivedMessageBinding;
 import com.example.clown.databinding.ItemContainerSentMessageBinding;
 import com.example.clown.models.ChatMessage;
 
 import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
 import java.util.List;
-import android.content.Intent;
 
 public class ChatAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder> {
 

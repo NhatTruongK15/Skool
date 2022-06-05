@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto">
@@ -35,39 +36,39 @@
 
     <TextView
         android:id="@+id/tvPhoneNumber"
-        android:maxLines="1"
-        android:ellipsize="end"
-        android:hint="@string/phone_number_hint"
-        android:textSize="@dimen/_10ssp"
-        android:maxWidth="@dimen/_150sdp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/_5sdp"
-        android:layout_marginStart="@dimen/_12sdp"
-        app:layout_constraintTop_toBottomOf="@id/tvUsername"
+        android:ellipsize="end"
+        android:hint="@string/phone_number_hint"
+        android:maxWidth="@dimen/_150sdp"
+        android:maxLines="1"
+        android:textSize="@dimen/_10ssp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toRightOf="@id/rivAvatar"/>
+        app:layout_constraintLeft_toRightOf="@id/rivAvatar"
+        app:layout_constraintTop_toBottomOf="@id/tvUsername"
+        tools:ignore="TextContrastCheck" />
 
     <ImageView
         android:id="@+id/ivStatus"
-        android:contentDescription="@string/status_online"
-        android:src="@drawable/ic_online_circle"
         android:layout_width="@dimen/_10sdp"
         android:layout_height="@dimen/_10sdp"
-        android:layout_marginEnd="@dimen/_5sdp"
-        app:layout_constraintTop_toTopOf="parent"
+        android:contentDescription="@string/status_online"
+        android:src="@drawable/ic_online_circle"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toLeftOf="@id/tvStatus"/>
+        app:layout_constraintRight_toLeftOf="@id/tvStatus"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="ImageContrastCheck" />
 
     <TextView
         android:id="@+id/tvStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:hint="@string/status_online"
         android:textColorHint="@color/status_online"
         android:textSize="@dimen/_10ssp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/_12sdp"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toRightOf="parent"/>
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="TextContrastCheck" />
 </androidx.constraintlayout.widget.ConstraintLayout>

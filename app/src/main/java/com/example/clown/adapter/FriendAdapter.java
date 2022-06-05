@@ -20,7 +20,7 @@ import com.example.clown.utilities.Constants;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendViewHolder> implements Filterable {
+public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendViewHolder> implements Filterable {
     private final List<User> mFriendsList;
     private final List<User> mFriendsListFull;
     private final Context mContext;
@@ -35,16 +35,16 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendVi
 
         @SuppressLint("ResourceAsColor")
         public void setBinding(@NonNull User onFriend) {
-            binding.tvUsername.setText(onFriend.getUsername());
+            binding.tvUsername.setText(onFriend.getName());
             binding.tvPhoneNumber.setText(onFriend.getPhoneNumber());
-            binding.rivAvatar.setImageBitmap(onFriend.getBitmapAvatar());
+            binding.rivAvatar.setImageBitmap(onFriend.getImage());
 
             if (onFriend.getAvailability()) {
                 binding.ivStatus.setImageResource(R.drawable.ic_online_circle);
                 binding.tvStatus.setText(R.string.status_online);
                 binding.tvStatus.setTextColor(R.color.status_online);
             } else {
-                binding.ivStatus.setImageResource(R.drawable.ic_status_offline);
+                binding.ivStatus.setImageResource(R.drawable.ic_offline_circle);
                 binding.tvStatus.setText(R.string.status_offline);
                 binding.tvStatus.setTextColor(R.color.status_offline);
             }
@@ -53,15 +53,15 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendVi
         }
 
         private void checkFriendProfile(User onFriend) {
-            Intent intent = new Intent(mContext, UserProfileActivity.class);
+            Intent intent = new Intent(mContext, FriendProfileActivity.class);
             intent.putExtra(Constants.KEY_USER, onFriend);
             mContext.startActivity(intent);
         }
     }
 
-    public FriendsAdapter(Context context, List<User> dataSet) {
+    public FriendAdapter(Context context, List<User> dataSet) {
         mContext = context;
-        mFriendsList = new ArrayList<>(dataSet);
+        mFriendsList = dataSet;
         mFriendsListFull = new ArrayList<>(mFriendsList);
     }
 
@@ -94,7 +94,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendVi
                 if (filteredPattern.isEmpty())
                     filteredFriendList = mFriendsListFull;
                 else for (User onFriend : mFriendsListFull)
-                    if (onFriend.getUsername().toLowerCase().contains(filteredPattern)
+                    if (onFriend.getName().toLowerCase().contains(filteredPattern)
                             || onFriend.getEmail().toLowerCase().contains(filteredPattern)
                             || onFriend.getPhoneNumber().contains(filteredPattern))
                         filteredFriendList.add(onFriend);

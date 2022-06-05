@@ -21,8 +21,8 @@ public class BaseActivity extends AppCompatActivity implements SharedPreferences
     protected BaseApplication mBaseApplication;
     protected User mCurrentUser;
 
-    protected static boolean mIsInitialized = false;
-    protected static boolean mIsSignedIn;
+    protected boolean mIsInitialized = false;
+    protected boolean mIsSignedIn;
 
     public User getCurrentUser() { return mCurrentUser; }
 
@@ -70,12 +70,13 @@ public class BaseActivity extends AppCompatActivity implements SharedPreferences
     }
 
     private void baseInit() {
-        if (!mIsInitialized)
-            mPreferenceManager = new PreferenceManager(getApplicationContext());
-
         mBaseApplication = (BaseApplication) getApplicationContext();
+
+        mPreferenceManager = new PreferenceManager(getApplicationContext());
         mPreferenceManager.registerChangesListener(this);
+
         mCurrentUser = mPreferenceManager.getUser();
+
         mIsSignedIn = mPreferenceManager.getBoolean(Constants.KEY_IS_SIGNED_IN);
         mIsInitialized = true;
     }
