@@ -73,8 +73,8 @@ public class SignInActivity extends BaseActivity {
             return false;
         }
 
-        if (!(Patterns.PHONE.matcher(mEmailOrPhoneNumber).matches() ||
-                Patterns.EMAIL_ADDRESS.matcher(mEmailOrPhoneNumber).matches())) {
+        if (!Patterns.PHONE.matcher(mEmailOrPhoneNumber).matches() &&
+                !Patterns.EMAIL_ADDRESS.matcher(mEmailOrPhoneNumber).matches()) {
             showToast(Constants.TOAST_INVALID_EMAIL_OR_PHONE_NUMBER);
             return false;
         }
@@ -97,7 +97,7 @@ public class SignInActivity extends BaseActivity {
     }
 
     private void onSignIn(Task<QuerySnapshot> task) {
-        if (task.isSuccessful() && task.getResult() != null) {
+        if (task.isSuccessful() && task.getResult() != null && task.getResult().getDocuments().size() != 0) {
             Log.e(TAG, "Signed in successfully!");
 
             // Get validated user
