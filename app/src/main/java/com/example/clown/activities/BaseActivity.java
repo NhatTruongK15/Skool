@@ -14,6 +14,8 @@ import com.example.clown.models.User;
 import com.example.clown.utilities.BaseApplication;
 import com.example.clown.utilities.Constants;
 import com.example.clown.utilities.PreferenceManager;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class BaseActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
@@ -25,6 +27,20 @@ public class BaseActivity extends AppCompatActivity implements SharedPreferences
     protected boolean mIsSignedIn;
 
     public User getCurrentUser() { return mCurrentUser; }
+
+    // Background Possibility
+    private final EventListener<DocumentSnapshot> mCurrentUserListener = (docSnap, error) -> {
+        if (error != null) {
+            Log.e("BaseActivity", error.getMessage());
+            return;
+        }
+
+        if (docSnap != null && docSnap.exists()) {
+            Log.e("BaseActivity", "Current user's updated!");
+            User updatedUser = docSnap.toObject(User.class);
+            if (updatedUser != null) mPreferenceManager.putUser(updatedUser);
+        }
+    };
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -78,6 +94,13 @@ public class BaseActivity extends AppCompatActivity implements SharedPreferences
         mCurrentUser = mPreferenceManager.getUser();
 
         mIsSignedIn = mPreferenceManager.getBoolean(Constants.KEY_IS_SIGNED_IN);
+
+        if (mIsSignedIn) FirebaseFirestore
+                    .getInstance()
+                    .collection(Constants.KEY_COLLECTION_USERS)
+                    .document(mCurrentUser.getUserID())
+                    .addSnapshotListener(mCurrentUserListener);
+
         mIsInitialized = true;
     }
 
