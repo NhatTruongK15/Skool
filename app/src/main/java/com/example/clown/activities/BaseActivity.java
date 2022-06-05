@@ -6,6 +6,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,7 +14,9 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 
 import com.example.clown.R;
 import com.example.clown.models.User;
@@ -24,6 +27,7 @@ import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.ListenerRegistration;
 
 public class BaseActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
     private static final String CHANNEL_ID = "TEST_CHANNEL";
@@ -31,10 +35,14 @@ public class BaseActivity extends AppCompatActivity implements SharedPreferences
     protected static PreferenceManager mPreferenceManager;
     protected BaseApplication mBaseApplication;
     protected User mCurrentUser;
+    protected String[] REQUESTED_PERMISSIONS;
 
     protected boolean mIsSignedIn;
 
+    protected int PERMISSION_REQ_ID;
+
     //region BACKGROUND POSSIBILITY
+    private ListenerRegistration mRegistration;
     private static boolean mIsChannelCreated = false;
 
     private final EventListener<DocumentSnapshot> mCurrentUserListener = (docSnap, error) -> {
@@ -80,20 +88,17 @@ public class BaseActivity extends AppCompatActivity implements SharedPreferences
     }
 
     private void createNotificationChannel() {
-        // Create the NotificationChannel, but only on API 26+ because
-        // the NotificationChannel class is new and not in the support library
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            // String description = getString(R.string.channel_description);
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL_ID, importance);
-            // channel.setDescription(description);
-            // Register the channel with the system; you can't change the importance
-            // or other notification behaviors after this
-            NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return;
 
-            mIsChannelCreated = true;
-        }
+        // Create channel
+        int importance = NotificationManager.IMPORTANCE_DEFAULT;
+        NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL_ID, importance);
+
+        // Register channel
+        NotificationManager notificationManager = getSystemService(NotificationManager.class);
+        notificationManager.createNotificationChannel(channel);
+
+        mIsChannelCreated = true;
     }
     //endregion
 
@@ -153,11 +158,11 @@ public class BaseActivity extends AppCompatActivity implements SharedPreferences
 
         mIsSignedIn = mPreferenceManager.getBoolean(Constants.KEY_IS_SIGNED_IN);
 
-        if (mIsSignedIn) FirebaseFirestore
-                    .getInstance()
-                    .collection(Constants.KEY_COLLECTION_USERS)
-                    .document(mCurrentUser.getUserID())
-                    .addSnapshotListener(mCurrentUserListener);
+        if (mIsSignedIn) mRegistration = FirebaseFirestore
+                .getInstance()
+                .collection(Constants.KEY_COLLECTION_USERS)
+                .document(mCurrentUser.getUserID())
+                .addSnapshotListener(mCurrentUserListener);
     }
 
     private void clearReferences() {
@@ -189,6 +194,15 @@ public class BaseActivity extends AppCompatActivity implements SharedPreferences
             Log.e("[ERROR] ", ex.getMessage());
             return false;
         }
+    }
+
+    protected boolean checkPermission(String permission) {
+        if (ContextCompat.checkSelfPermission(getApplicationContext(), permission)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, REQUESTED_PERMISSIONS, PERMISSION_REQ_ID);
+            return false;
+        }
+        return true;
     }
 
     protected void showToast(String message) {

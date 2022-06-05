@@ -88,6 +88,9 @@ public class Constants {
     public static final String TOAST_ON_SIGN_OUT = "Signing out...";
     public static final String TOAST_UPDATE_FCM_TOKEN_FAILED = "Update FcmToken failed!";
 
+    // Contacts Activity
+    public static final String TOAST_PHONE_CONTACT_REQ_FAILED = "The app needs your permission to access phone contacts!";
+
     public static final int HD_RES_860=860;
     public static final int HD_RES=860;
     public static final int PIC_HOLDER=500;

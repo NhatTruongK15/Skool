@@ -96,6 +96,8 @@ public class FriendsFragment extends Fragment implements EventListener<QuerySnap
     }
 
     private void setUpFireStoreListener() {
+        if (mCurrentUser.getFriendsList().isEmpty()) return;
+
         FirebaseFirestore
                 .getInstance()
                 .collection(Constants.KEY_COLLECTION_USERS)
