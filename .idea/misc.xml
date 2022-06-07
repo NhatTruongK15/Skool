@@ -98,17 +98,26 @@
         <entry key="..\:/Users/Admin/Documents/GitHub/Skool/app/src/main/res/layout/applying_verification_code_dialog.xml" value="0.25" />
         <entry key="..\:/Users/Admin/Documents/GitHub/Skool/app/src/main/res/layout/item_avatar.xml" value="0.38697916666666665" />
         <entry key="..\:/Users/Admin/Documents/GitHub/Skool/app/src/main/res/layout/userprofile.xml" value="0.38697916666666665" />
+        <entry key="..\:/Users/phatl/Desktop/Mobile_Introduction_Project/Git_Team/app/src/main/res/drawable/background_content_bottom.xml" value="0.2265" />
+        <entry key="..\:/Users/phatl/Desktop/Mobile_Introduction_Project/Git_Team/app/src/main/res/drawable/background_option_button.xml" value="0.1" />
+        <entry key="..\:/Users/phatl/Desktop/Mobile_Introduction_Project/Git_Team/app/src/main/res/drawable/background_user_option_btn.xml" value="0.2265" />
+        <entry key="..\:/Users/phatl/Desktop/Mobile_Introduction_Project/Git_Team/app/src/main/res/drawable/background_user_option_btn_pressed.xml" value="0.2265" />
+        <entry key="..\:/Users/phatl/Desktop/Mobile_Introduction_Project/Git_Team/app/src/main/res/drawable/btn_enable_video.xml" value="0.2265" />
+        <entry key="..\:/Users/phatl/Desktop/Mobile_Introduction_Project/Git_Team/app/src/main/res/drawable/btn_mute.xml" value="0.1955" />
         <entry key="..\:/Users/phatl/Desktop/Mobile_Introduction_Project/Git_Team/app/src/main/res/drawable/ic_forum.xml" value="0.2265" />
         <entry key="..\:/Users/phatl/Desktop/Mobile_Introduction_Project/Git_Team/app/src/main/res/drawable/ic_green_circle.xml" value="0.2265" />
         <entry key="..\:/Users/phatl/Desktop/Mobile_Introduction_Project/Git_Team/app/src/main/res/drawable/ic_offline_circle.xml" value="0.2265" />
+        <entry key="..\:/Users/phatl/Desktop/Mobile_Introduction_Project/Git_Team/app/src/main/res/drawable/ic_person.xml" value="0.2265" />
         <entry key="..\:/Users/phatl/Desktop/Mobile_Introduction_Project/Git_Team/app/src/main/res/layout/activity_chat.xml" value="0.25833333333333336" />
         <entry key="..\:/Users/phatl/Desktop/Mobile_Introduction_Project/Git_Team/app/src/main/res/layout/activity_contacts.xml" value="0.25833333333333336" />
         <entry key="..\:/Users/phatl/Desktop/Mobile_Introduction_Project/Git_Team/app/src/main/res/layout/activity_friend_adding.xml" value="0.25833333333333336" />
         <entry key="..\:/Users/phatl/Desktop/Mobile_Introduction_Project/Git_Team/app/src/main/res/layout/activity_friend_profile.xml" value="0.25833333333333336" />
         <entry key="..\:/Users/phatl/Desktop/Mobile_Introduction_Project/Git_Team/app/src/main/res/layout/activity_group_chat.xml" value="0.25833333333333336" />
         <entry key="..\:/Users/phatl/Desktop/Mobile_Introduction_Project/Git_Team/app/src/main/res/layout/activity_main.xml" value="0.264" />
+        <entry key="..\:/Users/phatl/Desktop/Mobile_Introduction_Project/Git_Team/app/src/main/res/layout/activity_my_profile.xml" value="0.25833333333333336" />
         <entry key="..\:/Users/phatl/Desktop/Mobile_Introduction_Project/Git_Team/app/src/main/res/layout/activity_sign_in.xml" value="0.25833333333333336" />
         <entry key="..\:/Users/phatl/Desktop/Mobile_Introduction_Project/Git_Team/app/src/main/res/layout/activity_sign_up.xml" value="0.264" />
+        <entry key="..\:/Users/phatl/Desktop/Mobile_Introduction_Project/Git_Team/app/src/main/res/layout/activity_suggested_profile.xml" value="0.25833333333333336" />
         <entry key="..\:/Users/phatl/Desktop/Mobile_Introduction_Project/Git_Team/app/src/main/res/layout/activity_users.xml" value="0.25833333333333336" />
         <entry key="..\:/Users/phatl/Desktop/Mobile_Introduction_Project/Git_Team/app/src/main/res/layout/fragment_basic_conversations.xml" value="0.24427083333333333" />
         <entry key="..\:/Users/phatl/Desktop/Mobile_Introduction_Project/Git_Team/app/src/main/res/layout/fragment_friends.xml" value="0.25833333333333336" />
@@ -116,9 +125,16 @@
         <entry key="..\:/Users/phatl/Desktop/Mobile_Introduction_Project/Git_Team/app/src/main/res/layout/fragment_pending_requests.xml" value="0.25833333333333336" />
         <entry key="..\:/Users/phatl/Desktop/Mobile_Introduction_Project/Git_Team/app/src/main/res/layout/fragment_phone_contacts.xml" value="0.25833333333333336" />
         <entry key="..\:/Users/phatl/Desktop/Mobile_Introduction_Project/Git_Team/app/src/main/res/layout/item_container_group_received_message.xml" value="0.25833333333333336" />
+        <entry key="..\:/Users/phatl/Desktop/Mobile_Introduction_Project/Git_Team/app/src/main/res/layout/item_container_received_message.xml" value="0.25833333333333336" />
+        <entry key="..\:/Users/phatl/Desktop/Mobile_Introduction_Project/Git_Team/app/src/main/res/layout/item_container_sent_message.xml" value="0.25833333333333336" />
+        <entry key="..\:/Users/phatl/Desktop/Mobile_Introduction_Project/Git_Team/app/src/main/res/layout/item_container_user.xml" value="0.25833333333333336" />
+        <entry key="..\:/Users/phatl/Desktop/Mobile_Introduction_Project/Git_Team/app/src/main/res/layout/item_conteainer_add_group_member.xml" value="0.25833333333333336" />
         <entry key="..\:/Users/phatl/Desktop/Mobile_Introduction_Project/Git_Team/app/src/main/res/layout/item_conversation.xml" value="0.25833333333333336" />
         <entry key="..\:/Users/phatl/Desktop/Mobile_Introduction_Project/Git_Team/app/src/main/res/layout/item_email.xml" value="0.25833333333333336" />
-        <entry key="..\:/Users/phatl/Desktop/Mobile_Introduction_Project/Git_Team/app/src/main/res/layout/item_friend.xml" value="0.1" />
+        <entry key="..\:/Users/phatl/Desktop/Mobile_Introduction_Project/Git_Team/app/src/main/res/layout/item_friend.xml" value="0.2" />
+        <entry key="..\:/Users/phatl/Desktop/Mobile_Introduction_Project/Git_Team/app/src/main/res/layout/item_info.xml" value="0.25833333333333336" />
+        <entry key="..\:/Users/phatl/Desktop/Mobile_Introduction_Project/Git_Team/app/src/main/res/layout/item_phone_contact.xml" value="0.25833333333333336" />
+        <entry key="..\:/Users/phatl/Desktop/Mobile_Introduction_Project/Git_Team/app/src/main/res/layout/item_suggested_user.xml" value="0.264" />
         <entry key="..\:/Users/phatl/Desktop/Mobile_Introduction_Project/Git_Team/app/src/main/res/layout/userprofile.xml" value="0.25833333333333336" />
         <entry key="..\:/Users/phatl/Desktop/Mobile_Introduction_Project/Skool/app/src/main/res/drawable/btn_switch_camera.xml" value="0.2265" />
         <entry key="..\:/Users/phatl/Desktop/Mobile_Introduction_Project/Skool/app/src/main/res/drawable/ic_call.xml" value="0.2265" />

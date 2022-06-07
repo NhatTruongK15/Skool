@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/btn_user_option"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <com.makeramen.roundedimageview.RoundedImageView
         android:id="@+id/rivAvatar"
@@ -44,6 +45,7 @@
         android:maxWidth="@dimen/_150sdp"
         android:maxLines="1"
         android:textSize="@dimen/_10ssp"
+        android:layout_marginStart="@dimen/_12sdp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toRightOf="@id/rivAvatar"
         app:layout_constraintTop_toBottomOf="@id/tvUsername"
@@ -67,6 +69,7 @@
         android:hint="@string/status_online"
         android:textColorHint="@color/status_online"
         android:textSize="@dimen/_10ssp"
+        android:layout_marginEnd="@dimen/_12sdp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"

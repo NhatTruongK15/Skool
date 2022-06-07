@@ -16,8 +16,10 @@ public class User implements Serializable {
     private String userID;
     private boolean availability;
     private String phoneNumber;
+
     private List<String> friendsList;
-    private ArrayList<String> pendingRequests;
+    private List<String> pendingRequests;
+    private List<String> sentRequests;
 
     //region #Accessors
     public String getName() { return name; }
@@ -43,13 +45,16 @@ public class User implements Serializable {
     public List<String> getFriendsList() { return friendsList; }
     public void setFriendsList(List<String> friendsList) { this.friendsList = friendsList; }
 
-    public ArrayList<String> getPendingRequests() { return pendingRequests; }
-    public void setPendingRequests(ArrayList<String> pendingRequests) { this.pendingRequests = pendingRequests; }
+    public List<String> getPendingRequests() { return pendingRequests; }
+    public void setPendingRequests(List<String> pendingRequests) { this.pendingRequests = pendingRequests; }
 
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
 
     public String getUserID() { return userID; }
     public void setUserID(String userID) { this.userID = userID; }
+
+    public List<String> getSentRequests() { return sentRequests; }
+    public void setSentRequests(List<String> sentRequests) { this.sentRequests = sentRequests; }
     //endregion
 }

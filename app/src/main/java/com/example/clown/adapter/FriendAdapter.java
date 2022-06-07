@@ -25,40 +25,6 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendView
     private final List<User> mFriendsListFull;
     private final Context mContext;
 
-    protected class FriendViewHolder extends RecyclerView.ViewHolder {
-        private final ItemFriendBinding binding;
-
-        public FriendViewHolder(@NonNull ItemFriendBinding binding) {
-            super(binding.getRoot());
-            this.binding = binding;
-        }
-
-        @SuppressLint("ResourceAsColor")
-        public void setBinding(@NonNull User onFriend) {
-            binding.tvUsername.setText(onFriend.getName());
-            binding.tvPhoneNumber.setText(onFriend.getPhoneNumber());
-            binding.rivAvatar.setImageBitmap(onFriend.getImage());
-
-            if (onFriend.getAvailability()) {
-                binding.ivStatus.setImageResource(R.drawable.ic_online_circle);
-                binding.tvStatus.setText(R.string.status_online);
-                binding.tvStatus.setTextColor(R.color.status_online);
-            } else {
-                binding.ivStatus.setImageResource(R.drawable.ic_offline_circle);
-                binding.tvStatus.setText(R.string.status_offline);
-                binding.tvStatus.setTextColor(R.color.status_offline);
-            }
-
-            binding.getRoot().setOnClickListener(v -> checkFriendProfile(onFriend));
-        }
-
-        private void checkFriendProfile(User onFriend) {
-            Intent intent = new Intent(mContext, FriendProfileActivity.class);
-            intent.putExtra(Constants.KEY_USER, onFriend);
-            mContext.startActivity(intent);
-        }
-    }
-
     public FriendAdapter(Context context, List<User> dataSet) {
         mContext = context;
         mFriendsList = dataSet;
@@ -113,5 +79,39 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendView
                 notifyDataSetChanged();
             }
         };
+    }
+
+    public class FriendViewHolder extends RecyclerView.ViewHolder {
+        private final ItemFriendBinding binding;
+
+        public FriendViewHolder(@NonNull ItemFriendBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
+        }
+
+        @SuppressLint("ResourceAsColor")
+        public void setBinding(@NonNull User onFriend) {
+            binding.tvUsername.setText(onFriend.getName());
+            binding.tvPhoneNumber.setText(onFriend.getPhoneNumber());
+            binding.rivAvatar.setImageBitmap(onFriend.getImage());
+
+            if (onFriend.getAvailability()) {
+                binding.ivStatus.setImageResource(R.drawable.ic_online_circle);
+                binding.tvStatus.setText(R.string.status_online);
+                binding.tvStatus.setTextColor(R.color.status_online);
+            } else {
+                binding.ivStatus.setImageResource(R.drawable.ic_offline_circle);
+                binding.tvStatus.setText(R.string.status_offline);
+                binding.tvStatus.setTextColor(R.color.status_offline);
+            }
+
+            binding.getRoot().setOnClickListener(v -> checkFriendProfile(onFriend));
+        }
+
+        private void checkFriendProfile(User onFriend) {
+            Intent intent = new Intent(mContext, FriendProfileActivity.class);
+            intent.putExtra(Constants.KEY_USER, onFriend);
+            mContext.startActivity(intent);
+        }
     }
 }

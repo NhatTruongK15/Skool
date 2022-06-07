@@ -3,7 +3,6 @@ package com.example.clown.fragments;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -19,14 +18,13 @@ import com.example.clown.utilities.Constants;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class FriendsFragment extends Fragment implements EventListener<QuerySnapshot> {
+public class FriendsFragment extends Fragment {
     public static final String TAG = FriendsFragment.class.getName();
 
     private FragmentFriendsBinding binding;
@@ -55,38 +53,21 @@ public class FriendsFragment extends Fragment implements EventListener<QuerySnap
                 }
             }
 
-            if (!mIsBound) {
-                mFriendAdapter = new FriendAdapter(getContext(), mFriendsList);
-                binding.friendsRecyclerView.setAdapter(mFriendAdapter);
-                mIsBound = true;
-            }
+            if (!mIsBound) friendsRecyclerViewInit();
         }
     };
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Init();
-    }
-
-    @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.e(TAG, "Friends fragment's creating view!");
+
         binding = FragmentFriendsBinding.inflate(inflater, container, false);
-        return binding.getRoot();
-    }
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        Log.e(TAG, "Friends fragment's view's created!");
-        friendsRecyclerViewInit();
+        Init();
+
         setUpFireStoreListener();
-    }
 
-    @Override
-    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-
+        return binding.getRoot();
     }
 
     private void Init() {
@@ -128,5 +109,6 @@ public class FriendsFragment extends Fragment implements EventListener<QuerySnap
         Log.e(TAG, "Friends RecyclerView initialized!");
         mFriendAdapter = new FriendAdapter(getContext(), mFriendsList);
         binding.friendsRecyclerView.setAdapter(mFriendAdapter);
+        mIsBound = true;
     }
 }
