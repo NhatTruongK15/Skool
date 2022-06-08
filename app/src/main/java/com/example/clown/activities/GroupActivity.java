@@ -103,9 +103,9 @@ public class GroupActivity extends FirestoreBaseActivity implements UserListener
 
 
             //Information for receiver
-            currentGroup.setUserID(documentId);
-            currentGroup.setRawImage(encodedImage);
-            currentGroup.setName(binding.etGroupName.getText().toString().trim());
+            currentGroup.setID(documentId);
+            currentGroup.setAvatar(encodedImage);
+            currentGroup.setUsername(binding.etGroupName.getText().toString().trim());
 
             methodSwitchToChat();
 

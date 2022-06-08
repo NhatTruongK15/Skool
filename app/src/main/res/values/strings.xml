@@ -56,4 +56,9 @@
     <string name="request_sent">Request Sent</string>
     <string name="already_friend">Already Friend</string>
     <string name="add_friend">Add Friend</string>
+
+    <!--Pending Request Item-->
+    <string name="friend_accept">Accept</string>
+    <string name="friend_decline">Decline</string>
+    <string name="mutual_friends">Mutual Friends</string>
 </resources>

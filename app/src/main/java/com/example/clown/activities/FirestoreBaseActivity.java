@@ -21,7 +21,7 @@ public class FirestoreBaseActivity extends AppCompatActivity {
         currentUser = preferenceManager.getUser();
         FirebaseFirestore database = FirebaseFirestore.getInstance();
         documentReference = database.collection(Constants.KEY_COLLECTION_USERS)
-                .document(currentUser.getUserID());
+                .document(currentUser.getID());
     }
 
     @Override

@@ -87,8 +87,8 @@ public class MyProfileActivity extends AppCompatActivity {
     }
 
     private void LoadUserDetails() {
-        binding.name.setText(currentUser.getName());
-        byte[] bytes = Base64.decode(currentUser.getRawImage(), Base64.DEFAULT);
+        binding.name.setText(currentUser.getUsername());
+        byte[] bytes = Base64.decode(currentUser.getAvatar(), Base64.DEFAULT);
         Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
 
         binding.headerBackground.setImageBitmap(bitmap);
@@ -163,13 +163,13 @@ public class MyProfileActivity extends AppCompatActivity {
                             Bitmap bitmap2 = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
 
                             database.collection(Constants.KEY_COLLECTION_USERS)
-                                    .document(currentUser.getUserID())
+                                    .document(currentUser.getID())
                                     .update(
                                             Constants.KEY_IMAGE, encodedImage
                                     );
 
                             //preference manager
-                            currentUser.setRawImage(encodedImage);
+                            currentUser.setAvatar(encodedImage);
                             preferenceManager.putUser(currentUser);
                             LoadUserDetails();
                         } catch (FileNotFoundException e) {

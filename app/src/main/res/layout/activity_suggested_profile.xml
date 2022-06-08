@@ -42,6 +42,7 @@
                 android:layout_marginStart="@dimen/_12sdp"
                 android:hint="@string/username_hint"
                 android:textColorHint="@color/white"
+                android:textColor="@color/white"
                 android:textSize="@dimen/_18ssp"
                 android:textStyle="bold"
                 app:layout_constraintTop_toTopOf="parent"
@@ -283,33 +284,22 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/optAddFriend"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/_45sdp"
                 android:background="@drawable/btn_user_option">
-                <ImageView
-                    android:id="@+id/ivUnfriend"
-                    android:layout_width="@dimen/_25sdp"
-                    android:layout_height="@dimen/_25sdp"
-                    android:layout_marginVertical="@dimen/_6sdp"
-                    android:src="@drawable/ic_outline_person_add"
-                    app:tint="@color/status_online"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintHorizontal_bias="0.4"
-                    tools:ignore="ImageContrastCheck"
-                    android:contentDescription="@string/unfriend"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/add_friend"
-                    android:textSize="@dimen/_12sdp"
-                    android:textColor="@color/status_online"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintLeft_toRightOf="@id/ivUnfriend"
-                    app:layout_constraintTop_toTopOf="parent"
-                    android:layout_marginStart="@dimen/_6sdp"/>
+                    <TextView
+                        android:id="@+id/tvAddFriend"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/add_friend"
+                        android:textSize="@dimen/_15ssp"
+                        android:textColor="@color/status_online"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:drawableStartCompat="@drawable/ic_outline_person_add"
+                        app:drawableTint="@color/status_online"
+                        android:drawablePadding="@dimen/_6sdp"/>
             </androidx.constraintlayout.widget.ConstraintLayout>
         </LinearLayout>
     </ScrollView>

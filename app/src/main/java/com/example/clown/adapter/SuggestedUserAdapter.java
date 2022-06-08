@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.clown.R;
+import com.example.clown.activities.FriendProfileActivity;
 import com.example.clown.activities.SuggestedProfileActivity;
 import com.example.clown.databinding.ItemSuggestedUserBinding;
 import com.example.clown.models.User;
@@ -55,23 +56,40 @@ public class SuggestedUserAdapter extends RecyclerView.Adapter<SuggestedUserAdap
         }
 
         public void setBinding(User onUser) {
-            binding.rivAvatar.setImageBitmap(onUser.getImage());
-            binding.tvUsername.setText(onUser.getName());
+            binding.rivAvatar.setImageBitmap(onUser.getBitmapAvatar());
+            binding.tvUsername.setText(onUser.getUsername());
+            binding.getRoot().setOnClickListener(v -> checkSuggestedProfile(onUser));
 
-            if (mCurrentUser.getFriendsList().contains(onUser.getUserID())) {
+            //region Get appropriate UI for the relationship
+            if (mCurrentUser.getFriends().contains(onUser.getID())) {
                 binding.tvRequestSent.setText(R.string.already_friend);
                 binding.tvRequestSent.setVisibility(View.VISIBLE);
                 binding.btnAddFriend.setVisibility(View.GONE);
-            } else {
-                binding.tvRequestSent.setVisibility(View.GONE);
-                binding.btnAddFriend.setVisibility(View.VISIBLE);
+                return;
             }
 
-            binding.getRoot().setOnClickListener(v -> checkSuggestedProfile(onUser));
+            if (mCurrentUser.getSentRequests().contains(onUser.getID())) {
+                binding.tvRequestSent.setText(R.string.request_sent);
+                binding.tvRequestSent.setVisibility(View.VISIBLE);
+                binding.btnAddFriend.setVisibility(View.GONE);
+                return;
+            }
+
+            binding.tvRequestSent.setVisibility(View.GONE);
+            binding.btnAddFriend.setVisibility(View.VISIBLE);
+            //endregion
         }
 
         private void checkSuggestedProfile(User onUser) {
-            Intent intent = new Intent(mContext, SuggestedProfileActivity.class);
+            // Checking whether this user is already friend
+            Class<?> targetActivity;
+            if (mCurrentUser.getFriends().contains(onUser.getID()))
+                targetActivity = FriendProfileActivity.class;
+            else
+                targetActivity = SuggestedProfileActivity.class;
+
+            // Start appropriate profile UI
+            Intent intent = new Intent(mContext, targetActivity);
             intent.putExtra(Constants.KEY_USER, onUser);
             mContext.startActivity(intent);
         }

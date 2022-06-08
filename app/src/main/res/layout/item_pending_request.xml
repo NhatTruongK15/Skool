@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/btn_user_option"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <com.makeramen.roundedimageview.RoundedImageView
+        android:id="@+id/rivAvatar"
+        android:layout_width="@dimen/_35sdp"
+        android:layout_height="@dimen/_35sdp"
+        android:src="@drawable/default_avatar"
+        android:scaleType="centerCrop"
+        android:layout_margin="@dimen/_6sdp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:riv_oval="true"/>
+
+    <TextView
+        android:id="@+id/tvUsername"
+        android:hint="@string/username_hint"
+        android:textSize="@dimen/_15ssp"
+        android:textStyle="bold|italic"
+        android:textColor="@color/black"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_6sdp"
+        android:layout_marginStart="@dimen/_6sdp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/rivAvatar"/>
+
+    <TextView
+        android:id="@+id/tvMutualFriendsCount"
+        android:hint="@string/mutual_friends"
+        android:textSize="@dimen/_9ssp"
+        android:textStyle="italic"
+        android:textColor="@color/black"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_6sdp"
+        app:layout_constraintTop_toBottomOf="@id/tvUsername"
+        app:layout_constraintLeft_toRightOf="@id/rivAvatar"/>
+
+    <Button
+        android:id="@+id/btnAccept"
+        android:text="@string/friend_accept"
+        android:layout_width="@dimen/_75sdp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/_6sdp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/btnDecline"/>
+
+    <Button
+        android:id="@+id/btnDecline"
+        android:text="@string/friend_decline"
+        android:layout_width="@dimen/_75sdp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/_6sdp"
+        android:backgroundTint="@color/secondary_text"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

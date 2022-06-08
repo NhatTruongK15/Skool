@@ -62,9 +62,9 @@ public class ConversationAdapter extends RecyclerView.Adapter<ConversationAdapte
             binding.textRecentMessage.setText(chatMessage.message);
             binding.getRoot().setOnClickListener(v -> {
                 User user = new User();
-                user.setUserID(chatMessage.conversationId);
-                user.setName(chatMessage.conversationName);
-                user.setRawImage(chatMessage.conversationImage);
+                user.setID(chatMessage.conversationId);
+                user.setUsername(chatMessage.conversationName);
+                user.setAvatar(chatMessage.conversationImage);
                 conversationListener.onConversationClicked(user);
             });
         }

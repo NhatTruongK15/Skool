@@ -1,5 +1,8 @@
 package com.example.clown.activities;
 
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
+import android.content.ComponentName;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Patterns;
@@ -7,7 +10,9 @@ import android.view.View;
 
 import com.example.clown.databinding.ActivitySignInBinding;
 import com.example.clown.models.User;
+import com.example.clown.services.MyJobService;
 import com.example.clown.utilities.Constants;
+import com.example.clown.utilities.PreferenceManager;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -40,6 +45,8 @@ public class SignInActivity extends BaseActivity {
         mBinding = ActivitySignInBinding.inflate(getLayoutInflater());
         setContentView(mBinding.getRoot());
 
+        mPreferenceManager = new PreferenceManager(getApplicationContext());
+        mCurrentUser = new User();
         mPreferenceManager.putBoolean(Constants.KEY_IS_SIGNED_IN, false);
     }
 
@@ -104,8 +111,9 @@ public class SignInActivity extends BaseActivity {
             User validatedUser = task.getResult().getDocuments().get(0).toObject(User.class);
             mPreferenceManager.putUser(validatedUser);
             mPreferenceManager.putBoolean(Constants.KEY_IS_SIGNED_IN, true);
+            mCurrentUser.Clone(validatedUser);
 
-            updateUserAvailability();
+            // updateUserAvailability();
 
             // Go to main activity
             startActivity(TAG, MainActivity.class, null);

@@ -84,7 +84,7 @@ public class ContactsActivity extends BaseActivity{
         ViewPager2Adapter contactsVP2Adapter = new ViewPager2Adapter(getSupportFragmentManager(), getLifecycle());
 
         contactsVP2Adapter.addFragment(new FriendsFragment());
-        contactsVP2Adapter.addFragment(new PendingRequestsFragment());
+        contactsVP2Adapter.addFragment(new PendingRequestsFragment(mCurrentUser));
         contactsVP2Adapter.addFragment(new PhoneContactsFragment());
 
         // Set up ViewPager2

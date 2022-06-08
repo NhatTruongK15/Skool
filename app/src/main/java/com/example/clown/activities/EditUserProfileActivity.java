@@ -38,7 +38,7 @@ public class EditUserProfileActivity extends AppCompatActivity {
                     case "email":
                         if(isValidSignInDetails()){
                             database.collection(Constants.KEY_COLLECTION_USERS)
-                                    .document(currentUser.getUserID())
+                                    .document(currentUser.getID())
                                     .update(
                                             Constants.KEY_EMAIL, binding.newValueForProfile.getText().toString()
                                     );

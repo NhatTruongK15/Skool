@@ -40,7 +40,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendView
 
     @Override
     public void onBindViewHolder(@NonNull FriendViewHolder holder, int position) {
-        final User onFriend = mFriendsList.get(position);
+        User onFriend = mFriendsList.get(position);
         holder.setBinding(onFriend);
     }
 
@@ -60,7 +60,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendView
                 if (filteredPattern.isEmpty())
                     filteredFriendList = mFriendsListFull;
                 else for (User onFriend : mFriendsListFull)
-                    if (onFriend.getName().toLowerCase().contains(filteredPattern)
+                    if (onFriend.getUsername().toLowerCase().contains(filteredPattern)
                             || onFriend.getEmail().toLowerCase().contains(filteredPattern)
                             || onFriend.getPhoneNumber().contains(filteredPattern))
                         filteredFriendList.add(onFriend);
@@ -91,9 +91,9 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendView
 
         @SuppressLint("ResourceAsColor")
         public void setBinding(@NonNull User onFriend) {
-            binding.tvUsername.setText(onFriend.getName());
+            binding.tvUsername.setText(onFriend.getUsername());
             binding.tvPhoneNumber.setText(onFriend.getPhoneNumber());
-            binding.rivAvatar.setImageBitmap(onFriend.getImage());
+            binding.rivAvatar.setImageBitmap(onFriend.getBitmapAvatar());
 
             if (onFriend.getAvailability()) {
                 binding.ivStatus.setImageResource(R.drawable.ic_online_circle);

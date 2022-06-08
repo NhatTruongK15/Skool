@@ -30,18 +30,18 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 
 public class BaseActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
-    private static final String CHANNEL_ID = "TEST_CHANNEL";
-
     protected static PreferenceManager mPreferenceManager;
+    protected static User mCurrentUser = new User();
+
     protected BaseApplication mBaseApplication;
-    protected User mCurrentUser;
     protected String[] REQUESTED_PERMISSIONS;
 
-    protected boolean mIsSignedIn;
-
+    protected static boolean mIsSignedIn;
     protected int PERMISSION_REQ_ID;
 
     //region BACKGROUND POSSIBILITY
+    private static final String CHANNEL_ID = "TEST_CHANNEL";
+
     private ListenerRegistration mRegistration;
     private static boolean mIsChannelCreated = false;
 
@@ -57,13 +57,13 @@ public class BaseActivity extends AppCompatActivity implements SharedPreferences
             if (updatedUser == null) return;
 
             // Check friends list updates
-            int oldSize = mCurrentUser.getFriendsList().size();
-            int newSize = updatedUser.getFriendsList().size();
+            int oldSize = mCurrentUser.getFriends().size();
+            int newSize = updatedUser.getFriends().size();
 
             if (oldSize > newSize)
                 for (int i = 0; i < oldSize; i++)
-                    if (!updatedUser.getFriendsList().contains(mCurrentUser.getFriendsList().get(i)))
-                        notifyFriendsRemoved(mCurrentUser.getFriendsList().get(i));
+                    if (!updatedUser.getFriends().contains(mCurrentUser.getFriends().get(i)))
+                        notifyFriendsRemoved(mCurrentUser.getFriends().get(i));
 
             // Check pending requests updates
 
@@ -111,12 +111,6 @@ public class BaseActivity extends AppCompatActivity implements SharedPreferences
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        clearReferences();
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
         mBaseApplication.setCurrentActivity(this);
@@ -125,7 +119,7 @@ public class BaseActivity extends AppCompatActivity implements SharedPreferences
     @Override
     protected void onPause() {
         super.onPause();
-        clearReferences();
+        clearBaseAppRefs();
     }
 
     @Override
@@ -151,21 +145,19 @@ public class BaseActivity extends AppCompatActivity implements SharedPreferences
     private void baseInit() {
         mBaseApplication = (BaseApplication) getApplicationContext();
 
-        mPreferenceManager = new PreferenceManager(getApplicationContext());
-        mPreferenceManager.registerChangesListener(this);
+        if (mPreferenceManager != null) {
+            mPreferenceManager.registerChangesListener(this);
+            mIsSignedIn = mPreferenceManager.getBoolean(Constants.KEY_IS_SIGNED_IN);
+        }
 
-        mCurrentUser = mPreferenceManager.getUser();
-
-        mIsSignedIn = mPreferenceManager.getBoolean(Constants.KEY_IS_SIGNED_IN);
-
-        if (mIsSignedIn) mRegistration = FirebaseFirestore
-                .getInstance()
-                .collection(Constants.KEY_COLLECTION_USERS)
-                .document(mCurrentUser.getUserID())
-                .addSnapshotListener(mCurrentUserListener);
+        /*if (mIsSignedIn) mRegistration = FirebaseFirestore
+                    .getInstance()
+                    .collection(Constants.KEY_COLLECTION_USERS)
+                    .document(mCurrentUser.getID())
+                    .addSnapshotListener(mCurrentUserListener);*/
     }
 
-    private void clearReferences() {
+    private void clearBaseAppRefs() {
         Activity currentActivity = mBaseApplication.getCurrentActivity();
         if (this.equals(currentActivity))
             mBaseApplication.setCurrentActivity(null);
@@ -179,7 +171,7 @@ public class BaseActivity extends AppCompatActivity implements SharedPreferences
         FirebaseFirestore
                 .getInstance()
                 .collection(Constants.KEY_COLLECTION_USERS)
-                .document(mCurrentUser.getUserID())
+                .document(mCurrentUser.getID())
                 .update(Constants.KEY_AVAILABILITY, mIsSignedIn);
     }
 

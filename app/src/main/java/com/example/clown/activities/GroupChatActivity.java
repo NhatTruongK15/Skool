@@ -70,7 +70,7 @@ public class GroupChatActivity extends FirestoreBaseActivity implements GroupCha
         binding.btnAdd.setOnClickListener(view -> {
             List<String> listMemberId = new ArrayList<>();
             List<String> arrTempForListAdmin = new ArrayList<>();
-            arrTempForListAdmin.add(currentUser.getUserID());
+            arrTempForListAdmin.add(currentUser.getID());
 
             CreateGroup(listMemberId, arrTempForListAdmin);
 
@@ -96,7 +96,7 @@ public class GroupChatActivity extends FirestoreBaseActivity implements GroupCha
         createGroupChat.put(Constants.KEY_LAST_MESSAGE, "");
         createGroupChat.put(Constants.KEY_GROUP_ADMIN, arrTempForListAdmin);
         createGroupChat.put(Constants.KEY_GROUP_MEMBERS, listMemberId);
-        createGroupChat.put(Constants.KEY_SENDER_ID, currentUser.getUserID());
+        createGroupChat.put(Constants.KEY_SENDER_ID, currentUser.getID());
         createGroupChat.put(Constants.KEY_RECEIVER_ID, groupId);
         createGroupChat.put(Constants.KEY_TIMESTAMP, new Date());
     }
@@ -105,7 +105,7 @@ public class GroupChatActivity extends FirestoreBaseActivity implements GroupCha
         for (User user : usersGroupChat
         )
         {
-            listMemberId.add(user.getUserID());
+            listMemberId.add(user.getID());
 
         }
     }
@@ -117,7 +117,7 @@ public class GroupChatActivity extends FirestoreBaseActivity implements GroupCha
                 .get()
                 .addOnCompleteListener(task -> {
                     loading(false);
-                    String currentUserId = currentUser.getUserID();
+                    String currentUserId = currentUser.getID();
                     if (task.isSuccessful() && task.getResult() != null) {
                         for (QueryDocumentSnapshot queryDocumentSnapshot : task.getResult()) {
                             if (currentUserId.equals(queryDocumentSnapshot.getId())) {
@@ -125,7 +125,7 @@ public class GroupChatActivity extends FirestoreBaseActivity implements GroupCha
                             }
                             User user = new User();
                             user = queryDocumentSnapshot.toObject(User.class);
-                            user.setUserID(queryDocumentSnapshot.getString(Constants.KEY_USER_ID));
+                            user.setID(queryDocumentSnapshot.getString(Constants.KEY_USER_ID));
                             listUser.add(user);
                         }
                         if (listUser.size() > 0) {

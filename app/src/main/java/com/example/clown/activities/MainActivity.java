@@ -1,5 +1,8 @@
 package com.example.clown.activities;
 
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -11,12 +14,14 @@ import com.example.clown.adapter.ViewPager2Adapter;
 import com.example.clown.databinding.ActivityMainBinding;
 import com.example.clown.fragments.BasicConversationsFragment;
 import com.example.clown.fragments.GroupConversationsFragment;
+import com.example.clown.services.MyJobService;
 import com.example.clown.utilities.Constants;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
 public class MainActivity extends BaseActivity {
     public static final String TAG = MainActivity.class.getName();
+    public static final int JOB_SERVICE_ID = 613;
 
     private ActivityMainBinding binding;
 
@@ -25,6 +30,8 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Init();
+
+        startJobService();
 
         loadCurrentUserDetails();
 
@@ -70,8 +77,8 @@ public class MainActivity extends BaseActivity {
     }
 
     private void loadCurrentUserDetails() {
-        binding.name.setText(mCurrentUser.getName());
-        binding.imageProfile.setImageBitmap(mCurrentUser.getImage());
+        binding.name.setText(mCurrentUser.getUsername());
+        binding.imageProfile.setImageBitmap(mCurrentUser.getBitmapAvatar());
         binding.Phone.setText(mCurrentUser.getPhoneNumber());
     }
 
@@ -91,5 +98,15 @@ public class MainActivity extends BaseActivity {
         startActivity(new Intent(getApplicationContext(), SignInActivity.class));
 
         finish();
+    }
+
+    private void startJobService() {
+        ComponentName componentName = new ComponentName(getApplicationContext(), MyJobService.class);
+        JobInfo jobInfo = new JobInfo.Builder(JOB_SERVICE_ID, componentName)
+                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+                .setPersisted(true)
+                .build();
+        JobScheduler jobScheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
+        jobScheduler.schedule(jobInfo);
     }
 }

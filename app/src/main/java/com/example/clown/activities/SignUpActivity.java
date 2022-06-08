@@ -355,10 +355,10 @@ public class SignUpActivity extends AgoraBaseActivity {
                                         loading(binding.buttonSignUp, binding.progressBar, false);
 
                                         User user = new User();
-                                        user.setUserID(currentUser.getUid());
-                                        user.setName(binding.inputName.getText().toString());
+                                        user.setID(currentUser.getUid());
+                                        user.setUsername(binding.inputName.getText().toString());
                                         user.setPhoneNumber(binding.inputPhoneNumb.getText().toString());
-                                        user.setRawImage(encodedImage);
+                                        user.setAvatar(encodedImage);
                                         user.setEmail(binding.inputEmail.getText().toString());
 
 

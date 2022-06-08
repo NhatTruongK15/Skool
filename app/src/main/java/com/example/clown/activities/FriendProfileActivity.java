@@ -28,8 +28,8 @@ public class FriendProfileActivity extends BaseActivity {
     }
 
     private void loadUserProfile() {
-        binding.rivProfileAvatar.setImageBitmap(mSelectedUser.getImage());
-        binding.tvUsername.setText(mSelectedUser.getName());
+        binding.rivProfileAvatar.setImageBitmap(mSelectedUser.getBitmapAvatar());
+        binding.tvUsername.setText(mSelectedUser.getUsername());
         binding.tvProfilePhoneNumber.setText(mSelectedUser.getPhoneNumber());
         binding.tvProfileEmail.setText(mSelectedUser.getEmail());
     }
@@ -39,8 +39,8 @@ public class FriendProfileActivity extends BaseActivity {
     }
 
     private void removeFriend() {
-        mSelectedUser.getFriendsList().remove(mCurrentUser.getUserID());
-        mCurrentUser.getFriendsList().remove(mSelectedUser.getUserID());
+        mSelectedUser.getFriends().remove(mCurrentUser.getID());
+        mCurrentUser.getFriends().remove(mSelectedUser.getID());
         mPreferenceManager.putUser(mCurrentUser);
     }
 }

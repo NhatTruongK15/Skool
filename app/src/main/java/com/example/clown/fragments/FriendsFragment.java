@@ -77,12 +77,12 @@ public class FriendsFragment extends Fragment {
     }
 
     private void setUpFireStoreListener() {
-        if (mCurrentUser.getFriendsList().isEmpty()) return;
+        if (mCurrentUser.getFriends().isEmpty()) return;
 
         FirebaseFirestore
                 .getInstance()
                 .collection(Constants.KEY_COLLECTION_USERS)
-                .whereIn(Constants.KEY_USER_ID, mCurrentUser.getFriendsList())
+                .whereIn(Constants.KEY_USER_ID, mCurrentUser.getFriends())
                 .addSnapshotListener(mFriendEventsListener);
     }
 

@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.clown.databinding.ItemConteainerAddGroupMemberBinding;
 import com.example.clown.listeners.GroupChatListener;
-import com.example.clown.listeners.UserListener;
 import com.example.clown.models.User;
 
 import java.util.List;
@@ -58,9 +57,9 @@ public class GroupAddMemberAdapter extends RecyclerView.Adapter<GroupAddMemberAd
 
         void setUserData(User user)
         {
-            binding.textName.setText(user.getName());
+            binding.textName.setText(user.getUsername());
 
-            binding.imageProfile.setImageBitmap(getUserImage(user.getRawImage()));
+            binding.imageProfile.setImageBitmap(getUserImage(user.getAvatar()));
             binding.getRoot().setOnClickListener(v -> groupChatListener.onGroupChatClicked(user));
         }
     }

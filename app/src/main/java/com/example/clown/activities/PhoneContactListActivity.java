@@ -176,12 +176,12 @@ public class PhoneContactListActivity extends AppCompatActivity implements UserL
                                 continue;
                             }
                             User user = new User();
-                            user.setName(queryDocumentSnapshot.getString(Constants.KEY_NAME));
+                            user.setUsername(queryDocumentSnapshot.getString(Constants.KEY_NAME));
                             user.setEmail(queryDocumentSnapshot.getString(Constants.KEY_EMAIL));
-                            user.setRawImage(queryDocumentSnapshot.getString(Constants.KEY_IMAGE));
-                            user.setToken(queryDocumentSnapshot.getString(Constants.KEY_FCM_TOKEN));
+                            user.setAvatar(queryDocumentSnapshot.getString(Constants.KEY_IMAGE));
+                            //user.setToken(queryDocumentSnapshot.getString(Constants.KEY_FCM_TOKEN));
                             user.setPhoneNumber(queryDocumentSnapshot.getString(Constants.KEY_PHONE_NUMBER));
-                            user.setUserID(queryDocumentSnapshot.getId());
+                            user.setID(queryDocumentSnapshot.getId());
                             users.add(user);
                         }
                         if (users.size() > 0) {

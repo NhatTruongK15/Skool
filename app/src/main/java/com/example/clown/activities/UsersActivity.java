@@ -50,7 +50,7 @@ public class UsersActivity extends FirestoreBaseActivity implements UserListener
                 .get()
                 .addOnCompleteListener(task -> {
                     loading(false);
-                    String currentUserId = currentUser.getUserID();
+                    String currentUserId = currentUser.getID();
                     if(task.isSuccessful() && task.getResult() != null)
                     {
                         List<User> users = new ArrayList<>();
@@ -59,11 +59,11 @@ public class UsersActivity extends FirestoreBaseActivity implements UserListener
                                 continue;
                             }
                             User user = new User();
-                            user.setName(queryDocumentSnapshot.getString(Constants.KEY_NAME));
+                            user.setUsername(queryDocumentSnapshot.getString(Constants.KEY_NAME));
                             user.setEmail(queryDocumentSnapshot.getString(Constants.KEY_EMAIL));
-                            user.setRawImage(queryDocumentSnapshot.getString(Constants.KEY_IMAGE));
-                            user.setToken(queryDocumentSnapshot.getString(Constants.KEY_FCM_TOKEN));
-                            user.setUserID(queryDocumentSnapshot.getId());
+                            user.setAvatar(queryDocumentSnapshot.getString(Constants.KEY_IMAGE));
+                            //user.setToken(queryDocumentSnapshot.getString(Constants.KEY_FCM_TOKEN));
+                            user.setID(queryDocumentSnapshot.getId());
                             users.add(user);
                         }
                         if(users.size() > 0)

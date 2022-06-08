@@ -4,7 +4,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -12,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.clown.databinding.ItemContainerUserBinding;
 import com.example.clown.listeners.UserGCListener;
-import com.example.clown.listeners.UserListener;
 import com.example.clown.models.User;
 
 import java.util.List;
@@ -59,9 +57,9 @@ public class UsersGCAdapter extends RecyclerView.Adapter<UsersGCAdapter.UserView
 
         void setUserData(User user)
         {
-            binding.textName.setText(user.getName());
+            binding.textName.setText(user.getUsername());
             binding.textEmail.setText(user.getEmail());
-            binding.imageProfile.setImageBitmap(getUserImage(user.getRawImage()));
+            binding.imageProfile.setImageBitmap(getUserImage(user.getAvatar()));
             binding.getRoot().setOnClickListener(v -> {
                 userGCListener.onUserGCClicked(user);
             });

@@ -4,57 +4,126 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
 
+import com.google.firebase.firestore.Exclude;
+
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class User implements Serializable {
-    private String name;
-    private String image;
-    private String email;
-    private String token;
-    private String userID;
-    private boolean availability;
-    private String phoneNumber;
+    // Account
+    private String mID;
+    private String mUsername;
+    private String mPhoneNumber;
+    private String mPassword;
+    private String mEmail;
 
-    private List<String> friendsList;
-    private List<String> pendingRequests;
-    private List<String> sentRequests;
+    // Personal
+    private String mAvatar;
+    private String mFirstName;
+    private String mLastName;
+    private Date mDateOfBirth;
+    private String mGender;
+    private String mBio;
+
+    // Connection
+    private boolean mAvailability;
+    private List<String> mFriends;
+    private List<String> mReceivedRequests;
+    private List<String> mSentRequests;
 
     //region #Accessors
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    public String getID() { return mID; }
+    public void setID(String id) { this.mID  = id; }
 
-    public String getRawImage() { return image; }
-    public Bitmap getImage() {
-        if (image == null) return null;
-        byte[] bytes = Base64.decode(image, Base64.DEFAULT);
+    public String getUsername() { return mUsername; }
+    public void setUsername(String name) { this.mUsername = name; }
+
+    public String getPhoneNumber() { return mPhoneNumber; }
+    public void setPhoneNumber(String phoneNumber) { this.mPhoneNumber = phoneNumber; }
+
+    public String getEmail() { return mEmail; }
+    public void setEmail(String email) { this.mEmail = email; }
+
+    public String getPassword() { return mPassword; }
+    public void setPassword(String mPassword) { this.mPassword = mPassword; }
+
+    public String getAvatar() { return mAvatar; }
+    public void setAvatar(String avatar) { this.mAvatar = avatar; }
+
+    public String getFirstName() { return mFirstName; }
+    public void setFirstName(String mFirstName) {this.mFirstName = mFirstName; }
+
+    public String getLastName() { return mLastName; }
+    public void setLastName(String mLastName) { this.mLastName = mLastName; }
+
+    public Date getDateOfBirth() { return mDateOfBirth; }
+    public void setDateOfBirth(Date mDateOfBirth) { this.mDateOfBirth = mDateOfBirth; }
+
+    public String getGender() { return mGender; }
+    public void setGender(String mGender) { this.mGender = mGender; }
+
+    public String getBio() { return mBio; }
+    public void setBio(String mBio) { this.mBio = mBio; }
+
+    public boolean getAvailability() { return mAvailability; }
+    public void setAvailability(boolean availability) { this.mAvailability = availability; }
+
+    public List<String> getFriends() { return mFriends; }
+    public void setFriendsList(List<String> friendsList) { this.mFriends = new ArrayList<>(friendsList); }
+
+    public List<String> getReceivedRequests() { return mReceivedRequests; }
+    public void setReceivedRequests(List<String> pendingRequests) { this.mReceivedRequests = new ArrayList<>(pendingRequests); }
+
+    public List<String> getSentRequests() { return mSentRequests; }
+    public void setSentRequests(List<String> sentRequests) { this.mSentRequests = new ArrayList<>(sentRequests); }
+
+    @Exclude public Bitmap getBitmapAvatar() {
+        if (mAvatar == null) return null;
+        byte[] bytes = Base64.decode(mAvatar, Base64.DEFAULT);
         return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
     }
-    public void setRawImage(String image) { this.image = image; }
-
-    public String getToken() { return token; }
-    public void setToken(String token) { this.token = token; }
-
-    public boolean getAvailability() { return availability; }
-    public void setAvailability(boolean availability) { this.availability = availability; }
-
-    public String getPhoneNumber() { return phoneNumber; }
-    public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
-
-    public List<String> getFriendsList() { return friendsList; }
-    public void setFriendsList(List<String> friendsList) { this.friendsList = friendsList; }
-
-    public List<String> getPendingRequests() { return pendingRequests; }
-    public void setPendingRequests(List<String> pendingRequests) { this.pendingRequests = pendingRequests; }
-
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
-
-    public String getUserID() { return userID; }
-    public void setUserID(String userID) { this.userID = userID; }
-
-    public List<String> getSentRequests() { return sentRequests; }
-    public void setSentRequests(List<String> sentRequests) { this.sentRequests = sentRequests; }
+    @Exclude public String getFullName() { return mFirstName + " " + mLastName; }
     //endregion
+
+    public User() {
+        setID("");
+        setUsername("Unnamed");
+        setPhoneNumber("");
+        setEmail("");
+        setPassword("");
+
+        setAvatar("");
+        setFirstName("");
+        setLastName("");
+        setDateOfBirth(new Date());
+        setGender("Male");
+        setBio("None");
+
+        setAvailability(false);
+        mFriends = new ArrayList<>();
+        mReceivedRequests = new ArrayList<>();
+        mSentRequests = new ArrayList<>();
+    }
+
+    public void Clone(User source) {
+        setID(source.getID());
+        setUsername(source.getUsername());
+        setPhoneNumber(source.getPhoneNumber());
+        setEmail(source.getEmail());
+        setPassword(source.getPassword());
+
+        setAvatar(source.getAvatar());
+        setFirstName(source.getFirstName());
+        setLastName(source.getLastName());
+        setDateOfBirth(source.getDateOfBirth());
+        setGender(source.getGender());
+        setBio(source.getBio());
+
+        setAvailability(source.getAvailability());
+        setFriendsList(source.getFriends());
+        setReceivedRequests(source.getReceivedRequests());
+        setSentRequests(source.getSentRequests());
+    }
 }
