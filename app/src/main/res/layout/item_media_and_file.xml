@@ -9,16 +9,24 @@
 
     >
     <ImageView
-        android:layout_width="@dimen/_70sdp"
-        android:layout_height="@dimen/_70sdp"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_80sdp"
         android:id="@+id/imgItem"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_80sdp"
+        android:id="@+id/txtItem"
+        android:textColor="@color/primary_dark"
+        android:gravity="center"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/btnItem"
-        android:layout_width="@dimen/_60sdp"
-        android:layout_height="@dimen/_60sdp"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_65sdp"
         android:background="@color/Trans"
         android:padding="@dimen/_5sdp"
         app:layout_constraintStart_toStartOf="parent"
