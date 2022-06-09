@@ -10,12 +10,14 @@ import android.view.View;
 
 import com.example.clown.databinding.ActivitySignInBinding;
 import com.example.clown.models.User;
-import com.example.clown.services.MyJobService;
+import com.example.clown.services.UserListenerService;
 import com.example.clown.utilities.Constants;
 import com.example.clown.utilities.PreferenceManager;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.Objects;
 
 public class SignInActivity extends BaseActivity {
     private static final String TAG = SignInActivity.class.getName();
@@ -27,17 +29,22 @@ public class SignInActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (mIsSignedIn) onSignedIn();
-
         Init();
+
+        // If the app was signed in before then
+        // skip the sign in process
+        if (mPreferenceManager.getUser() != null) onSignedIn();
 
         setListeners();
     }
 
     private void onSignedIn() {
         Log.e(TAG, "Already signed in!");
-        updateUserAvailability();
+
+        mCurrentUser.Clone(mPreferenceManager.getUser());
+
         startActivity(TAG, MainActivity.class, null);
+
         finish();
     }
 
@@ -47,7 +54,6 @@ public class SignInActivity extends BaseActivity {
 
         mPreferenceManager = new PreferenceManager(getApplicationContext());
         mCurrentUser = new User();
-        mPreferenceManager.putBoolean(Constants.KEY_IS_SIGNED_IN, false);
     }
 
     private void setListeners() {
@@ -110,10 +116,9 @@ public class SignInActivity extends BaseActivity {
             // Get validated user
             User validatedUser = task.getResult().getDocuments().get(0).toObject(User.class);
             mPreferenceManager.putUser(validatedUser);
-            mPreferenceManager.putBoolean(Constants.KEY_IS_SIGNED_IN, true);
-            mCurrentUser.Clone(validatedUser);
+            mCurrentUser.Clone(Objects.requireNonNull(validatedUser));
 
-            // updateUserAvailability();
+            startJobService();
 
             // Go to main activity
             startActivity(TAG, MainActivity.class, null);
@@ -125,5 +130,15 @@ public class SignInActivity extends BaseActivity {
         Log.e(TAG, "Signed in failed!");
         loading(false);
         showToast(Constants.TOAST_SIGN_IN_FAILED);
+    }
+
+    private void startJobService() {
+        ComponentName componentName = new ComponentName(getApplicationContext(), UserListenerService.class);
+        JobInfo jobInfo = new JobInfo.Builder(Constants.KEY_SERVICE_ID, componentName)
+                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED)
+                .setPersisted(true)
+                .build();
+        JobScheduler jobScheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
+        jobScheduler.schedule(jobInfo);
     }
 }

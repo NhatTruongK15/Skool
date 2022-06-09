@@ -1,5 +1,7 @@
 package com.example.clown.utilities;
 
+import android.app.Application;
+
 import java.util.HashMap;
 
 public class Constants {
@@ -11,15 +13,10 @@ public class Constants {
     public static final String KEY_GROUP_ADMIN = "admin";
     public static final String KEY_DOCUMENT_ID = "documentId";
     public static  final String KEY_COLLECTION_USERS = "users";
-    public static final String KEY_NAME = "name";
-    public static final String KEY_EMAIL = "email";
-    public static final String KEY_PHONE_NUMBER = "phoneNumber";
-    public static final String KEY_PASSWORD = "password";
+
     public static final String KEY_REFERENCE_NAME = "clown";
     public static final String KEY_IS_SIGNED_IN = "isSignedIn";
     public static final String KEY_DOCUMENT_REFERENCE_ID = "documentReferenceID"; // userID cũ (  thực chất là ID của document )
-    public static final String KEY_USER_ID = "userID"; // authencation ID not use anymore
-    public static final String KEY_IMAGE = "image";
     public static final String KEY_FCM_TOKEN = "fcmToken";
     public static final String KEY_EDIT_PROFILETYPE = "editProfileType";
     public static final String KEY_USER = "user";
@@ -45,12 +42,32 @@ public class Constants {
     public static final String KEY_SENDER_IMAGE="senderImage";
     public static final String KEY_RECEIVER_IMAGE="receiverImage";
     public static final String KEY_LAST_MESSAGE="lastMessage";
-    public static final String KEY_AVAILABILITY="availability";
 
     public static final String REMOTE_MSG_AUTHORIZATION="Authorization";
     public static final String REMOTE_MSG_CONTENT_TYPE="Content-Type";
     public static final String REMOTE_MSG_DATA="data";
     public static final String REMOTE_MSG_REGISTRATION_IDS="registration_ids";
+
+    // Firestore User Model
+    public static final String KEY_ID = "id";
+    public static final String KEY_USERNAME = "userName";
+    public static final String KEY_PASSWORD = "password";
+    public static final String KEY_PHONE_NUMBER = "phoneNumber";
+    public static final String KEY_EMAIL = "email";
+    public static final String KEY_AVATAR = "avatar";
+    public static final String KEY_AVAILABILITY="availability";
+    public static final String KEY_FIRST_NAME = "firstName";
+    public static final String KEY_LAST_NAME = "lastName";
+    public static final String KEY_BIO = "bio";
+    public static final String KEY_DATE_OF_BIRTH = "dateOfBirth";
+    public static final String KEY_GENDER = "gender";
+    public static final String KEY_FRIEND_LIST = "friendList";
+    public static final String KEY_RECEIVED_REQUESTS = "receivedRequests";
+    public static final String KEY_SENT_REQUESTS = "sentRequests";
+    public static final String VALUE_UN_INITIALIZED = "None";
+    public static final String VALUE_GENDER_MALE = "Male";
+    public static final String VALUE_GENDER_FEMALE = "Female";
+    public static final String VALUE_GENDER_OTHER = "Other";
 
     // Agora
     public static final String AGORA_APP_ID="7bf042d1345441fd9da44293ef98cd6d";
@@ -73,6 +90,14 @@ public class Constants {
     public static final int MSG_AGORA_REMOTE_INVITATION_REFUSED = 9;
     public static final int MSG_AGORA_REMOTE_INVITATION_CANCELED = 10;
     public static final int MSG_AGORA_REMOTE_INVITATION_FAILED = 11;
+
+    // Application
+    public static final String KEY_CHANNEL_ID = "applicationChannelID";
+    public static final int KEY_SERVICE_ID = 613;
+
+    // PreferenceManager
+    public static final String KEY_CURRENT_USER = "currentUser";
+    public static final String ACT_UPDATE_CURRENT_USER = "updateCurrentUser";
 
     // Base Activity
     public static final String KEY_TRANSFER_DATA = "transferData";

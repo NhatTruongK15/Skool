@@ -18,6 +18,7 @@ import com.example.clown.services.MyJobService;
 import com.example.clown.utilities.Constants;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class MainActivity extends BaseActivity {
     public static final String TAG = MainActivity.class.getName();
@@ -30,8 +31,6 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Init();
-
-        startJobService();
 
         loadCurrentUserDetails();
 
@@ -93,20 +92,11 @@ public class MainActivity extends BaseActivity {
     private void signOut() {
         showToast(Constants.TOAST_ON_SIGN_OUT);
 
-        mPreferenceManager.clear();
+        JobScheduler jobScheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
+        jobScheduler.cancel(Constants.KEY_SERVICE_ID);
 
         startActivity(new Intent(getApplicationContext(), SignInActivity.class));
 
         finish();
-    }
-
-    private void startJobService() {
-        ComponentName componentName = new ComponentName(getApplicationContext(), MyJobService.class);
-        JobInfo jobInfo = new JobInfo.Builder(JOB_SERVICE_ID, componentName)
-                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
-                .setPersisted(true)
-                .build();
-        JobScheduler jobScheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
-        jobScheduler.schedule(jobInfo);
     }
 }

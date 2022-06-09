@@ -165,7 +165,7 @@ public class MyProfileActivity extends AppCompatActivity {
                             database.collection(Constants.KEY_COLLECTION_USERS)
                                     .document(currentUser.getID())
                                     .update(
-                                            Constants.KEY_IMAGE, encodedImage
+                                            Constants.KEY_AVATAR, encodedImage
                                     );
 
                             //preference manager

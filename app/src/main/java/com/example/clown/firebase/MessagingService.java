@@ -36,7 +36,7 @@ public class MessagingService extends FirebaseMessagingService {
 
         User user = new User();
         user.setID(message.getData().get(Constants.KEY_DOCUMENT_REFERENCE_ID));
-        user.setUsername(message.getData().get(Constants.KEY_NAME));
+        user.setUsername(message.getData().get(Constants.KEY_USERNAME));
         //user.setToken( message.getData().get(Constants.KEY_FCM_TOKEN));
 
         int notificationId = new Random().nextInt();

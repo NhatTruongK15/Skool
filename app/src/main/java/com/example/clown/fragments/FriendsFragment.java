@@ -82,7 +82,7 @@ public class FriendsFragment extends Fragment {
         FirebaseFirestore
                 .getInstance()
                 .collection(Constants.KEY_COLLECTION_USERS)
-                .whereIn(Constants.KEY_USER_ID, mCurrentUser.getFriends())
+                .whereIn(Constants.KEY_ID, mCurrentUser.getFriends())
                 .addSnapshotListener(mFriendEventsListener);
     }
 

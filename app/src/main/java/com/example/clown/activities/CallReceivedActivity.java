@@ -65,8 +65,8 @@ public class CallReceivedActivity extends AgoraBaseActivity {
                 .document(bundle.getString(Constants.KEY_DOCUMENT_REFERENCE_ID))
                 .get().addOnCompleteListener(t -> {
             if (t.isSuccessful() && t.getResult() != null) {
-                String remoteName = (String) t.getResult().getData().get(Constants.KEY_NAME);
-                String remoteImage = (String) t.getResult().getData().get(Constants.KEY_IMAGE);
+                String remoteName = (String) t.getResult().getData().get(Constants.KEY_USERNAME);
+                String remoteImage = (String) t.getResult().getData().get(Constants.KEY_AVATAR);
                 if (remoteName != null)
                     binding.tvCallerNameCallReceived.setText(remoteName);
 

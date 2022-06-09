@@ -4,7 +4,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
 
+import com.example.clown.utilities.Constants;
 import com.google.firebase.firestore.Exclude;
+import com.google.firebase.firestore.PropertyName;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -34,72 +36,71 @@ public class User implements Serializable {
     private List<String> mSentRequests;
 
     //region #Accessors
-    public String getID() { return mID; }
-    public void setID(String id) { this.mID  = id; }
+    @PropertyName(Constants.KEY_ID) public String getID() { return mID; }
+    @PropertyName(Constants.KEY_ID) public void setID(String id) { this.mID  = id; }
 
-    public String getUsername() { return mUsername; }
-    public void setUsername(String name) { this.mUsername = name; }
+    @PropertyName(Constants.KEY_USERNAME) public String getUsername() { return mUsername; }
+    @PropertyName(Constants.KEY_USERNAME) public void setUsername(String name) { this.mUsername = name; }
 
-    public String getPhoneNumber() { return mPhoneNumber; }
-    public void setPhoneNumber(String phoneNumber) { this.mPhoneNumber = phoneNumber; }
+    @PropertyName(Constants.KEY_PHONE_NUMBER) public String getPhoneNumber() { return mPhoneNumber; }
+    @PropertyName(Constants.KEY_PHONE_NUMBER) public void setPhoneNumber(String phoneNumber) { this.mPhoneNumber = phoneNumber; }
 
-    public String getEmail() { return mEmail; }
-    public void setEmail(String email) { this.mEmail = email; }
+    @PropertyName(Constants.KEY_EMAIL) public String getEmail() { return mEmail; }
+    @PropertyName(Constants.KEY_EMAIL) public void setEmail(String email) { this.mEmail = email; }
 
-    public String getPassword() { return mPassword; }
-    public void setPassword(String mPassword) { this.mPassword = mPassword; }
+    @PropertyName(Constants.KEY_PASSWORD) public String getPassword() { return mPassword; }
+    @PropertyName(Constants.KEY_PASSWORD) public void setPassword(String mPassword) { this.mPassword = mPassword; }
 
-    public String getAvatar() { return mAvatar; }
-    public void setAvatar(String avatar) { this.mAvatar = avatar; }
+    @PropertyName(Constants.KEY_AVATAR) public String getAvatar() { return mAvatar; }
+    @PropertyName(Constants.KEY_AVATAR) public void setAvatar(String avatar) { this.mAvatar = avatar; }
 
-    public String getFirstName() { return mFirstName; }
-    public void setFirstName(String mFirstName) {this.mFirstName = mFirstName; }
+    @PropertyName(Constants.KEY_FIRST_NAME) public String getFirstName() { return mFirstName; }
+    @PropertyName(Constants.KEY_FIRST_NAME) public void setFirstName(String mFirstName) {this.mFirstName = mFirstName; }
 
-    public String getLastName() { return mLastName; }
-    public void setLastName(String mLastName) { this.mLastName = mLastName; }
+    @PropertyName(Constants.KEY_LAST_NAME) public String getLastName() { return mLastName; }
+    @PropertyName(Constants.KEY_LAST_NAME) public void setLastName(String mLastName) { this.mLastName = mLastName; }
 
-    public Date getDateOfBirth() { return mDateOfBirth; }
-    public void setDateOfBirth(Date mDateOfBirth) { this.mDateOfBirth = mDateOfBirth; }
+    @PropertyName(Constants.KEY_DATE_OF_BIRTH) public Date getDateOfBirth() { return mDateOfBirth; }
+    @PropertyName(Constants.KEY_DATE_OF_BIRTH) public void setDateOfBirth(Date mDateOfBirth) { this.mDateOfBirth = mDateOfBirth; }
 
-    public String getGender() { return mGender; }
-    public void setGender(String mGender) { this.mGender = mGender; }
+    @PropertyName(Constants.KEY_GENDER) public String getGender() { return mGender; }
+    @PropertyName(Constants.KEY_GENDER) public void setGender(String mGender) { this.mGender = mGender; }
 
-    public String getBio() { return mBio; }
-    public void setBio(String mBio) { this.mBio = mBio; }
+    @PropertyName(Constants.KEY_BIO) public String getBio() { return mBio; }
+    @PropertyName(Constants.KEY_BIO) public void setBio(String mBio) { this.mBio = mBio; }
 
-    public boolean getAvailability() { return mAvailability; }
-    public void setAvailability(boolean availability) { this.mAvailability = availability; }
+    @PropertyName(Constants.KEY_AVAILABILITY) public boolean getAvailability() { return mAvailability; }
+    @PropertyName(Constants.KEY_AVAILABILITY) public void setAvailability(boolean availability) { this.mAvailability = availability; }
 
-    public List<String> getFriends() { return mFriends; }
-    public void setFriendsList(List<String> friendsList) { this.mFriends = new ArrayList<>(friendsList); }
+    @PropertyName(Constants.KEY_FRIEND_LIST) public List<String> getFriends() { return mFriends; }
+    @PropertyName(Constants.KEY_FRIEND_LIST) public void setFriends(List<String> friendsList) { this.mFriends = new ArrayList<>(friendsList); }
 
-    public List<String> getReceivedRequests() { return mReceivedRequests; }
-    public void setReceivedRequests(List<String> pendingRequests) { this.mReceivedRequests = new ArrayList<>(pendingRequests); }
+    @PropertyName(Constants.KEY_RECEIVED_REQUESTS) public List<String> getReceivedRequests() { return mReceivedRequests; }
+    @PropertyName(Constants.KEY_RECEIVED_REQUESTS) public void setReceivedRequests(List<String> pendingRequests) { this.mReceivedRequests = new ArrayList<>(pendingRequests); }
 
-    public List<String> getSentRequests() { return mSentRequests; }
-    public void setSentRequests(List<String> sentRequests) { this.mSentRequests = new ArrayList<>(sentRequests); }
+    @PropertyName(Constants.KEY_SENT_REQUESTS) public List<String> getSentRequests() { return mSentRequests; }
+    @PropertyName(Constants.KEY_SENT_REQUESTS) public void setSentRequests(List<String> sentRequests) { this.mSentRequests = new ArrayList<>(sentRequests); }
 
     @Exclude public Bitmap getBitmapAvatar() {
         if (mAvatar == null) return null;
         byte[] bytes = Base64.decode(mAvatar, Base64.DEFAULT);
         return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
     }
-    @Exclude public String getFullName() { return mFirstName + " " + mLastName; }
     //endregion
 
     public User() {
-        setID("");
-        setUsername("Unnamed");
-        setPhoneNumber("");
-        setEmail("");
-        setPassword("");
+        setID(Constants.VALUE_UN_INITIALIZED);
+        setUsername(Constants.VALUE_UN_INITIALIZED);
+        setPhoneNumber(Constants.VALUE_UN_INITIALIZED);
+        setEmail(Constants.VALUE_UN_INITIALIZED);
+        setPassword(Constants.VALUE_UN_INITIALIZED);
 
-        setAvatar("");
-        setFirstName("");
-        setLastName("");
+        setAvatar(Constants.VALUE_UN_INITIALIZED);
+        setFirstName(Constants.VALUE_UN_INITIALIZED);
+        setLastName(Constants.VALUE_UN_INITIALIZED);
         setDateOfBirth(new Date());
-        setGender("Male");
-        setBio("None");
+        setGender(Constants.VALUE_UN_INITIALIZED);
+        setBio(Constants.VALUE_UN_INITIALIZED);
 
         setAvailability(false);
         mFriends = new ArrayList<>();
@@ -122,7 +123,7 @@ public class User implements Serializable {
         setBio(source.getBio());
 
         setAvailability(source.getAvailability());
-        setFriendsList(source.getFriends());
+        setFriends(source.getFriends());
         setReceivedRequests(source.getReceivedRequests());
         setSentRequests(source.getSentRequests());
     }

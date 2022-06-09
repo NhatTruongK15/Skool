@@ -1,8 +1,6 @@
 package com.example.clown.adapter;
 
 import static com.example.clown.utilities.Constants.HD_RES;
-import static com.example.clown.utilities.Constants.HD_RES_860;
-import static com.example.clown.utilities.Constants.PIC_HOLDER;
 
 import android.content.Context;
 import android.content.Intent;
@@ -26,14 +24,8 @@ import com.example.clown.activities.FileDisplayActivitiy;
 import com.example.clown.databinding.ItemContainerGroupReceivedMessageBinding;
 import com.example.clown.databinding.ItemContainerSentMessageBinding;
 import com.example.clown.models.ChatMessage;
-import com.example.clown.models.User;
 import com.example.clown.utilities.Constants;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.io.ByteArrayOutputStream;
 import java.util.List;
@@ -252,8 +244,8 @@ public class GroupChatAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHol
                     .addOnFailureListener(v -> {})
             .addOnCompleteListener(task -> {
                 if(task.isSuccessful() && task.getResult() != null){
-                    binding.textUserName.setText(task.getResult().getString(Constants.KEY_NAME));
-                    binding.imageProfile.setImageBitmap(getUserImage(task.getResult().getString(Constants.KEY_IMAGE)));
+                    binding.textUserName.setText(task.getResult().getString(Constants.KEY_USERNAME));
+                    binding.imageProfile.setImageBitmap(getUserImage(task.getResult().getString(Constants.KEY_AVATAR)));
                 }
             });
 

@@ -342,12 +342,12 @@ public class SignUpActivity extends AgoraBaseActivity {
 
                             //create userInput (containing user's infomations)
                             HashMap<String, Object> userInput = new HashMap<>();
-                            userInput.put(Constants.KEY_NAME, binding.inputName.getText().toString());
+                            userInput.put(Constants.KEY_USERNAME, binding.inputName.getText().toString());
                             userInput.put(Constants.KEY_EMAIL, binding.inputEmail.getText().toString());
                             userInput.put(Constants.KEY_PHONE_NUMBER, binding.inputPhoneNumb.getText().toString());
                             userInput.put(Constants.KEY_PASSWORD, binding.inputPassword.getText().toString());
-                            userInput.put(Constants.KEY_IMAGE, encodedImage);
-                            userInput.put(Constants.KEY_USER_ID, currentUser.getUid());
+                            userInput.put(Constants.KEY_AVATAR, encodedImage);
+                            userInput.put(Constants.KEY_ID, currentUser.getUid());
                             database.collection(Constants.KEY_COLLECTION_USERS)
                                     .document(currentUser.getUid())
                                     .set(userInput)
@@ -364,13 +364,13 @@ public class SignUpActivity extends AgoraBaseActivity {
 
                                         preferenceManager.putBoolean(Constants.KEY_IS_SIGNED_IN, true);
                                         preferenceManager.putUser(user);
-/*                                      preferenceManager.putString(Constants.KEY_USER_ID, currentUser.getUid());
+/*                                      preferenceManager.putString(Constants.KEY_ID, currentUser.getUid());
                                         preferenceManager.putString(Constants.KEY_PHONE_NUMBER, binding.inputPhoneNumb.getText().toString());
                                         preferenceManager.putString(Constants.KEY_EMAIL, binding.inputEmail.getText().toString());
 
                                         preferenceManager.putString(Constants.KEY_DOCUMENT_REFERENCE_ID, currentUser.getUid());
-                                        preferenceManager.putString(Constants.KEY_NAME, binding.inputName.getText().toString());
-                                        preferenceManager.putString(Constants.KEY_IMAGE, encodedImage);*/
+                                        preferenceManager.putString(Constants.KEY_USERNAME, binding.inputName.getText().toString());
+                                        preferenceManager.putString(Constants.KEY_AVATAR, encodedImage);*/
 
                                         // LOGIN AGORA SERVER
                                         String userId = currentUser.getUid();
@@ -464,21 +464,21 @@ public class SignUpActivity extends AgoraBaseActivity {
 
                             //create userInput (containing user's infomations)
                             HashMap<String, Object> userInput =  new HashMap<>();
-                            userInput.put(Constants.KEY_NAME, binding.inputName.getText().toString());
+                            userInput.put(Constants.KEY_USERNAME, binding.inputName.getText().toString());
                             userInput.put(Constants.KEY_EMAIL, binding.inputEmail.getText().toString());
                             userInput.put(Constants.KEY_PASSWORD,binding.inputPassword.getText().toString());
-                            userInput.put(Constants.KEY_IMAGE, encodedImage);
-                            userInput.put(Constants.KEY_USER_ID, currentUser.getUid());
+                            userInput.put(Constants.KEY_AVATAR, encodedImage);
+                            userInput.put(Constants.KEY_ID, currentUser.getUid());
 
                             database.collection(Constants.KEY_COLLECTION_USERS)
                                     .add(userInput)
                                     .addOnSuccessListener(documentReference ->{
                                         loading(false);
                                         preferenceManager.putBoolean(Constants.KEY_IS_SIGNED_IN, true);
-                                        preferenceManager.putString(Constants.KEY_USER_ID,currentUser.getUid() );
+                                        preferenceManager.putString(Constants.KEY_ID,currentUser.getUid() );
                                         preferenceManager.putString(Constants.KEY_DOCUMENT_REFERENCE_ID,documentReference.getUserID());
-                                        preferenceManager.putString(Constants.KEY_NAME, binding.inputName.getText().toString());
-                                        preferenceManager.putString(Constants.KEY_IMAGE,encodedImage);
+                                        preferenceManager.putString(Constants.KEY_USERNAME, binding.inputName.getText().toString());
+                                        preferenceManager.putString(Constants.KEY_AVATAR,encodedImage);
                                         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                         startActivity(intent);

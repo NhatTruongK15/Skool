@@ -59,9 +59,9 @@ public class UsersActivity extends FirestoreBaseActivity implements UserListener
                                 continue;
                             }
                             User user = new User();
-                            user.setUsername(queryDocumentSnapshot.getString(Constants.KEY_NAME));
+                            user.setUsername(queryDocumentSnapshot.getString(Constants.KEY_USERNAME));
                             user.setEmail(queryDocumentSnapshot.getString(Constants.KEY_EMAIL));
-                            user.setAvatar(queryDocumentSnapshot.getString(Constants.KEY_IMAGE));
+                            user.setAvatar(queryDocumentSnapshot.getString(Constants.KEY_AVATAR));
                             //user.setToken(queryDocumentSnapshot.getString(Constants.KEY_FCM_TOKEN));
                             user.setID(queryDocumentSnapshot.getId());
                             users.add(user);

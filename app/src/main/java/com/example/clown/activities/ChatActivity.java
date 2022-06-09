@@ -473,7 +473,7 @@ public class ChatActivity extends FirestoreBaseActivity {
 
                 JSONObject data = new JSONObject();
                 data.put(Constants.KEY_DOCUMENT_REFERENCE_ID, currentUser.getID());
-                data.put(Constants.KEY_NAME, currentUser.getUsername());
+                data.put(Constants.KEY_USERNAME, currentUser.getUsername());
                 //data.put(Constants.KEY_FCM_TOKEN, currentUser.getToken());
                 data.put(Constants.KEY_MESSAGE, binding.inputMessage.getText().toString());
                 data.put(Constants.KEY_MESSAGE_IMAGE, encodedImage);
@@ -563,7 +563,7 @@ public class ChatActivity extends FirestoreBaseActivity {
                 }
                 //receiverUser.setToken(value.getString(Constants.KEY_FCM_TOKEN));
                 if (receiverUser.getAvatar() == null) {
-                    receiverUser.setAvatar(value.getString(Constants.KEY_IMAGE));
+                    receiverUser.setAvatar(value.getString(Constants.KEY_AVATAR));
                     chatAdapter.setReceiverProfileImage(receiverUser.getBitmapAvatar());
                     chatAdapter.notifyItemRangeChanged(0, chatMessages.size());
                 }

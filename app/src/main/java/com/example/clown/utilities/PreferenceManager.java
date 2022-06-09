@@ -47,13 +47,13 @@ public class PreferenceManager {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         Gson gson = new Gson();
         String json = gson.toJson(value);
-        editor.putString(Constants.KEY_USER, json);
+        editor.putString(Constants.KEY_CURRENT_USER, json);
         editor.apply();
     }
 
     public User getUser() {
         Gson gson = new Gson();
-        String json = sharedPreferences.getString(Constants.KEY_USER, null);
+        String json = sharedPreferences.getString(Constants.KEY_CURRENT_USER, null);
         return gson.fromJson(json, User.class);
     }
 

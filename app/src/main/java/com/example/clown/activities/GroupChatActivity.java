@@ -125,7 +125,7 @@ public class GroupChatActivity extends FirestoreBaseActivity implements GroupCha
                             }
                             User user = new User();
                             user = queryDocumentSnapshot.toObject(User.class);
-                            user.setID(queryDocumentSnapshot.getString(Constants.KEY_USER_ID));
+                            user.setID(queryDocumentSnapshot.getString(Constants.KEY_ID));
                             listUser.add(user);
                         }
                         if (listUser.size() > 0) {
