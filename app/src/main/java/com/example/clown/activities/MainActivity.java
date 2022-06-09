@@ -1,8 +1,6 @@
 package com.example.clown.activities;
 
-import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
-import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -14,11 +12,9 @@ import com.example.clown.adapter.ViewPager2Adapter;
 import com.example.clown.databinding.ActivityMainBinding;
 import com.example.clown.fragments.BasicConversationsFragment;
 import com.example.clown.fragments.GroupConversationsFragment;
-import com.example.clown.services.MyJobService;
 import com.example.clown.utilities.Constants;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 public class MainActivity extends BaseActivity {
     public static final String TAG = MainActivity.class.getName();
