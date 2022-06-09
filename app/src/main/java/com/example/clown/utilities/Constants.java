@@ -109,6 +109,16 @@ public class Constants {
     public static final String TOAST_SIGN_IN_FAILED = "Failed to sign in!";
     public static final String TOAST_SIGN_IN_SUCCESSFULLY = "Sign in successfully!";
 
+    // SignUp Activity
+    public static final String TOAST_PLEASE_FILL_IN_ALL_INFORMATION = "Please fill in all information!";
+    public static final String TOAST_INVALID_EMAIL = "Your email is invalid!";
+    public static final String TOAST_UNCONFIRMED_PASSWORD = "Please confirm your password!";
+    public static final String TOAST_PASSWORDS_UNMATCHED = "Passwords unmatched!";
+    public static final String TOAST_ACCOUNT_ALREADY_SIGNED_UP = "This phone number has already had an account!";
+    public static final String TOAST_WEAK_PASSWORD = "Your password must be at least 6 characters length!";
+    public static final String TOAST_OVERFLOW_REQUESTS = "This device has sent too many requests!\nPlease try again later!";
+    public static final String TOAST_INCORRECT_VERIFY_CODE = "Your verification code is incorrect!";
+
     // Main Activity
     public static final String TOAST_ON_SIGN_OUT = "Signing out...";
     public static final String TOAST_UPDATE_FCM_TOKEN_FAILED = "Update FcmToken failed!";

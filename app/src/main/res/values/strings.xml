@@ -1,10 +1,7 @@
 <resources>
     <string name="app_name">Clown</string>
     <string name="welcome_back">Welcome Back!</string>
-    <string name="email">Email</string>
     <string name="add_image">Add Image</string>
-    <string name="name">Name</string>
-    <string name="confirm_password">Confirm Password</string>
     <string name="sign_up">Sign Up</string>
     <string name="select_user">Select User</string>
     <string name="online">Online</string>
@@ -18,6 +15,12 @@
     <string name="forget_password_option">Forget Password?</string>
     <string name="create_new_account_option">Create New Account</string>
     <string name="sign_in_button">Sign In</string>
+
+    <!--Sign Up Activity-->
+    <string name="missing_sms_code">Haven\'t seen your SMS code?</string>
+    <string name="verification_code_hint">Your verification code</string>
+    <string name="confirm_password_hint">Confirm Password</string>
+    <string name="submit_button">Submit</string>
 
     <!--Contacts Activity-->
     <string name="title_contacts">Contacts</string>

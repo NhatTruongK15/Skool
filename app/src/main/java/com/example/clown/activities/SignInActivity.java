@@ -31,8 +31,8 @@ public class SignInActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         Init();
 
-        // If the app was signed in before then
-        // skip the sign in process
+        // If the app has been signed in
+        // then skip the sign in process
         if (mPreferenceManager.getUser() != null) onSignedIn();
 
         setListeners();
@@ -118,12 +118,15 @@ public class SignInActivity extends BaseActivity {
             mPreferenceManager.putUser(validatedUser);
             mCurrentUser.Clone(Objects.requireNonNull(validatedUser));
 
-            startJobService();
+            // Start app's background listener
+            startAppService();
 
             // Go to main activity
             startActivity(TAG, MainActivity.class, null);
             showToast(Constants.TOAST_SIGN_IN_SUCCESSFULLY);
+
             finish();
+
             return;
         }
 
@@ -132,7 +135,7 @@ public class SignInActivity extends BaseActivity {
         showToast(Constants.TOAST_SIGN_IN_FAILED);
     }
 
-    private void startJobService() {
+    private void startAppService() {
         ComponentName componentName = new ComponentName(getApplicationContext(), UserListenerService.class);
         JobInfo jobInfo = new JobInfo.Builder(Constants.KEY_SERVICE_ID, componentName)
                 .setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED)

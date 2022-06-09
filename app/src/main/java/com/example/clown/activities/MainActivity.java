@@ -18,10 +18,8 @@ import com.google.android.material.tabs.TabLayoutMediator;
 
 public class MainActivity extends BaseActivity {
     public static final String TAG = MainActivity.class.getName();
-    public static final int JOB_SERVICE_ID = 613;
 
     private ActivityMainBinding binding;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
