@@ -21,8 +21,6 @@ public class Constants {
     public static final String KEY_EDIT_PROFILETYPE = "editProfileType";
     public static final String KEY_USER = "user";
     public static final String KEY_COLLECTION_CHAT = "chat";
-    public static final String KEY_SENDER_ID ="senderId";
-    public static final String KEY_RECEIVER_ID="receiverId";
     public static final String KEY_MESSAGE ="message";
     public static final String KEY_MESSAGE_IMAGE ="message_image";
     public static final String KEY_MESSAGE_IMAGE_LINK ="message_image_link";
@@ -37,10 +35,6 @@ public class Constants {
 
     public static final String KEY_TIMESTAMP="timestamp";
     public static final String KEY_COLLECTION_CONVERSATIONS="conversations";
-    public static final String KEY_SENDER_NAME="senderName";
-    public static final String KEY_RECEIVER_NAME="receiverName";
-    public static final String KEY_SENDER_IMAGE="senderImage";
-    public static final String KEY_RECEIVER_IMAGE="receiverImage";
     public static final String KEY_LAST_MESSAGE="lastMessage";
 
     public static final String REMOTE_MSG_AUTHORIZATION="Authorization";
@@ -68,6 +62,21 @@ public class Constants {
     public static final String VALUE_GENDER_MALE = "Male";
     public static final String VALUE_GENDER_FEMALE = "Female";
     public static final String VALUE_GENDER_OTHER = "Other";
+
+    // Firestore Conversation Model
+    public static final String KEY_CONVERSATION_ID = "conversationId";
+    public static final String KEY_CONVERSATION_NAME = "name";
+    public static final String KEY_CONVERSATION_LAST_MESSAGE = "lastMessage";
+    public static final String KEY_CONVERSATION_TIME_STAMP = "timeStamp";
+    public static final String KEY_CONVERSATION_ADMINS = "admins";
+    public static final String KEY_CONVERSATION_MEMBERS = "members";
+    public static final String KEY_SENDER_ID = "senderId";
+    public static final String KEY_RECEIVER_ID = "receiverId";
+    public static final String KEY_SENDER_NAME= "senderName";
+    public static final String KEY_RECEIVER_NAME="receiverName";
+    public static final String KEY_SENDER_AVATAR = "senderImage";
+    public static final String KEY_RECEIVER_AVATAR = "receiverImage";
+    public static final String PATTERN_DATE_TIME_FORMATTER = "dd/MM/yyyy HH:mm:ss";
 
     // Agora
     public static final String AGORA_APP_ID="7bf042d1345441fd9da44293ef98cd6d";

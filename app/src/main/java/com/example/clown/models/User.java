@@ -31,9 +31,9 @@ public class User implements Serializable {
 
     // Connection
     private boolean mAvailability;
-    private List<String> mFriends;
-    private List<String> mReceivedRequests;
-    private List<String> mSentRequests;
+    private final List<String> mFriends;
+    private final List<String> mReceivedRequests;
+    private final List<String> mSentRequests;
 
     //region #Accessors
     @PropertyName(Constants.KEY_ID) public String getID() { return mID; }
@@ -73,13 +73,22 @@ public class User implements Serializable {
     @PropertyName(Constants.KEY_AVAILABILITY) public void setAvailability(boolean availability) { this.mAvailability = availability; }
 
     @PropertyName(Constants.KEY_FRIEND_LIST) public List<String> getFriends() { return mFriends; }
-    @PropertyName(Constants.KEY_FRIEND_LIST) public void setFriends(List<String> friendsList) { this.mFriends = new ArrayList<>(friendsList); }
+    @PropertyName(Constants.KEY_FRIEND_LIST) public void setFriends(List<String> friendsList) {
+        this.mFriends.clear();
+        this.mFriends.addAll(friendsList);
+    }
 
     @PropertyName(Constants.KEY_RECEIVED_REQUESTS) public List<String> getReceivedRequests() { return mReceivedRequests; }
-    @PropertyName(Constants.KEY_RECEIVED_REQUESTS) public void setReceivedRequests(List<String> pendingRequests) { this.mReceivedRequests = new ArrayList<>(pendingRequests); }
+    @PropertyName(Constants.KEY_RECEIVED_REQUESTS) public void setReceivedRequests(List<String> mReceivedRequests) {
+        this.mReceivedRequests.clear();
+        this.mReceivedRequests.addAll(mReceivedRequests);
+    }
 
     @PropertyName(Constants.KEY_SENT_REQUESTS) public List<String> getSentRequests() { return mSentRequests; }
-    @PropertyName(Constants.KEY_SENT_REQUESTS) public void setSentRequests(List<String> sentRequests) { this.mSentRequests = new ArrayList<>(sentRequests); }
+    @PropertyName(Constants.KEY_SENT_REQUESTS) public void setSentRequests(List<String> mSentRequests) {
+        this.mSentRequests.clear();
+        this.mSentRequests.addAll(mSentRequests);
+    }
 
     @Exclude public Bitmap getBitmapAvatar() {
         if (mAvatar == null) return null;

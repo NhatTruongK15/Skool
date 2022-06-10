@@ -62,12 +62,6 @@
             android:name=".activities.ActivityMediaAndFile"
             android:exported="false" />
         <activity
-            android:name=".activities.FriendAddingActivity"
-            android:exported="false" />
-        <activity
-            android:name=".activities.PhoneContactListActivity"
-            android:exported="false" />
-        <activity
             android:name=".activities.GroupActivity"
             android:exported="false" />
         <activity

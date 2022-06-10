@@ -97,7 +97,7 @@ public class GroupActivity extends FirestoreBaseActivity implements UserListener
             Intent intent = getIntent();
             HashMap<String, Object> createGroupChat = (HashMap<String, Object>) intent.getSerializableExtra(Constants.KEY_HASH_MAP_GROUP_MEMBERS);
             documentId = (String) intent.getSerializableExtra(Constants.KEY_DOCUMENT_ID);
-            createGroupChat.put(Constants.KEY_RECEIVER_IMAGE, encodedImage);
+            createGroupChat.put(Constants.KEY_RECEIVER_AVATAR, encodedImage);
             createGroupChat.put(Constants.KEY_GROUP_NAME, binding.etGroupName.getText().toString().trim());
             database.collection(Constants.KEY_COLLECTION_CONVERSATIONS).document(documentId).set(createGroupChat);
 

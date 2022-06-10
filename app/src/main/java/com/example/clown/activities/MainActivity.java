@@ -4,22 +4,34 @@ import android.app.job.JobScheduler;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 
 import com.example.clown.R;
+import com.example.clown.adapter.ConversationAdapter;
 import com.example.clown.adapter.ViewPager2Adapter;
 import com.example.clown.databinding.ActivityMainBinding;
 import com.example.clown.fragments.BasicConversationsFragment;
 import com.example.clown.fragments.GroupConversationsFragment;
+import com.example.clown.models.Conversation;
 import com.example.clown.utilities.Constants;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
+import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends BaseActivity {
     public static final String TAG = MainActivity.class.getName();
 
     private ActivityMainBinding binding;
+    private final List<Conversation> mConversations = new ArrayList<>();
+    private final ConversationAdapter mConversationAdapter = new ConversationAdapter(getApplicationContext(), mConversations);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +39,8 @@ public class MainActivity extends BaseActivity {
         Init();
 
         loadCurrentUserDetails();
+
+        loadConversations();
 
         setListeners();
     }
@@ -75,6 +89,14 @@ public class MainActivity extends BaseActivity {
         binding.Phone.setText(mCurrentUser.getPhoneNumber());
     }
 
+    private void loadConversations() {
+        FirebaseFirestore
+                .getInstance()
+                .collection(Constants.KEY_COLLECTION_CONVERSATIONS)
+                .whereArrayContains(Constants.KEY_CONVERSATION_MEMBERS, mCurrentUser.getID())
+                .addSnapshotListener(this::onCollectionsChanged);
+    }
+
     private void setListeners() {
         binding.imageSignOut.setOnClickListener(v -> signOut());
         binding.imageMenu.setOnClickListener(v -> binding.drawerLayout.openDrawer(GravityCompat.START));
@@ -92,5 +114,43 @@ public class MainActivity extends BaseActivity {
         startActivity(new Intent(getApplicationContext(), SignInActivity.class));
 
         finish();
+    }
+
+    private void addConversation(DocumentChange docChange, int newIndex) {
+        Conversation newConversation = docChange.getDocument().toObject(Conversation.class);
+        mConversations.add(newConversation);
+        mConversationAdapter.notifyItemInserted(newIndex);
+    }
+
+    private void removeConversation(int oldIndex) {
+        mConversations.remove(oldIndex);
+        mConversationAdapter.notifyItemRemoved(oldIndex);
+    }
+
+    private void updateConversation(DocumentChange docChange, int oldIndex) {
+        Conversation modifiedConversation = docChange.getDocument().toObject(Conversation.class);
+        mConversations.set(oldIndex, modifiedConversation);
+        mConversationAdapter.notifyItemChanged(oldIndex);
+    }
+
+    private void onCollectionsChanged(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+        if (error != null) {
+            showToast(error.getMessage());
+            return;
+        }
+
+        if (value != null && !value.isEmpty())
+            for (DocumentChange docChange : value.getDocumentChanges()) {
+                switch (docChange.getType()) {
+                    case ADDED:
+                        addConversation(docChange, docChange.getNewIndex()); break;
+
+                    case REMOVED:
+                        removeConversation(docChange.getOldIndex()); break;
+
+                    case MODIFIED:
+                        updateConversation(docChange, docChange.getOldIndex()); break;
+                }
+            }
     }
 }

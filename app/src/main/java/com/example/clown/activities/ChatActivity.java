@@ -457,10 +457,10 @@ public class ChatActivity extends FirestoreBaseActivity {
             HashMap<String, Object> conversation = new HashMap<>();
             conversation.put(Constants.KEY_SENDER_ID, currentUser.getID());
             conversation.put(Constants.KEY_SENDER_NAME, currentUser.getUsername());
-            conversation.put(Constants.KEY_SENDER_IMAGE, currentUser.getAvatar());
+            conversation.put(Constants.KEY_SENDER_AVATAR, currentUser.getAvatar());
             conversation.put(Constants.KEY_RECEIVER_ID, receiverUser.getID());
             conversation.put(Constants.KEY_RECEIVER_NAME, receiverUser.getUsername());
-            conversation.put(Constants.KEY_RECEIVER_IMAGE, receiverUser.getAvatar());
+            conversation.put(Constants.KEY_RECEIVER_AVATAR, receiverUser.getAvatar());
             conversation.put(Constants.KEY_LAST_MESSAGE, binding.inputMessage.getText().toString());
             conversation.put(Constants.KEY_TIMESTAMP, new Date());
             addConversation(conversation);

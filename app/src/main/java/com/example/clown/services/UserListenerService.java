@@ -118,6 +118,8 @@ public class UserListenerService extends JobService {
         Log.e(TAG, "UserListener stared!");
 
         Runnable task = () -> {
+
+            //noinspection StatementWithEmptyBody
             while (!mIsCanceled);
 
             Log.e(TAG, "CurrentUserListener finished!");
