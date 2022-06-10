@@ -102,7 +102,6 @@ public class BaseActivity extends AppCompatActivity {
     //endregion
 
     //region INHERITANCES
-
     protected boolean startActivity(String TAG, Class<?> targetActivity, @Nullable Bundle transferData) {
         try {
             Log.e(TAG, targetActivity.getName() + " started!");

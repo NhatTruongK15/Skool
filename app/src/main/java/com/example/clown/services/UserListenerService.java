@@ -143,24 +143,19 @@ public class UserListenerService extends JobService {
     }
 
     private void checkFriendsChanges(List<String> oldFriends, List<String> newFriends) {
+        // No friends change
         if (oldFriends.equals(newFriends)) return;
 
-        List<String> sourceRecords = null;
-        List<String> checkRecords = null;
+        // Friends added
+        List<String> sourceRecords = newFriends;
+        List<String> checkRecords = oldFriends;
         boolean bType = FRIEND_ADDED;
 
+        // Friends removed
         if (oldFriends.size() > newFriends.size()) {
-            // Friends removed
             sourceRecords = oldFriends;
             checkRecords = newFriends;
             bType = FRIEND_REMOVED;
-        }
-
-        if (oldFriends.size() < newFriends.size()) {
-            // Friends added
-            sourceRecords = newFriends;
-            checkRecords = oldFriends;
-            bType = FRIEND_ADDED;
         }
 
         for (String friendID : sourceRecords)

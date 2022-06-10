@@ -30,13 +30,6 @@ public class ContactsActivity extends BaseActivity{
     private static final int FRAGMENT_PHONE_CONTACTS_POS = 2;
 
     private ActivityContactsBinding binding;
-    private final ViewPager2.OnPageChangeCallback onCallBack = new ViewPager2.OnPageChangeCallback() {
-        @Override
-        public void onPageSelected(int position) {
-            super.onPageSelected(position);
-            if (position == FRAGMENT_PHONE_CONTACTS_POS) checkPermission(REQUESTED_PERMISSIONS[0]);
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,4 +103,12 @@ public class ContactsActivity extends BaseActivity{
                 break;
         }
     }
+
+    private final ViewPager2.OnPageChangeCallback onCallBack = new ViewPager2.OnPageChangeCallback() {
+        @Override
+        public void onPageSelected(int position) {
+            super.onPageSelected(position);
+            if (position == FRAGMENT_PHONE_CONTACTS_POS) checkPermission(REQUESTED_PERMISSIONS[0]);
+        }
+    };
 }
