@@ -73,7 +73,7 @@ public class UserListenerService extends JobService {
 
         // Preference Manager
         mPreferenceManager = new PreferenceManager(getApplicationContext());
-        mPreferenceManager.registerChangesListener(this::onPreferenceManagerChanged);
+        mPreferenceManager.registerChangesListener(mPreferenceListener);
 
         // Firestore Listener
         mListenerRegister = FirebaseFirestore
@@ -134,7 +134,7 @@ public class UserListenerService extends JobService {
     }
 
     private void cleanUp() {
-        mPreferenceManager.unRegisterChangesListener(this::onPreferenceManagerChanged);
+        mPreferenceManager.unRegisterChangesListener(mPreferenceListener);
         mPreferenceManager.clear();
 
         mListenerRegister.remove();
@@ -143,15 +143,20 @@ public class UserListenerService extends JobService {
     }
 
     private void checkFriendsChanges(List<String> oldFriends, List<String> newFriends) {
-        List<String> sourceRecords, checkRecords;
-        boolean bType;
+        if (oldFriends.equals(newFriends)) return;
+
+        List<String> sourceRecords = null;
+        List<String> checkRecords = null;
+        boolean bType = FRIEND_ADDED;
 
         if (oldFriends.size() > newFriends.size()) {
             // Friends removed
             sourceRecords = oldFriends;
             checkRecords = newFriends;
             bType = FRIEND_REMOVED;
-        } else {
+        }
+
+        if (oldFriends.size() < newFriends.size()) {
             // Friends added
             sourceRecords = newFriends;
             checkRecords = oldFriends;
@@ -166,13 +171,18 @@ public class UserListenerService extends JobService {
     private void checkReceivedRequestsChanges(List<String> oldRequests, List<String> newRequests) {
     }
 
-    private void notifyFriendsChanges(String friendID, boolean changeType) {
+    private void notifyFriendsChanges(String friendID, boolean bIsFriendAdded) {
         Notification notification = new NotificationCompat
                 .Builder(getApplicationContext(), Constants.KEY_CHANNEL_ID)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setSmallIcon(R.drawable.ic_call)
                 .setContentText(friendID)
                 .build();
+
+        Intent intent = bIsFriendAdded ?
+                new Intent(Constants.ACT_FRIEND_ADDED) :
+                new Intent(Constants.ACT_FRIEND_REMOVED);
+        sendBroadcast(intent);
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         notificationManager.notify(Timestamp.now().getNanoseconds(), notification);
@@ -186,12 +196,11 @@ public class UserListenerService extends JobService {
     //endregion
 
     //region EVENT_LISTENERS
-    public void onPreferenceManagerChanged(SharedPreferences sharedPreferences, String key) {
+    private final SharedPreferences.OnSharedPreferenceChangeListener mPreferenceListener = (sharedPreferences, key) -> {
         Log.e(TAG, "PreferenceManager changed!");
-
         if (key.equals(Constants.KEY_CURRENT_USER))
             sendBroadcast(new Intent(Constants.ACT_UPDATE_CURRENT_USER));
-    }
+    };
 
     private void onUserChanged(DocumentSnapshot docSnap, FirebaseFirestoreException error) {
         if (error != null) {
@@ -205,17 +214,16 @@ public class UserListenerService extends JobService {
             User oldRecord = this.mPreferenceManager.getUser();
             User newRecord = docSnap.toObject(User.class);
 
+            if (newRecord == null) return;
+
             // Update current user changes
             this.mPreferenceManager.putUser(newRecord);
-
-            if (newRecord == null) return;
 
             checkFriendsChanges(
                     oldRecord.getFriends(),
                     newRecord.getFriends()
             );
 
-            // Check received requests updates
             checkReceivedRequestsChanges(
                     oldRecord.getReceivedRequests(),
                     newRecord.getReceivedRequests()

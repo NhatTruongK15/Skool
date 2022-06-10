@@ -22,16 +22,12 @@ import com.google.android.material.tabs.TabLayoutMediator;
 import java.util.Objects;
 
 public class ContactsActivity extends BaseActivity{
-    public static final String TAG = ContactsActivity.class.getName();
+    private static final String TAG = ContactsActivity.class.getName();
 
     private static final int CONTACTS_ACTIVITY_REQ_CODE = 21;
     private static final int FRAGMENT_FRIENDS_POS = 0;
     private static final int FRAGMENT_PENDING_REQUESTS_POS = 1;
     private static final int FRAGMENT_PHONE_CONTACTS_POS = 2;
-
-
-    private boolean mIsContactsAccessGranted = false;
-    public boolean isContactsAccessGranted() { return mIsContactsAccessGranted; }
 
     private ActivityContactsBinding binding;
     private final ViewPager2.OnPageChangeCallback onCallBack = new ViewPager2.OnPageChangeCallback() {
@@ -55,12 +51,8 @@ public class ContactsActivity extends BaseActivity{
             if (grantResults.length > 0)
                 if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                     showToast(Constants.TOAST_PHONE_CONTACT_REQ_FAILED);
-                    mIsContactsAccessGranted = true;
                     binding.viewPager2Contacts.setCurrentItem(FRAGMENT_FRIENDS_POS, true);
-                } else {
-                    Log.e(TAG, "Phone contacts permission accepted!");
-                    mIsContactsAccessGranted = true;
-                }
+                } else Log.e(TAG, "Phone contacts permission accepted!");
     }
 
     private void Init() {
@@ -81,8 +73,8 @@ public class ContactsActivity extends BaseActivity{
 
     private void setUpContactsViewPager() {
         // Create & set up ViewPager2 Adapter
-        ViewPager2Adapter contactsVP2Adapter = new ViewPager2Adapter(getSupportFragmentManager(), getLifecycle());
-
+        ViewPager2Adapter contactsVP2Adapter
+                = new ViewPager2Adapter(getSupportFragmentManager(), getLifecycle());
         contactsVP2Adapter.addFragment(new FriendsFragment());
         contactsVP2Adapter.addFragment(new PendingRequestsFragment(mCurrentUser));
         contactsVP2Adapter.addFragment(new PhoneContactsFragment());

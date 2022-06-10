@@ -30,8 +30,8 @@ public class MainActivity extends BaseActivity {
     public static final String TAG = MainActivity.class.getName();
 
     private ActivityMainBinding binding;
-    private final List<Conversation> mConversations = new ArrayList<>();
-    private final ConversationAdapter mConversationAdapter = new ConversationAdapter(getApplicationContext(), mConversations);
+    private List<Conversation> mConversations = new ArrayList<>();
+    private ConversationAdapter mConversationAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

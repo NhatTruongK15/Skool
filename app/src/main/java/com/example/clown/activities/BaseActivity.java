@@ -32,11 +32,11 @@ public class BaseActivity extends AppCompatActivity {
 
     protected int PERMISSION_REQ_ID;
 
-    private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+    protected BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(Constants.ACT_UPDATE_CURRENT_USER))
-                mCurrentUser.Clone(mPreferenceManager.getUser());
+            Log.e(TAG, "Local current user updated");
+            mCurrentUser.Clone(mPreferenceManager.getUser());
         }
     };
 

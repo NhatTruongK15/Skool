@@ -107,6 +107,8 @@ public class Constants {
     // PreferenceManager
     public static final String KEY_CURRENT_USER = "currentUser";
     public static final String ACT_UPDATE_CURRENT_USER = "updateCurrentUser";
+    public static final String ACT_FRIEND_ADDED = "friendAdded";
+    public static final String ACT_FRIEND_REMOVED = "friendRemoved";
 
     // Base Activity
     public static final String KEY_TRANSFER_DATA = "transferData";
