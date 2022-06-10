@@ -3,6 +3,7 @@ package com.example.clown.activities;
 import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
 import android.content.ComponentName;
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Patterns;
@@ -31,17 +32,23 @@ public class SignInActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         Init();
 
-        // If the app has been signed in
-        // then skip the sign in process
-        if (mPreferenceManager.getUser() != null) onSignedIn();
-
         setListeners();
     }
 
-    private void onSignedIn() {
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // If the app has been signed in
+        // then skip the sign in process
+        if (mPreferenceManager.getUser() != null) onAlreadySignedIn();
+    }
+
+    private void onAlreadySignedIn() {
         Log.e(TAG, "Already signed in!");
 
         mCurrentUser.Clone(mPreferenceManager.getUser());
+
+        if (!isJobServiceOn(getApplicationContext())) startAppService();
 
         startActivity(TAG, MainActivity.class, null);
 
@@ -133,6 +140,21 @@ public class SignInActivity extends BaseActivity {
         Log.e(TAG, "Signed in failed!");
         loading(false);
         showToast(Constants.TOAST_SIGN_IN_FAILED);
+    }
+
+    private static boolean isJobServiceOn(Context context) {
+        JobScheduler scheduler = (JobScheduler) context.getSystemService(JOB_SCHEDULER_SERVICE ) ;
+
+        boolean hasBeenScheduled = false ;
+
+        for ( JobInfo jobInfo : scheduler.getAllPendingJobs() ) {
+            if ( jobInfo.getId() == Constants.KEY_SERVICE_ID ) {
+                hasBeenScheduled = true ;
+                break ;
+            }
+        }
+
+        return hasBeenScheduled ;
     }
 
     private void startAppService() {

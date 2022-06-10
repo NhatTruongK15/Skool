@@ -41,7 +41,6 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.util.HashMap;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -304,13 +303,8 @@ public class SignUpActivity extends BaseActivity {
 
             binding.verificationLayout.setVisibility(View.VISIBLE);
             binding.userInfoLayout.setVisibility(View.GONE);
-
-            String verifyCodeHint = R.string.verification_code_hint + "\n" +
-                    PHONE_NUMBER_PREFIX + binding.inputPhoneNumb.getText()
-                    .subSequence(1, binding.inputPhoneNumb.getText().length());
-
             binding.resendContent.setText(R.string.missing_sms_code);
-            binding.verificationCodeEditText.setHint(verifyCodeHint);
+            binding.verificationCodeEditText.setHint(R.string.verification_code_hint);
         }
     };
 
@@ -367,29 +361,22 @@ public class SignUpActivity extends BaseActivity {
             Log.e("register state", "createUserWithEmail:success");
             pd.dismiss();
 
-            //create userInput (containing user's information)
-            HashMap<String, Object> userInput = new HashMap<>();
-            userInput.put(Constants.KEY_USERNAME, binding.inputName.getText().toString());
-            userInput.put(Constants.KEY_EMAIL, binding.inputEmail.getText().toString());
-            userInput.put(Constants.KEY_PHONE_NUMBER, binding.inputPhoneNumb.getText().toString());
-            userInput.put(Constants.KEY_PASSWORD, binding.inputPassword.getText().toString());
-            userInput.put(Constants.KEY_AVATAR, mEncodedAvatar);
-            userInput.put(Constants.KEY_ID, Objects.requireNonNull(currentUser).getUid());
+            //create newUser (containing user's information)
+            User newUser = new User();
+            newUser.setID(Objects.requireNonNull(currentUser).getUid());
+            newUser.setUsername(binding.inputName.getText().toString());
+            newUser.setPhoneNumber(binding.inputPhoneNumb.getText().toString());
+            newUser.setPassword(binding.inputPassword.getText().toString());
+            newUser.setAvatar(mEncodedAvatar);
+            newUser.setEmail(binding.inputEmail.getText().toString());
 
             FirebaseFirestore
                     .getInstance()
                     .collection(Constants.KEY_COLLECTION_USERS)
                     .document(currentUser.getUid())
-                    .set(userInput)
+                    .set(newUser)
                     .addOnSuccessListener(documentReference -> {
                         loading(false);
-
-                        User newUser = new User();
-                        newUser.setID(currentUser.getUid());
-                        newUser.setUsername(binding.inputName.getText().toString());
-                        newUser.setPhoneNumber(binding.inputPhoneNumb.getText().toString());
-                        newUser.setAvatar(mEncodedAvatar);
-                        newUser.setEmail(binding.inputEmail.getText().toString());
 
                         // Set app's user
                         mPreferenceManager.putUser(newUser);
@@ -401,6 +388,8 @@ public class SignUpActivity extends BaseActivity {
                         // Go to main activity
                         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                         startActivity(intent);
+
+                        showToast(Constants.TOAST_SIGN_UP_SUCCESSFULLY);
                         finish();
                     })
                     .addOnFailureListener(exception -> {

@@ -22,6 +22,8 @@ import com.example.clown.utilities.PreferenceManager;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class BaseActivity extends AppCompatActivity {
+    private static final String TAG = BaseActivity.class.getName();
+
     protected static PreferenceManager mPreferenceManager;
     protected static User mCurrentUser = new User();
 
@@ -33,10 +35,8 @@ public class BaseActivity extends AppCompatActivity {
     private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(Constants.ACT_UPDATE_CURRENT_USER)) {
+            if (intent.getAction().equals(Constants.ACT_UPDATE_CURRENT_USER))
                 mCurrentUser.Clone(mPreferenceManager.getUser());
-                showToast("Current user's updated!");
-            }
         }
     };
 
@@ -52,7 +52,6 @@ public class BaseActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         activityBind();
-
     }
 
     @Override
@@ -78,6 +77,8 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     private void activityBind() {
+        Log.e(TAG, "Binding " + this.getLocalClassName());
+
         // Base Application bind
         mBaseApplication.setCurrentActivity(this);
 
@@ -87,8 +88,11 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     private void activityUnBind() {
+        Log.e(TAG, "Unbind " + this.getLocalClassName());
+
         // Base Application unbind
         Activity currentActivity = mBaseApplication.getCurrentActivity();
+
         if (this.equals(currentActivity))
             mBaseApplication.setCurrentActivity(null);
 
@@ -120,7 +124,7 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     protected void showToast(String message) {
-        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+        runOnUiThread(() -> Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show());
     }
     //endregion
 }

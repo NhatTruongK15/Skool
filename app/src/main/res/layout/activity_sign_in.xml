@@ -43,12 +43,12 @@
             android:hint="@string/phone_number_or_email_hint"
             android:imeOptions="actionNext"
             android:importantForAutofill="no"
-            android:inputType="textEmailAddress|phone"
+            android:inputType="textNoSuggestions"
             android:paddingStart="@dimen/_16sdp"
             android:paddingEnd="@dimen/_16sdp"
             android:textColor="@color/primary_text"
             android:textSize="@dimen/_13ssp"
-            tools:ignore="TextContrastCheck" />
+            tools:ignore="TextContrastCheck,TextFields" />
 
         <EditText
             android:id="@+id/inputPassword"

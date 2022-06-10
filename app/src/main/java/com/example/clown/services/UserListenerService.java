@@ -100,11 +100,13 @@ public class UserListenerService extends JobService {
 
     private void isUserOffline() {
         // If no activity is active then the user is offline
-        if (mBaseApplication.getCurrentActivity() == null)
+        if (mBaseApplication.getCurrentActivity() == null) {
+            Log.e(TAG, "User is offline!");
             updateUserAvailability();
+        }
     }
 
-    private void updateUserAvailability() {
+    private synchronized void updateUserAvailability() {
         FirebaseFirestore
                 .getInstance()
                 .collection(Constants.KEY_COLLECTION_USERS)

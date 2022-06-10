@@ -6,6 +6,13 @@
     <string name="select_user">Select User</string>
     <string name="online">Online</string>
     <string name="mobile">Mobile</string>
+    <string name="image_content_description_hint">Image</string>
+
+    <!--Main Activity-->
+    <string name="new_group_opt">New Group</string>
+    <string name="features_opt">Features</string>
+    <string name="invite_friends_opt">Invite Friends</string>
+    <string name="calls_opt">Calls</string>
 
     <!--Sign In Activity-->
     <string name="by_order_of_the_peaky_blinder">By order of the peaky blinder</string>

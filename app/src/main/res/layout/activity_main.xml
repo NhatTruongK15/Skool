@@ -26,13 +26,13 @@
                 android:layout_width="@dimen/_30sdp"
                 android:layout_height="@dimen/_30sdp"
                 android:layout_marginStart="@dimen/_16sdp"
-                android:layout_marginLeft="@dimen/_16sdp"
                 android:layout_marginTop="@dimen/_12sdp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/ic_menu"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:riv_corner_radius="@dimen/_8sdp" />
+                app:riv_corner_radius="@dimen/_8sdp"
+                android:contentDescription="@string/image_content_description_hint"/>
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/imageSignOut"
@@ -40,7 +40,6 @@
                 android:layout_height="@dimen/_30sdp"
                 android:layout_marginTop="@dimen/_12sdp"
                 android:layout_marginEnd="@dimen/_16sdp"
-                android:layout_marginRight="@dimen/_16sdp"
                 android:background="@drawable/background_icon"
                 android:padding="@dimen/_6sdp"
                 android:src="@drawable/ic_logout"
@@ -66,7 +65,7 @@
     <!--nav bar Layout-->
         <!--menu sidebar-->
     <com.google.android.material.navigation.NavigationView
-        android:id="@+id/NavMenubarLayout"
+        android:id="@+id/NavMenuarLayout"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
@@ -75,7 +74,7 @@
         tools:ignore="MissingConstraints">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
 
@@ -99,7 +98,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="30dp"
-                    android:text="Name"
+                    android:text="@string/username_hint"
                     android:textColor="@color/white"
                     android:textStyle="bold" />
 
@@ -107,10 +106,9 @@
                     android:id="@+id/Phone"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Phone Number"
+                    android:text="@string/phone_number_hint"
                     android:textColor="#AE9F9F"
                     android:textStyle="bold" />
-                />
             </LinearLayout>
 
             <View
@@ -125,8 +123,7 @@
                 android:layout_height="wrap_content"
                 android:background="#17212b"
                 android:orientation="vertical">
-
-                <androidx.appcompat.widget.LinearLayoutCompat
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:foreground="?selectableItemBackground"
@@ -147,12 +144,12 @@
                         android:text="New Group"
                         android:textColor="@color/emoji_white"
                         android:textStyle="bold" />
-                </androidx.appcompat.widget.LinearLayoutCompat>
+                </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/buttonContact"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background=" #17212b"
                 android:orientation="vertical">
@@ -175,7 +172,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="15dp"
-                        android:text="Contacts"
+                        android:text="@string/title_contacts"
                         android:textColor="@color/white"
                         android:textStyle="bold" />
                 </androidx.appcompat.widget.LinearLayoutCompat>
@@ -205,7 +202,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="15dp"
-                        android:text="Calls"
+                        android:text="@string/calls_opt"
                         android:textColor="@color/white"
                         android:textStyle="bold" />
                 </androidx.appcompat.widget.LinearLayoutCompat>
@@ -364,7 +361,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="15dp"
-                        android:text="Features"
+                        android:text="@string/features_opt"
                         android:textColor="@color/white"
                         android:textStyle="bold" />
                 </androidx.appcompat.widget.LinearLayoutCompat>

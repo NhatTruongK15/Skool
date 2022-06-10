@@ -118,6 +118,7 @@ public class Constants {
     public static final String TOAST_WEAK_PASSWORD = "Your password must be at least 6 characters length!";
     public static final String TOAST_OVERFLOW_REQUESTS = "This device has sent too many requests!\nPlease try again later!";
     public static final String TOAST_INCORRECT_VERIFY_CODE = "Your verification code is incorrect!";
+    public static final String TOAST_SIGN_UP_SUCCESSFULLY = "Sign up successfully!";
 
     // Main Activity
     public static final String TOAST_ON_SIGN_OUT = "Signing out...";
