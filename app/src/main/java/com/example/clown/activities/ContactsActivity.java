@@ -21,7 +21,7 @@ import com.google.android.material.tabs.TabLayoutMediator;
 
 import java.util.Objects;
 
-public class ContactsActivity extends BaseActivity{
+public class ContactsActivity extends BaseActivity {
     private static final String TAG = ContactsActivity.class.getName();
 
     private static final int CONTACTS_ACTIVITY_REQ_CODE = 21;
@@ -69,7 +69,7 @@ public class ContactsActivity extends BaseActivity{
         ViewPager2Adapter contactsVP2Adapter
                 = new ViewPager2Adapter(getSupportFragmentManager(), getLifecycle());
         contactsVP2Adapter.addFragment(new FriendsFragment());
-        contactsVP2Adapter.addFragment(new PendingRequestsFragment(mCurrentUser));
+        contactsVP2Adapter.addFragment(new PendingRequestsFragment());
         contactsVP2Adapter.addFragment(new PhoneContactsFragment());
 
         // Set up ViewPager2

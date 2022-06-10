@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.util.Log;
+import android.widget.RemoteViews;
 import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
@@ -30,8 +31,10 @@ import java.util.List;
 public class UserListenerService extends JobService {
     public static final String TAG = UserListenerService.class.getName();
 
-    private static final boolean FRIEND_ADDED = true;
-    private static final boolean FRIEND_REMOVED = false;
+    private static final boolean RECORD_ADDED = true;
+    private static final boolean RECORD_REMOVED = false;
+    private static final int REC_TYPE_FRIEND = 0;
+    private static final int REC_TYPE_RECEIVED_REQUEST = 1;
 
     private BaseApplication mBaseApplication;
     private PreferenceManager mPreferenceManager;
@@ -142,28 +145,30 @@ public class UserListenerService extends JobService {
         mIsCanceled = true;
     }
 
-    private void checkFriendsChanges(List<String> oldFriends, List<String> newFriends) {
+    private void checkFriendsChanges(List<String> oldFriends, List<String> newFriends, int nType) {
         // No friends change
         if (oldFriends.equals(newFriends)) return;
 
         // Friends added
         List<String> sourceRecords = newFriends;
         List<String> checkRecords = oldFriends;
-        boolean bType = FRIEND_ADDED;
+        boolean bType = RECORD_ADDED;
 
         // Friends removed
         if (oldFriends.size() > newFriends.size()) {
             sourceRecords = oldFriends;
             checkRecords = newFriends;
-            bType = FRIEND_REMOVED;
+            bType = RECORD_REMOVED;
         }
 
-        for (String friendID : sourceRecords)
-            if (!checkRecords.contains(friendID))
-                notifyFriendsChanges(friendID, bType);
-    }
-
-    private void checkReceivedRequestsChanges(List<String> oldRequests, List<String> newRequests) {
+        for (String recordID : sourceRecords)
+            if (!checkRecords.contains(recordID))
+                switch(nType) {
+                    case REC_TYPE_FRIEND:
+                        notifyFriendsChanges(recordID, bType); break;
+                    case REC_TYPE_RECEIVED_REQUEST:
+                        notifyReceivedRequestsChanged(recordID, bType); break;
+                }
     }
 
     private void notifyFriendsChanges(String friendID, boolean bIsFriendAdded) {
@@ -171,13 +176,39 @@ public class UserListenerService extends JobService {
                 .Builder(getApplicationContext(), Constants.KEY_CHANNEL_ID)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setSmallIcon(R.drawable.ic_call)
-                .setContentText(friendID)
+                .setContentText(friendID + "friend")
                 .build();
 
         Intent intent = bIsFriendAdded ?
                 new Intent(Constants.ACT_FRIEND_ADDED) :
                 new Intent(Constants.ACT_FRIEND_REMOVED);
         sendBroadcast(intent);
+
+    }
+
+    private void notifyReceivedRequestsChanged(String requesterID, boolean bIsRequestAdded) {
+        Intent intent = bIsRequestAdded ?
+                new Intent(Constants.ACT_RECEIVED_REQUEST_ADDED) :
+                new Intent(Constants.ACT_RECEIVED_REQUEST_REMOVED);
+        sendBroadcast(intent);
+
+        if (bIsRequestAdded) showNotification(
+                R.drawable.ic_call,
+                R.layout.notification_friend_request,
+                Constants.NOTIFICATION_FRIEND_REQUEST_TITLE
+        );
+    }
+
+    private void showNotification(int smallIconID, int customLayout, String title) {
+        RemoteViews remoteViews = new RemoteViews(getPackageName(), customLayout);
+
+        Notification notification = new NotificationCompat
+                .Builder(getApplicationContext(), Constants.KEY_CHANNEL_ID)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setContentTitle(title)
+                .setSmallIcon(smallIconID)
+                .setCustomContentView(remoteViews)
+                .build();
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         notificationManager.notify(Timestamp.now().getNanoseconds(), notification);
@@ -214,14 +245,18 @@ public class UserListenerService extends JobService {
             // Update current user changes
             this.mPreferenceManager.putUser(newRecord);
 
+            // Check friends changes
             checkFriendsChanges(
                     oldRecord.getFriends(),
-                    newRecord.getFriends()
+                    newRecord.getFriends(),
+                    REC_TYPE_FRIEND
             );
 
-            checkReceivedRequestsChanges(
+            // Check received requests changes
+            checkFriendsChanges(
                     oldRecord.getReceivedRequests(),
-                    newRecord.getReceivedRequests()
+                    newRecord.getReceivedRequests(),
+                    REC_TYPE_RECEIVED_REQUEST
             );
         }
     }

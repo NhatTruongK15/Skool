@@ -71,4 +71,7 @@
     <string name="friend_accept">Accept</string>
     <string name="friend_decline">Decline</string>
     <string name="mutual_friends">Mutual Friends</string>
+
+    <!--Notification Layouts-->
+    <string name="new_friend_request_content">you\'\ve received a friend request from </string>
 </resources>

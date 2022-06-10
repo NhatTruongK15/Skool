@@ -102,13 +102,19 @@ public class Constants {
 
     // Application
     public static final String KEY_CHANNEL_ID = "applicationChannelID";
+    public static final String KEY_CURRENT_USER = "currentUser";
     public static final int KEY_SERVICE_ID = 613;
 
-    // PreferenceManager
-    public static final String KEY_CURRENT_USER = "currentUser";
+    // Notifications
+    public static final String NOTIFICATION_FRIEND_REQUEST_TITLE = "New friend request!";
+    public static final String NOTIFICATION_NEW_FRIEND_ADDED_TITLE = "You've gotten a new friend!";
+
+    // Broadcast actions
     public static final String ACT_UPDATE_CURRENT_USER = "updateCurrentUser";
-    public static final String ACT_FRIEND_ADDED = "friendAdded";
-    public static final String ACT_FRIEND_REMOVED = "friendRemoved";
+    public static final String ACT_FRIEND_ADDED = "friendAdd";
+    public static final String ACT_FRIEND_REMOVED = "friendRemove";
+    public static final String ACT_RECEIVED_REQUEST_ADDED = "receivedRequestAdd";
+    public static final String ACT_RECEIVED_REQUEST_REMOVED = "receivedRequestRemove";
 
     // Base Activity
     public static final String KEY_TRANSFER_DATA = "transferData";

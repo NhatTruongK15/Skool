@@ -35,7 +35,6 @@ public class FriendsFragment extends Fragment {
     private static final String TAG = FriendsFragment.class.getName();
 
     private FragmentFriendsBinding binding;
-    private User mCurrentUser;
     private String mUserID;
     private List<String> mFriendIDs;
     private List<User> mFriends;
@@ -61,23 +60,14 @@ public class FriendsFragment extends Fragment {
         binding = FragmentFriendsBinding.inflate(inflater, container, false);
 
         // Data source
-        mCurrentUser = (Objects.requireNonNull((ContactsActivity) getActivity())).getCurrentUser();
-        mUserID = mCurrentUser.getID();
-        mFriendIDs = mCurrentUser.getFriends();
+        User currentUser = (Objects.requireNonNull((ContactsActivity) getActivity())).getCurrentUser();
+        mUserID = currentUser.getID();
+        mFriendIDs = currentUser.getFriends();
 
         // RecyclerView
         mFriends = new ArrayList<>();
         mFriendAdapter = new FriendAdapter(getContext(), mFriends);
         binding.friendsRecyclerView.setAdapter(mFriendAdapter);
-    }
-
-    private synchronized void loadFriendsDetails() {
-        FirebaseFirestore
-                .getInstance()
-                .collection(Constants.KEY_COLLECTION_USERS)
-                .whereIn(Constants.KEY_ID, mFriendIDs)
-                .get()
-                .addOnCompleteListener(mOnLoadFriendsCompleted);
     }
 
     private void broadcastReceiverRegister() {
@@ -89,13 +79,22 @@ public class FriendsFragment extends Fragment {
         requireContext().registerReceiver(mBroadcastReceiver, intentFilter);
     }
 
+    private synchronized void loadFriendsDetails() {
+        FirebaseFirestore
+                .getInstance()
+                .collection(Constants.KEY_COLLECTION_USERS)
+                .whereIn(Constants.KEY_ID, mFriendIDs)
+                .get()
+                .addOnCompleteListener(mOnLoadFriendsCompleted);
+    }
+
     private void setFireStoreListener() {
-        if (mCurrentUser.getFriends().isEmpty()) return;
+        if (mFriendIDs.isEmpty()) return;
 
         FirebaseFirestore
                 .getInstance()
                 .collection(Constants.KEY_COLLECTION_USERS)
-                .whereIn(Constants.KEY_ID, mCurrentUser.getFriends())
+                .whereIn(Constants.KEY_ID, mFriendIDs)
                 .addSnapshotListener(mFriendEventsListener);
     }
 

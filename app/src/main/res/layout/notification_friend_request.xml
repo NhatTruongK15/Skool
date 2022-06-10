@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white">
+    <TextView
+        android:id="@+id/tvContent"
+        android:text="@string/new_friend_request_content"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_20sdp"
+        android:layout_alignParentTop="true"/>
+
+    <Button
+        android:id="@+id/btnAccept"
+        android:text="@string/friend_accept"
+        android:layout_marginTop="@dimen/_3sdp"
+        android:layout_marginEnd="@dimen/_5sdp"
+        android:layout_below="@id/tvContent"
+        android:layout_toStartOf="@id/btnDecline"
+        android:layout_width="@dimen/_75sdp"
+        android:layout_height="wrap_content"/>
+
+    <Button
+        android:id="@+id/btnDecline"
+        android:text="@string/friend_decline"
+        android:layout_width="@dimen/_75sdp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/_5sdp"
+        android:layout_marginTop="@dimen/_3sdp"
+        android:layout_below="@id/tvContent"
+        android:layout_alignParentEnd="true"
+        android:backgroundTint="@color/secondary_text"/>
+</RelativeLayout>

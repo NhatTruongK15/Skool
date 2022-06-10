@@ -9,6 +9,7 @@ import android.widget.Filter;
 import android.widget.Filterable;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.clown.R;
@@ -89,20 +90,21 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendView
             this.binding = binding;
         }
 
-        @SuppressLint("ResourceAsColor")
         public void setBinding(@NonNull User onFriend) {
             binding.tvUsername.setText(onFriend.getUsername());
             binding.tvPhoneNumber.setText(onFriend.getPhoneNumber());
             binding.rivAvatar.setImageBitmap(onFriend.getBitmapAvatar());
 
             if (onFriend.getAvailability()) {
+                int onlineColor = ContextCompat.getColor(mContext, R.color.status_online);
                 binding.ivStatus.setImageResource(R.drawable.ic_online_circle);
                 binding.tvStatus.setText(R.string.status_online);
-                binding.tvStatus.setTextColor(R.color.status_online);
+                binding.tvStatus.setTextColor(onlineColor);
             } else {
+                int offlineColor = ContextCompat.getColor(mContext, R.color.status_offline);
                 binding.ivStatus.setImageResource(R.drawable.ic_offline_circle);
                 binding.tvStatus.setText(R.string.status_offline);
-                binding.tvStatus.setTextColor(R.color.status_offline);
+                binding.tvStatus.setTextColor(offlineColor);
             }
 
             binding.getRoot().setOnClickListener(v -> checkFriendProfile(onFriend));

@@ -7,34 +7,34 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.clown.R;
 import com.example.clown.databinding.ItemPendingRequestBinding;
 import com.example.clown.models.User;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class PendingRequestAdapter extends RecyclerView.Adapter<PendingRequestAdapter.PendingRequestViewHolder> {
+public class ReceivedRequestAdapter extends RecyclerView.Adapter<ReceivedRequestAdapter.PendingRequestViewHolder> {
     private final List<User> mPendingUsersList;
+    private final List<String> mFriendIDs;
     private final Context mContext;
-    private User mCurrentUser;
+    private final String mUserID;
 
-    public PendingRequestAdapter(Context context, List<User> dataSet) {
+    public ReceivedRequestAdapter(Context context, List<User> dataSet, String currentUserID, List<String> friendIDs) {
         mContext = context;
         mPendingUsersList = dataSet;
+        mUserID = currentUserID;
+        mFriendIDs = friendIDs;
     }
-
-    public void setCurrentUser(User currentUser) { mCurrentUser = currentUser; }
 
     @NonNull
     @Override
-    public PendingRequestAdapter.PendingRequestViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ReceivedRequestAdapter.PendingRequestViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         return new PendingRequestViewHolder(ItemPendingRequestBinding.inflate(inflater, parent, false));
     }
 
     @Override
-    public void onBindViewHolder(@NonNull PendingRequestAdapter.PendingRequestViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ReceivedRequestAdapter.PendingRequestViewHolder holder, int position) {
         User onUser = mPendingUsersList.get(position);
         holder.setBinding(onUser);
     }
@@ -55,8 +55,7 @@ public class PendingRequestAdapter extends RecyclerView.Adapter<PendingRequestAd
         public void setBinding(User onUser) {
             binding.rivAvatar.setImageBitmap(onUser.getBitmapAvatar());
             binding.tvUsername.setText(onUser.getUsername());
-            binding.tvMutualFriendsCount
-                    .setText(String.format("%s %s", mutualFriendsCount(onUser.getFriends()), R.string.mutual_friends));
+            binding.tvMutualFriendsCount.setText(mutualFriendsCount(onUser.getFriends()));
 
             binding.getRoot().setOnClickListener(v -> checkProfile(onUser));
             binding.btnAccept.setOnClickListener(v -> friendAccept(onUser));
@@ -64,10 +63,13 @@ public class PendingRequestAdapter extends RecyclerView.Adapter<PendingRequestAd
         }
 
         private String mutualFriendsCount(List<String> friendsList) {
-            if (friendsList == null || friendsList.isEmpty()) return "0";
-            List<String> mutualFriends = new ArrayList<>(mCurrentUser.getFriends());
+            if (friendsList == null || friendsList.isEmpty()) return "0 mutual friend";
+            List<String> mutualFriends = new ArrayList<>(mFriendIDs);
             mutualFriends.retainAll(friendsList);
-            return Integer.toString(mutualFriends.size());
+
+            return mutualFriends.size() > 1 ?
+                    mutualFriends.size() + " mutual friends" :
+                    mutualFriends.size() + " mutual friend";
         }
 
         private void checkProfile(User onUser) {
