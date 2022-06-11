@@ -1,12 +1,14 @@
 package com.example.clown.activities;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.clown.R;
@@ -29,6 +31,8 @@ public class ContactsActivity extends BaseActivity {
     private static final int FRAGMENT_PENDING_REQUESTS_POS = 1;
     private static final int FRAGMENT_PHONE_CONTACTS_POS = 2;
 
+    public static final String ACT_PHONE_CONTACT_FRAG_LOAD = "phoneContactLoad";
+
     private ActivityContactsBinding binding;
 
     @Override
@@ -49,6 +53,7 @@ public class ContactsActivity extends BaseActivity {
     }
 
     private void Init() {
+        // Binding
         binding = ActivityContactsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
@@ -61,6 +66,7 @@ public class ContactsActivity extends BaseActivity {
         Objects.requireNonNull(getSupportActionBar())
                 .setDisplayHomeAsUpEnabled(true);
 
+        // ViewPager2
         setUpContactsViewPager();
     }
 
@@ -104,11 +110,19 @@ public class ContactsActivity extends BaseActivity {
         }
     }
 
-    private final ViewPager2.OnPageChangeCallback onCallBack = new ViewPager2.OnPageChangeCallback() {
+    protected final ViewPager2.OnPageChangeCallback onCallBack = new ViewPager2.OnPageChangeCallback() {
         @Override
         public void onPageSelected(int position) {
             super.onPageSelected(position);
-            if (position == FRAGMENT_PHONE_CONTACTS_POS) checkPermission(REQUESTED_PERMISSIONS[0]);
+            if (position == FRAGMENT_PHONE_CONTACTS_POS) {
+                checkPermission(REQUESTED_PERMISSIONS[0]);
+
+                Log.e(TAG, "on Phone contacts fragment selected!");
+                Intent intent = new Intent(ACT_PHONE_CONTACT_FRAG_LOAD);
+                LocalBroadcastManager
+                        .getInstance(ContactsActivity.this)
+                        .sendBroadcast(intent);
+            }
         }
     };
 }

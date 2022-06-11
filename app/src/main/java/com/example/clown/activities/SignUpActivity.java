@@ -45,7 +45,7 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public class SignUpActivity extends BaseActivity {
-    public static final String TAG = SignUpActivity.class.getName();
+    private static final String TAG = SignUpActivity.class.getName();
 
     private static final String PHONE_NUMBER_PREFIX = "+84";
     private static final float PREFERRED_VALUE_FLOAT = 720;

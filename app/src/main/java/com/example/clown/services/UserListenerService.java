@@ -172,13 +172,6 @@ public class UserListenerService extends JobService {
     }
 
     private void notifyFriendsChanges(String friendID, boolean bIsFriendAdded) {
-        Notification notification = new NotificationCompat
-                .Builder(getApplicationContext(), Constants.KEY_CHANNEL_ID)
-                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                .setSmallIcon(R.drawable.ic_call)
-                .setContentText(friendID + "friend")
-                .build();
-
         Intent intent = bIsFriendAdded ?
                 new Intent(Constants.ACT_FRIEND_ADDED) :
                 new Intent(Constants.ACT_FRIEND_REMOVED);
@@ -207,7 +200,8 @@ public class UserListenerService extends JobService {
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setContentTitle(title)
                 .setSmallIcon(smallIconID)
-                .setCustomContentView(remoteViews)
+                //.setCustomContentView(remoteViews)
+                .setCustomBigContentView(remoteViews)
                 .build();
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);

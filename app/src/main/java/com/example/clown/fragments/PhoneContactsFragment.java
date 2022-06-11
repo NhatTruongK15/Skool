@@ -1,18 +1,23 @@
 package com.example.clown.fragments;
 
+import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.clown.activities.ContactsActivity;
 import com.example.clown.adapter.SuggestedUserAdapter;
@@ -29,7 +34,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class PhoneContactsFragment extends Fragment {
-    public static final String TAG = PhoneContactsFragment.class.getName();
+    private static final String TAG = PhoneContactsFragment.class.getName();
 
     private FragmentPhoneContactsBinding binding;
 

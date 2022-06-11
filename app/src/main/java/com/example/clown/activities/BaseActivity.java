@@ -14,6 +14,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.example.clown.models.User;
 import com.example.clown.utilities.BaseApplication;
@@ -28,8 +29,8 @@ public class BaseActivity extends AppCompatActivity {
     protected static User mCurrentUser = new User();
 
     protected BaseApplication mBaseApplication;
-    protected String[] REQUESTED_PERMISSIONS;
 
+    protected String[] REQUESTED_PERMISSIONS;
     protected int PERMISSION_REQ_ID;
 
     protected BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {

@@ -21,6 +21,7 @@ public class Conversation implements Serializable {
     protected Date mTimeStamp;
     private final List<String> mAdmins;
     private final List<String> mMembers;
+    private boolean mIsBlocked;
 
     // Sender
     protected String mSenderId;
@@ -57,6 +58,9 @@ public class Conversation implements Serializable {
         this.mMembers.addAll(mMembers);
     }
 
+    @PropertyName(Constants.KEY_CONVERSATION_IS_BLOCKED) public boolean isBlocked() { return mIsBlocked; }
+    @PropertyName(Constants.KEY_CONVERSATION_IS_BLOCKED) public void setBlock(boolean mIsBlocked) { this.mIsBlocked = mIsBlocked; }
+
     @PropertyName(Constants.KEY_SENDER_ID) public String getSenderId() { return mSenderId; }
     @PropertyName(Constants.KEY_SENDER_ID) public void setSenderId(String mSenderId) { this.mSenderId = mSenderId; }
 
@@ -90,6 +94,7 @@ public class Conversation implements Serializable {
         setName(Constants.VALUE_UN_INITIALIZED);
         setLastMessage(Constants.VALUE_UN_INITIALIZED);
         setTimeStamp(new Date());
+        setBlock(false);
 
         setSenderId(Constants.VALUE_UN_INITIALIZED);
         setSenderName(Constants.VALUE_UN_INITIALIZED);
@@ -108,6 +113,7 @@ public class Conversation implements Serializable {
         setName(source.getName());
         setLastMessage(source.getLastMessage());
         setTimeStamp(source.getTimeStamp());
+        setBlock(source.isBlocked());
 
         setSenderId(source.getSenderId());
         setSenderName(source.getSenderName());
@@ -126,6 +132,7 @@ public class Conversation implements Serializable {
         setName(source.getName());
         setLastMessage(source.getLastMessage());
         setTimeStamp(source.getTimeStamp());
+        setBlock(source.isBlocked());
 
         setSenderId(source.getSenderId());
         setSenderName(source.getSenderName());

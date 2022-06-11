@@ -55,6 +55,7 @@ public class PendingRequestsFragment extends Fragment {
         return binding.getRoot();
     }
 
+    //region FUNCTIONS
     private void Init(LayoutInflater inflater, ViewGroup container) {
         // Binding
         binding = FragmentPendingRequestsBinding.inflate(inflater, container, false);
@@ -138,7 +139,9 @@ public class PendingRequestsFragment extends Fragment {
     protected void showToast(String message) {
         Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
     }
+    //endregion
 
+    //region CALLBACKS
     private final EventListener<QuerySnapshot> mEventListener = (value, error) -> {
         if (error != null) {
             Log.e(TAG, error.getMessage());
@@ -172,4 +175,5 @@ public class PendingRequestsFragment extends Fragment {
             else removeRequest();
         }
     };
+    //endregion
 }
