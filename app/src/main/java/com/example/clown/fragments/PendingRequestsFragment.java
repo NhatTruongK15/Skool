@@ -165,7 +165,7 @@ public class PendingRequestsFragment extends Fragment implements ReceivedRequest
 
     private void unRegisterMembers() {
         requireContext().unregisterReceiver(mBroadcastReceiver);
-        mListenerRegister.remove();
+        if (mListenerRegister != null) mListenerRegister.remove();
     }
 
     private void addRequest() {

@@ -66,6 +66,7 @@ public class FriendsFragment extends Fragment {
         unRegisterMembers();
     }
 
+    //region FUNCTIONS
     private void Init(LayoutInflater inflater, ViewGroup container) {
         // Binding
         binding = FragmentFriendsBinding.inflate(inflater, container, false);
@@ -119,7 +120,7 @@ public class FriendsFragment extends Fragment {
 
     private void unRegisterMembers() {
         requireContext().unregisterReceiver(mBroadcastReceiver);
-        mListenerRegister.remove();
+        if (mListenerRegister != null) mListenerRegister.remove();
     }
 
     private void updateFriend(DocumentChange docChange, int pos) {
@@ -158,6 +159,7 @@ public class FriendsFragment extends Fragment {
     protected void showToast(String message) {
         Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
     }
+    //endregion
 
     //region FIRE STORE CALLBACKS
     private final EventListener<QuerySnapshot> mFriendEventsListener = (value, error) -> {
