@@ -25,6 +25,7 @@ import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
@@ -35,10 +36,10 @@ public class FriendsFragment extends Fragment {
     private static final String TAG = FriendsFragment.class.getName();
 
     private FragmentFriendsBinding binding;
-    private String mUserID;
     private List<String> mFriendIDs;
     private List<User> mFriends;
     private FriendAdapter mFriendAdapter;
+    private ListenerRegistration mListenerRegister;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -46,13 +47,23 @@ public class FriendsFragment extends Fragment {
 
         Init(inflater, container);
 
-        broadcastReceiverRegister();
+        return binding.getRoot();
+    }
 
+    @Override
+    public void onResume() {
+        super.onResume();
         loadFriendsDetails();
 
-        setFireStoreListener();
+        broadcastReceiverRegister();
 
-        return binding.getRoot();
+        setFireStoreListener();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        unRegisterMembers();
     }
 
     private void Init(LayoutInflater inflater, ViewGroup container) {
@@ -61,7 +72,6 @@ public class FriendsFragment extends Fragment {
 
         // Data source
         User currentUser = (Objects.requireNonNull((ContactsActivity) getActivity())).getCurrentUser();
-        mUserID = currentUser.getID();
         mFriendIDs = currentUser.getFriends();
 
         // RecyclerView
@@ -79,7 +89,11 @@ public class FriendsFragment extends Fragment {
         requireContext().registerReceiver(mBroadcastReceiver, intentFilter);
     }
 
-    private synchronized void loadFriendsDetails() {
+    private void loadFriendsDetails() {
+        if (mFriendIDs.isEmpty()) return;
+
+        resetFriendAdapter(mFriends.size());
+
         FirebaseFirestore
                 .getInstance()
                 .collection(Constants.KEY_COLLECTION_USERS)
@@ -88,14 +102,24 @@ public class FriendsFragment extends Fragment {
                 .addOnCompleteListener(mOnLoadFriendsCompleted);
     }
 
+    private void resetFriendAdapter(int size) {
+        mFriends.clear();
+        mFriendAdapter.notifyItemRangeRemoved(0, size);
+    }
+
     private void setFireStoreListener() {
         if (mFriendIDs.isEmpty()) return;
 
-        FirebaseFirestore
+        mListenerRegister = FirebaseFirestore
                 .getInstance()
                 .collection(Constants.KEY_COLLECTION_USERS)
                 .whereIn(Constants.KEY_ID, mFriendIDs)
                 .addSnapshotListener(mFriendEventsListener);
+    }
+
+    private void unRegisterMembers() {
+        requireContext().unregisterReceiver(mBroadcastReceiver);
+        mListenerRegister.remove();
     }
 
     private void updateFriend(DocumentChange docChange, int pos) {

@@ -200,7 +200,6 @@ public class UserListenerService extends JobService {
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setContentTitle(title)
                 .setSmallIcon(smallIconID)
-                //.setCustomContentView(remoteViews)
                 .setCustomBigContentView(remoteViews)
                 .build();
 
@@ -228,7 +227,7 @@ public class UserListenerService extends JobService {
             return;
         }
 
-        if (docSnap != null && docSnap.exists()) {
+        if (docSnap != null && docSnap.exists() && !docSnap.getMetadata().hasPendingWrites()) {
             Log.e(TAG, "Current user's updated!");
 
             User oldRecord = this.mPreferenceManager.getUser();

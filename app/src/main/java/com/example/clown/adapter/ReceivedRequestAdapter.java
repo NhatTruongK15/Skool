@@ -1,6 +1,5 @@
 package com.example.clown.adapter;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -13,28 +12,26 @@ import com.example.clown.models.User;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ReceivedRequestAdapter extends RecyclerView.Adapter<ReceivedRequestAdapter.PendingRequestViewHolder> {
+public class ReceivedRequestAdapter extends RecyclerView.Adapter<ReceivedRequestAdapter.ViewHolder> {
     private final List<User> mPendingUsersList;
     private final List<String> mFriendIDs;
-    private final Context mContext;
-    private final String mUserID;
+    private final IReceivedRequestItemListener requestItemListener;
 
-    public ReceivedRequestAdapter(Context context, List<User> dataSet, String currentUserID, List<String> friendIDs) {
-        mContext = context;
-        mPendingUsersList = dataSet;
-        mUserID = currentUserID;
+    public ReceivedRequestAdapter(List<String> friendIDs, List<User> dataSet, IReceivedRequestItemListener listener) {
         mFriendIDs = friendIDs;
+        mPendingUsersList = dataSet;
+        requestItemListener = listener;
     }
 
     @NonNull
     @Override
-    public ReceivedRequestAdapter.PendingRequestViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        return new PendingRequestViewHolder(ItemPendingRequestBinding.inflate(inflater, parent, false));
+        return new ViewHolder(ItemPendingRequestBinding.inflate(inflater, parent, false));
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ReceivedRequestAdapter.PendingRequestViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         User onUser = mPendingUsersList.get(position);
         holder.setBinding(onUser);
     }
@@ -44,10 +41,10 @@ public class ReceivedRequestAdapter extends RecyclerView.Adapter<ReceivedRequest
         return mPendingUsersList.size();
     }
 
-    public class PendingRequestViewHolder extends RecyclerView.ViewHolder {
+    protected class ViewHolder extends RecyclerView.ViewHolder {
         private final ItemPendingRequestBinding binding;
 
-        public PendingRequestViewHolder(@NonNull ItemPendingRequestBinding binding) {
+        public ViewHolder(@NonNull ItemPendingRequestBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
         }
@@ -57,9 +54,9 @@ public class ReceivedRequestAdapter extends RecyclerView.Adapter<ReceivedRequest
             binding.tvUsername.setText(onUser.getUsername());
             binding.tvMutualFriendsCount.setText(mutualFriendsCount(onUser.getFriends()));
 
-            binding.getRoot().setOnClickListener(v -> checkProfile(onUser));
-            binding.btnAccept.setOnClickListener(v -> friendAccept(onUser));
-            binding.btnDecline.setOnClickListener(v -> friendDecline(onUser));
+            binding.getRoot().setOnClickListener(v -> requestItemListener.onRequestItemClicked(onUser));
+            binding.btnAccept.setOnClickListener(v -> requestItemListener.onAcceptBtnClicked(onUser));
+            binding.btnDecline.setOnClickListener(v -> requestItemListener.onDeclineBtnClicked(onUser));
         }
 
         private String mutualFriendsCount(List<String> friendsList) {
@@ -71,21 +68,11 @@ public class ReceivedRequestAdapter extends RecyclerView.Adapter<ReceivedRequest
                     mutualFriends.size() + " mutual friends" :
                     mutualFriends.size() + " mutual friend";
         }
+    }
 
-        private void checkProfile(User onUser) {
-
-        }
-
-        private void friendDecline(User onUser) {
-            // Remove pending requests from local
-
-            // Remove pending requests from fire store
-        }
-
-        private void friendAccept(User onUser) {
-            // Remove pending requests from local
-
-            // Remove pending requests from fire store
-        }
+    public interface IReceivedRequestItemListener {
+        void onRequestItemClicked(User requester);
+        void onAcceptBtnClicked(User requester);
+        void onDeclineBtnClicked(User requester);
     }
 }

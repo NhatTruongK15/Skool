@@ -20,25 +20,28 @@ import com.example.clown.adapter.ReceivedRequestAdapter;
 import com.example.clown.databinding.FragmentPendingRequestsBinding;
 import com.example.clown.models.User;
 import com.example.clown.utilities.Constants;
+import com.example.clown.utilities.PreferenceManager;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class PendingRequestsFragment extends Fragment {
+public class PendingRequestsFragment extends Fragment implements ReceivedRequestAdapter.IReceivedRequestItemListener {
     private static final String TAG = PendingRequestsFragment.class.getName();
 
     private FragmentPendingRequestsBinding binding;
-
+    private String mUserID;
     private List<String> mRequesterIDs;
     private List<User> mRequesters;
     private ReceivedRequestAdapter mReceivedRequestAdapter;
+    private ListenerRegistration mListenerRegister;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -46,14 +49,65 @@ public class PendingRequestsFragment extends Fragment {
 
         Init(inflater, container);
 
-        broadcastReceiverRegister();
-
-        loadRequestsDetails();
-
-        setUpFireStoreListener();
-
         return binding.getRoot();
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        loadRequestsDetails();
+
+        broadcastReceiverRegister();
+
+        setUpFireStoreListener();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        unRegisterMembers();
+    }
+
+    //region IMPLEMENT METHODS
+    @Override
+    public void onRequestItemClicked(User requester) {
+
+    }
+
+    @Override
+    public void onAcceptBtnClicked(User requester) {
+        Log.e(TAG, "Request Accepted!");
+    }
+
+    @Override
+    public void onDeclineBtnClicked(User requester) {
+        Log.e(TAG, "Request Declined!");
+
+        // Remove self ID from requester sent request list
+        requester.getSentRequests().remove(mUserID);
+        updateUserProperty(
+                requester.getID(),
+                Constants.KEY_SENT_REQUESTS,
+                requester.getSentRequests());
+
+        // Update remote self received request list
+        mRequesterIDs.remove(requester.getID());
+        updateUserProperty(
+                mUserID,
+                Constants.KEY_RECEIVED_REQUESTS,
+                mRequesterIDs);
+        removeRequest();
+
+        // Update local self received request list
+        PreferenceManager preferenceManager = new PreferenceManager(requireActivity().getApplicationContext());
+        User currentUser = preferenceManager.getUser();
+        currentUser.setReceivedRequests(mRequesterIDs);
+        preferenceManager.putUser(currentUser);
+
+        // Notify User
+        showToast(Constants.TOAST_FRIEND_REQUEST_DECLINED);
+    }
+    //endregion
 
     //region FUNCTIONS
     private void Init(LayoutInflater inflater, ViewGroup container) {
@@ -62,13 +116,13 @@ public class PendingRequestsFragment extends Fragment {
 
         // Data Source
         User currentUser = (Objects.requireNonNull((ContactsActivity) getActivity())).getCurrentUser();
-        String userID = currentUser.getID();
+        mUserID = currentUser.getID();
         List<String> mFriendIDs = currentUser.getFriends();
         mRequesterIDs = currentUser.getReceivedRequests();
 
         // RecyclerView
         mRequesters = new ArrayList<>();
-        mReceivedRequestAdapter = new ReceivedRequestAdapter(requireContext(), mRequesters, userID, mFriendIDs);
+        mReceivedRequestAdapter = new ReceivedRequestAdapter(mFriendIDs, mRequesters, this);
         binding.pendingRequestsRecyclerView.setAdapter(mReceivedRequestAdapter);
     }
 
@@ -84,6 +138,8 @@ public class PendingRequestsFragment extends Fragment {
     private synchronized void loadRequestsDetails() {
         if (mRequesterIDs.isEmpty()) return;
 
+        resetRequestAdapter(mRequesters.size());
+
         FirebaseFirestore
                 .getInstance()
                 .collection(Constants.KEY_COLLECTION_USERS)
@@ -92,14 +148,24 @@ public class PendingRequestsFragment extends Fragment {
                 .addOnCompleteListener(mOnLoadRequestsCompleted);
     }
 
+    private void resetRequestAdapter(int size) {
+        mRequesters.clear();
+        mReceivedRequestAdapter.notifyItemRangeRemoved(0, size);
+    }
+
     private void setUpFireStoreListener() {
         if (mRequesterIDs.isEmpty()) return;
 
-        FirebaseFirestore
+        mListenerRegister = FirebaseFirestore
                 .getInstance()
                 .collection(Constants.KEY_COLLECTION_USERS)
                 .whereIn(Constants.KEY_ID, mRequesterIDs)
                 .addSnapshotListener(mEventListener);
+    }
+
+    private void unRegisterMembers() {
+        requireContext().unregisterReceiver(mBroadcastReceiver);
+        mListenerRegister.remove();
     }
 
     private void addRequest() {
@@ -136,6 +202,14 @@ public class PendingRequestsFragment extends Fragment {
         mReceivedRequestAdapter.notifyItemChanged(oldIndex);
     }
 
+    private void updateUserProperty(String userID, String field, Object value) {
+        FirebaseFirestore
+                .getInstance()
+                .collection(Constants.KEY_COLLECTION_USERS)
+                .document(userID)
+                .update(field, value);
+    }
+
     protected void showToast(String message) {
         Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
     }
@@ -148,7 +222,7 @@ public class PendingRequestsFragment extends Fragment {
             return;
         }
 
-        if (value != null) {
+        if (value != null && !value.getMetadata().hasPendingWrites()) {
             for (DocumentChange docChange : value.getDocumentChanges())
                 if (docChange.getType() == DocumentChange.Type.MODIFIED)
                     updateRequest(docChange, docChange.getOldIndex());

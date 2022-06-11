@@ -1,14 +1,10 @@
 package com.example.clown.activities;
 
 import android.Manifest;
-import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.clown.R;
@@ -17,7 +13,6 @@ import com.example.clown.databinding.ActivityContactsBinding;
 import com.example.clown.fragments.FriendsFragment;
 import com.example.clown.fragments.PendingRequestsFragment;
 import com.example.clown.fragments.PhoneContactsFragment;
-import com.example.clown.utilities.Constants;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
@@ -27,29 +22,18 @@ public class ContactsActivity extends BaseActivity {
     private static final String TAG = ContactsActivity.class.getName();
 
     private static final int CONTACTS_ACTIVITY_REQ_CODE = 21;
-    private static final int FRAGMENT_FRIENDS_POS = 0;
+    public static final int FRAGMENT_FRIENDS_POS = 0;
     private static final int FRAGMENT_PENDING_REQUESTS_POS = 1;
     private static final int FRAGMENT_PHONE_CONTACTS_POS = 2;
 
-    public static final String ACT_PHONE_CONTACT_FRAG_LOAD = "phoneContactLoad";
-
     private ActivityContactsBinding binding;
+
+    public ViewPager2 getContactViewPager() { return binding.viewPager2Contacts; }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Init();
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == CONTACTS_ACTIVITY_REQ_CODE)
-            if (grantResults.length > 0)
-                if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                    showToast(Constants.TOAST_PHONE_CONTACT_REQ_FAILED);
-                    binding.viewPager2Contacts.setCurrentItem(FRAGMENT_FRIENDS_POS, true);
-                } else Log.e(TAG, "Phone contacts permission accepted!");
     }
 
     private void Init() {
@@ -71,6 +55,8 @@ public class ContactsActivity extends BaseActivity {
     }
 
     private void setUpContactsViewPager() {
+        Log.e(TAG, "Set up Contacts ViewPager2");
+
         // Create & set up ViewPager2 Adapter
         ViewPager2Adapter contactsVP2Adapter
                 = new ViewPager2Adapter(getSupportFragmentManager(), getLifecycle());
@@ -80,7 +66,6 @@ public class ContactsActivity extends BaseActivity {
 
         // Set up ViewPager2
         binding.viewPager2Contacts.setAdapter(contactsVP2Adapter);
-        binding.viewPager2Contacts.registerOnPageChangeCallback(onCallBack);
 
         // Connect ViewPager2 with TabLayout
         new TabLayoutMediator(
@@ -109,20 +94,4 @@ public class ContactsActivity extends BaseActivity {
                 break;
         }
     }
-
-    protected final ViewPager2.OnPageChangeCallback onCallBack = new ViewPager2.OnPageChangeCallback() {
-        @Override
-        public void onPageSelected(int position) {
-            super.onPageSelected(position);
-            if (position == FRAGMENT_PHONE_CONTACTS_POS) {
-                checkPermission(REQUESTED_PERMISSIONS[0]);
-
-                Log.e(TAG, "on Phone contacts fragment selected!");
-                Intent intent = new Intent(ACT_PHONE_CONTACT_FRAG_LOAD);
-                LocalBroadcastManager
-                        .getInstance(ContactsActivity.this)
-                        .sendBroadcast(intent);
-            }
-        }
-    };
 }

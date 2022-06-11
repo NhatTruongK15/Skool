@@ -1,23 +1,23 @@
 package com.example.clown.fragments;
 
-import android.content.BroadcastReceiver;
+import static com.example.clown.activities.ContactsActivity.FRAGMENT_FRIENDS_POS;
+
+import android.Manifest;
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.database.Cursor;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.example.clown.activities.ContactsActivity;
 import com.example.clown.adapter.SuggestedUserAdapter;
@@ -38,7 +38,7 @@ public class PhoneContactsFragment extends Fragment {
 
     private FragmentPhoneContactsBinding binding;
 
-    private SuggestedUserAdapter mPhoneContactsAdapter;
+    private SuggestedUserAdapter mPhoneContactsAdapter ;
     private List<String> mPhoneContactsList;
     private List<User> mSuggestedUsersList;
     private User mCurrentUser;
@@ -56,14 +56,16 @@ public class PhoneContactsFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentPhoneContactsBinding.inflate(inflater, container, false);
-
+        
         Init();
 
-        getPhoneContacts(requireActivity().getApplicationContext());
-
-        filterPhoneContactsAppUsers();
-
         return binding.getRoot();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mActivityResultLauncher.launch(Manifest.permission.READ_CONTACTS);
     }
 
     private void filterPhoneContactsAppUsers() {
@@ -122,4 +124,17 @@ public class PhoneContactsFragment extends Fragment {
             cursor.close();
         }
     }
+
+    protected final ActivityResultLauncher<String> mActivityResultLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), bIsGranted -> {
+                if (bIsGranted) {
+                    Log.e(TAG, "Permission's granted!");
+                    getPhoneContacts(requireActivity().getApplicationContext());
+
+                    filterPhoneContactsAppUsers();
+                } else {
+                    Log.e(TAG, "Permission's denied!");
+                    ((ContactsActivity) requireActivity()).getContactViewPager().setCurrentItem(FRAGMENT_FRIENDS_POS, true);
+                }
+            });
 }

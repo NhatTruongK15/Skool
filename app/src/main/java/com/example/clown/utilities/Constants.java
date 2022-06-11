@@ -145,6 +145,8 @@ public class Constants {
     // Contacts Activity
     public static final String TOAST_PHONE_CONTACT_REQ_FAILED = "The app needs your permission to access phone contacts!";
     public static final String TOAST_FRIEND_REQUEST_SENT = "Friend request's sent!";
+    public static final String TOAST_FRIEND_REQUEST_DECLINED = "Friend request's declined!";
+    public static final String TOAST_FRIEND_REQUEST_ACCEPTED = "Friend request's accepted!";
 
     public static final int HD_RES_860=860;
     public static final int HD_RES=860;
