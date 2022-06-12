@@ -174,7 +174,7 @@ public class ChatActivity extends FirestoreBaseActivity {
             case ".flac":
             case ".mkv":
             case ".webm":
-
+            case ".txt":
                 result = "etc";
                 break;
             default:
@@ -463,7 +463,7 @@ public class ChatActivity extends FirestoreBaseActivity {
                 JSONObject data = new JSONObject();
                 data.put(Constants.KEY_DOCUMENT_REFERENCE_ID, preferenceManager.getString(Constants.KEY_DOCUMENT_REFERENCE_ID));
                 data.put(Constants.KEY_NAME, preferenceManager.getString(Constants.KEY_NAME));
-                data.put(Constants.KEY_FCM_TOKEN, preferenceManager.getString(Constants.KEY_FCM_TOKEN));
+//                data.put(Constants.KEY_FCM_TOKEN, preferenceManager.getString(Constants.KEY_FCM_TOKEN));
                 data.put(Constants.KEY_MESSAGE, binding.inputMessage.getText().toString());
                 data.put(Constants.KEY_MESSAGE_IMAGE, encodedImage);
                 data.put(Constants.KEY_MESSAGE_IMAGE_LINK,imglink);
@@ -550,7 +550,7 @@ public class ChatActivity extends FirestoreBaseActivity {
                     ).intValue();
                     isReceiverAvailable = availability == 1;
                 }
-                receiverUser.token = value.getString(Constants.KEY_FCM_TOKEN);
+//                receiverUser.token = value.getString(Constants.KEY_FCM_TOKEN);
                 if (receiverUser.image == null) {
                     receiverUser.image = value.getString(Constants.KEY_IMAGE);
                     chatAdapter.setReceiverProfileImage(getBitmapFromEncodeString(receiverUser.image));

@@ -41,7 +41,6 @@
         android:id="@+id/imgMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/_4sdp"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
         android:background="@drawable/background_received_message"
@@ -61,6 +60,8 @@
             android:layout_marginBottom="5dp"
             app:layout_constraintBottom_toTopOf="@+id/textDateTime"
             app:layout_constraintStart_toEndOf="@id/imageProfile"
+            app:layout_constraintEnd_toEndOf="parent"
+
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintWidth_max="wrap"
             app:layout_constraintHeight_max="wrap"
