@@ -5,16 +5,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.example.clown.models.User;
 import com.example.clown.utilities.BaseApplication;
@@ -116,15 +112,8 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
-    protected void checkPermission(String permission) {
-        if (ContextCompat.checkSelfPermission(getApplicationContext(), permission)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, REQUESTED_PERMISSIONS, PERMISSION_REQ_ID);
-        }
-    }
-
     protected void showToast(String message) {
-        runOnUiThread(() -> Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show());
+        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }
     //endregion
 }

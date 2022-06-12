@@ -14,7 +14,7 @@ import com.example.clown.models.User;
 import com.example.clown.services.UserListenerService;
 import com.example.clown.utilities.Constants;
 import com.example.clown.utilities.PreferenceManager;
-import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -43,6 +43,7 @@ public class SignInActivity extends BaseActivity {
         if (mPreferenceManager.getUser() != null) onAlreadySignedIn();
     }
 
+    //region FUNCTIONS
     private void onAlreadySignedIn() {
         Log.e(TAG, "Already signed in!");
 
@@ -80,7 +81,7 @@ public class SignInActivity extends BaseActivity {
                     .whereEqualTo(Constants.KEY_PHONE_NUMBER, mEmailOrPhoneNumber)
                     .whereEqualTo(Constants.KEY_PASSWORD, mPassword)
                     .get()
-                    .addOnCompleteListener(this::onSignIn);
+                    .addOnCompleteListener(mOnSignedInCompleted);
         }
     }
 
@@ -116,32 +117,6 @@ public class SignInActivity extends BaseActivity {
         mBinding.buttonSignIn.setVisibility(nBtnVisibility);
     }
 
-    private void onSignIn(Task<QuerySnapshot> task) {
-        if (task.isSuccessful() && task.getResult() != null && task.getResult().getDocuments().size() != 0) {
-            Log.e(TAG, "Signed in successfully!");
-
-            // Get validated user
-            User validatedUser = task.getResult().getDocuments().get(0).toObject(User.class);
-            mPreferenceManager.putUser(validatedUser);
-            mCurrentUser.Clone(Objects.requireNonNull(validatedUser));
-
-            // Start app's background listener
-            startAppService();
-
-            // Go to main activity
-            startActivity(TAG, MainActivity.class, null);
-            showToast(Constants.TOAST_SIGN_IN_SUCCESSFULLY);
-
-            finish();
-
-            return;
-        }
-
-        Log.e(TAG, "Signed in failed!");
-        loading(false);
-        showToast(Constants.TOAST_SIGN_IN_FAILED);
-    }
-
     private static boolean isJobServiceOn(Context context) {
         JobScheduler scheduler = (JobScheduler) context.getSystemService(JOB_SCHEDULER_SERVICE ) ;
 
@@ -166,4 +141,32 @@ public class SignInActivity extends BaseActivity {
         JobScheduler jobScheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
         jobScheduler.schedule(jobInfo);
     }
+    //endregion
+
+    //region CALLBACKS
+    protected final OnCompleteListener<QuerySnapshot> mOnSignedInCompleted = task -> {
+        if (task.isSuccessful() && task.getResult() != null && task.getResult().getDocuments().size() != 0) {
+            Log.e(TAG, "Signed in successfully!");
+
+            // Get validated user
+            User validatedUser = task.getResult().getDocuments().get(0).toObject(User.class);
+            mPreferenceManager.putUser(validatedUser);
+            mCurrentUser.Clone(Objects.requireNonNull(validatedUser));
+
+            // Start app's background listener
+            startAppService();
+
+            // Go to main activity
+            startActivity(TAG, MainActivity.class, null);
+            showToast(Constants.TOAST_SIGN_IN_SUCCESSFULLY);
+
+            finish();
+            return;
+        }
+
+        Log.e(TAG, "Signed in failed!");
+        loading(false);
+        showToast(Constants.TOAST_SIGN_IN_FAILED);
+    };
+    //endregion
 }

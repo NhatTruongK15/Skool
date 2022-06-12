@@ -22,8 +22,8 @@ import com.example.clown.utilities.Constants;
 import com.example.clown.utilities.PreferenceManager;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
 
 import java.util.List;
@@ -77,19 +77,20 @@ public class UserListenerService extends JobService {
         // Preference Manager
         mPreferenceManager = new PreferenceManager(getApplicationContext());
         mPreferenceManager.registerChangesListener(mPreferenceListener);
+        String currentUserID = mPreferenceManager.getUser().getID();
 
         // Firestore Listener
         mListenerRegister = FirebaseFirestore
                 .getInstance()
                 .collection(Constants.KEY_COLLECTION_USERS)
-                .document(mPreferenceManager.getUser().getID())
-                .addSnapshotListener(this::onUserChanged);
+                .document(currentUserID)
+                .addSnapshotListener(mDocSnapEventListener);
 
         // Service cancel flag
         mIsCanceled = false;
     }
 
-    private void createNotificationChannel() {
+    private void createNotificationChannel()      {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return;
 
         // Create channel
@@ -122,8 +123,7 @@ public class UserListenerService extends JobService {
 
         Runnable task = () -> {
 
-            //noinspection StatementWithEmptyBody
-            while (!mIsCanceled);
+            while (true) if (mIsCanceled) break;
 
             Log.e(TAG, "CurrentUserListener finished!");
 
@@ -214,14 +214,14 @@ public class UserListenerService extends JobService {
     }
     //endregion
 
-    //region EVENT_LISTENERS
-    private final SharedPreferences.OnSharedPreferenceChangeListener mPreferenceListener = (sharedPreferences, key) -> {
+    //region CALLBACKS
+    protected final SharedPreferences.OnSharedPreferenceChangeListener mPreferenceListener = (sharedPreferences, key) -> {
         Log.e(TAG, "PreferenceManager changed!");
         if (key.equals(Constants.KEY_CURRENT_USER))
             sendBroadcast(new Intent(Constants.ACT_UPDATE_CURRENT_USER));
     };
 
-    private void onUserChanged(DocumentSnapshot docSnap, FirebaseFirestoreException error) {
+    protected final EventListener<DocumentSnapshot> mDocSnapEventListener = (docSnap, error) -> {
         if (error != null) {
             Log.e(TAG, error.getMessage());
             return;
@@ -252,6 +252,6 @@ public class UserListenerService extends JobService {
                     REC_TYPE_RECEIVED_REQUEST
             );
         }
-    }
+    };
     //endregion
 }

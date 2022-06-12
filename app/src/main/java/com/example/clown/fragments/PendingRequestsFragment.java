@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.example.clown.activities.ContactsActivity;
 import com.example.clown.adapter.ReceivedRequestAdapter;
 import com.example.clown.databinding.FragmentPendingRequestsBinding;
+import com.example.clown.models.Conversation;
 import com.example.clown.models.User;
 import com.example.clown.utilities.Constants;
 import com.example.clown.utilities.PreferenceManager;
@@ -37,7 +38,7 @@ public class PendingRequestsFragment extends Fragment implements ReceivedRequest
     private static final String TAG = PendingRequestsFragment.class.getName();
 
     private FragmentPendingRequestsBinding binding;
-    private String mUserID;
+    private User mCurrentUser;
     private List<String> mRequesterIDs;
     private List<User> mRequesters;
     private ReceivedRequestAdapter mReceivedRequestAdapter;
@@ -77,6 +78,45 @@ public class PendingRequestsFragment extends Fragment implements ReceivedRequest
     @Override
     public void onAcceptBtnClicked(User requester) {
         Log.e(TAG, "Request Accepted!");
+
+        // Remove self ID from requester sent request list
+        requester.getSentRequests().remove(mCurrentUser.getID());
+        requester.getFriends().add(mCurrentUser.getID());
+
+        FirebaseFirestore
+                .getInstance()
+                .collection(Constants.KEY_COLLECTION_USERS)
+                .document(requester.getID())
+                .update(Constants.KEY_SENT_REQUESTS, requester.getSentRequests(),
+                        Constants.KEY_FRIEND_LIST, requester.getFriends());
+
+        // Update remote self received request list
+        mCurrentUser.getReceivedRequests().remove(requester.getID());
+        mCurrentUser.getFriends().add(requester.getID());
+
+        FirebaseFirestore
+                .getInstance()
+                .collection(Constants.KEY_COLLECTION_USERS)
+                .document(mCurrentUser.getID())
+                .update(Constants.KEY_RECEIVED_REQUESTS, mCurrentUser.getReceivedRequests(),
+                        Constants.KEY_FRIEND_LIST, mCurrentUser.getFriends());
+
+        // Create new conversation
+        Conversation newConversation = new Conversation();
+
+        newConversation.getMembers().add(mCurrentUser.getID());
+        newConversation.getMembers().add(requester.getID());
+
+        newConversation.getAdmins().add(mCurrentUser.getID());
+        newConversation.getAdmins().add(requester.getID());
+
+
+
+        removeRequest();
+
+        // Update local self received request list
+        PreferenceManager preferenceManager = new PreferenceManager(requireActivity().getApplicationContext());
+        preferenceManager.putUser(mCurrentUser);
     }
 
     @Override
@@ -84,7 +124,7 @@ public class PendingRequestsFragment extends Fragment implements ReceivedRequest
         Log.e(TAG, "Request Declined!");
 
         // Remove self ID from requester sent request list
-        requester.getSentRequests().remove(mUserID);
+        requester.getSentRequests().remove(mCurrentUser.getID());
         updateUserProperty(
                 requester.getID(),
                 Constants.KEY_SENT_REQUESTS,
@@ -93,7 +133,7 @@ public class PendingRequestsFragment extends Fragment implements ReceivedRequest
         // Update remote self received request list
         mRequesterIDs.remove(requester.getID());
         updateUserProperty(
-                mUserID,
+                mCurrentUser.getID(),
                 Constants.KEY_RECEIVED_REQUESTS,
                 mRequesterIDs);
         removeRequest();
@@ -115,10 +155,9 @@ public class PendingRequestsFragment extends Fragment implements ReceivedRequest
         binding = FragmentPendingRequestsBinding.inflate(inflater, container, false);
 
         // Data Source
-        User currentUser = (Objects.requireNonNull((ContactsActivity) getActivity())).getCurrentUser();
-        mUserID = currentUser.getID();
-        List<String> mFriendIDs = currentUser.getFriends();
-        mRequesterIDs = currentUser.getReceivedRequests();
+        mCurrentUser = (Objects.requireNonNull((ContactsActivity) getActivity())).getCurrentUser();
+        List<String> mFriendIDs = mCurrentUser.getFriends();
+        mRequesterIDs = mCurrentUser.getReceivedRequests();
 
         // RecyclerView
         mRequesters = new ArrayList<>();
