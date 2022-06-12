@@ -7,34 +7,29 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.clown.databinding.ItemContainerUserBinding;
-import com.example.clown.listeners.UserListener;
 import com.example.clown.models.User;
 
 import java.util.List;
 
-public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
+public class GroupUserAdapter extends RecyclerView.Adapter<GroupUserAdapter.ViewHolder> {
     private final List<User> users;
-    private final UserListener userListener;
+    private final IGroupUserListener mGroupUserListener;
 
-    public UsersAdapter(List<User> users, UserListener userListener) {
+    public GroupUserAdapter(List<User> users, IGroupUserListener listener) {
         this.users = users;
-        this.userListener = userListener;
+        this.mGroupUserListener = listener;
     }
-
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        ItemContainerUserBinding itemContainerUserBinding = ItemContainerUserBinding.inflate(
-                LayoutInflater.from(parent.getContext()), parent,
-                false
-        );
-        return new ViewHolder(itemContainerUserBinding);
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+        return new ViewHolder(ItemContainerUserBinding.inflate(inflater, parent, false));
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            holder.setUserData(users.get(position));
+        holder.setUserData(users.get(position));
     }
 
     @Override
@@ -51,10 +46,18 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> 
         }
 
         void setUserData(User user) {
-             binding.textName.setText(user.getUsername());
-             binding.textEmail.setText(user.getEmail());
-             binding.imageProfile.setImageBitmap(user.getBitmapAvatar());
-             binding.getRoot().setOnClickListener(v -> userListener.onUserClicked(user));
+            binding.textName.setText(user.getUsername());
+            binding.textEmail.setText(user.getEmail());
+            binding.imageProfile.setImageBitmap(user.getBitmapAvatar());
+            binding.getRoot().setOnClickListener(v -> onItemClicked(user));
         }
+
+        private void onItemClicked(User user) {
+            if (mGroupUserListener != null) mGroupUserListener.onGroupUserClicked(user);
+        }
+    }
+
+    public interface IGroupUserListener {
+        void onGroupUserClicked(User user);
     }
 }

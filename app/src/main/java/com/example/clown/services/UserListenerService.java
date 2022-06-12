@@ -84,7 +84,7 @@ public class UserListenerService extends JobService {
                 .getInstance()
                 .collection(Constants.KEY_COLLECTION_USERS)
                 .document(currentUserID)
-                .addSnapshotListener(mDocSnapEventListener);
+                .addSnapshotListener(mCurrentUserListener);
 
         // Service cancel flag
         mIsCanceled = false;
@@ -221,7 +221,7 @@ public class UserListenerService extends JobService {
             sendBroadcast(new Intent(Constants.ACT_UPDATE_CURRENT_USER));
     };
 
-    protected final EventListener<DocumentSnapshot> mDocSnapEventListener = (docSnap, error) -> {
+    protected final EventListener<DocumentSnapshot> mCurrentUserListener = (docSnap, error) -> {
         if (error != null) {
             Log.e(TAG, error.getMessage());
             return;

@@ -105,6 +105,7 @@ public class ConversationAdapter extends RecyclerView.Adapter<ConversationAdapte
             intent.putExtra(Constants.KEY_CONVERSATION_NAME ,conversation.getName());
             intent.putStringArrayListExtra(Constants.KEY_CONVERSATION_ADMINS, admins);
             intent.putStringArrayListExtra(Constants.KEY_CONVERSATION_MEMBERS, members);
+
             mContext.startActivity(intent);
         }
     }

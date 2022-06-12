@@ -37,7 +37,7 @@ public class MainActivity extends BaseActivity {
     private ConversationAdapter mGroupConversationAdapter;
 
     public ConversationAdapter getBasicConversationAdapter() { return mBasicConversationAdapter; }
-    public ConversationAdapter getGroupConversationAdapter() { return mBasicConversationAdapter; }
+    public ConversationAdapter getGroupConversationAdapter() { return mGroupConversationAdapter; }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,7 +111,7 @@ public class MainActivity extends BaseActivity {
         binding.imageSignOut.setOnClickListener(v -> signOut());
         binding.imageMenu.setOnClickListener(v -> binding.drawerLayout.openDrawer(GravityCompat.START));
         binding.buttonContact.setOnClickListener(v -> startActivity(TAG, ContactsActivity.class, null));
-        binding.llcNewGroup.setOnClickListener(v -> startActivity(TAG, GroupChatActivity.class, null));
+        binding.llcNewGroup.setOnClickListener(v -> startActivity(TAG, NewGroupActivity.class, null));
         binding.imageProfile.setOnClickListener(v -> startActivity(TAG, MyProfileActivity.class, null));
     }
 
