@@ -77,8 +77,8 @@ public class ConversationAdapter extends RecyclerView.Adapter<ConversationAdapte
         }
 
         void setBinding(Conversation onConversation) {
-            String name = null;
-            Bitmap image = null;
+            String name;
+            Bitmap image;
 
             if (mType == BASIC_CONVERSATION) {
                 name = mUserID.equals(onConversation.getSenderId()) ?
@@ -88,6 +88,9 @@ public class ConversationAdapter extends RecyclerView.Adapter<ConversationAdapte
                 image = mUserID.equals(onConversation.getSenderId()) ?
                         onConversation.getReceiverBitmapAvatar() :
                         onConversation.getSenderBitmapAvatar();
+            } else {
+                name = onConversation.getName();
+                image = onConversation.getBitmapImage();
             }
 
             binding.textName.setText(name);
