@@ -16,23 +16,22 @@ import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import com.example.clown.databinding.ActivityMyProfileBinding;
 import com.example.clown.models.User;
 import com.example.clown.utilities.Constants;
-import com.example.clown.utilities.PreferenceManager;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 public class MyProfileActivity extends BaseActivity {
 
-    ActivityMyProfileBinding binding;
+    private ActivityMyProfileBinding binding;
     private FirebaseFirestore database;
-    private String encodedImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,63 +53,42 @@ public class MyProfileActivity extends BaseActivity {
 
         binding.ChangeImage.setOnClickListener(v -> ChangeUserImage());
 
-        binding.ChangeEmail.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), EditUserProfileActivity.class);
-                intent.putExtra(Constants.KEY_EDIT_PROFILETYPE, "email");
-                startActivity(intent);
-            }
+        binding.ChangeEmail.setOnClickListener(v -> {
+            Intent intent = new Intent(getApplicationContext(), EditUserProfileActivity.class);
+            intent.putExtra(Constants.KEY_EDIT_PROFILETYPE, "email");
+            startActivity(intent);
         });
 
-        binding.ChangePhone.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showToast("you can't change your phone number.");
-            }
+        binding.ChangePhone.setOnClickListener(v -> showToast("you can't change your phone number."));
+
+        binding.ChangeFirstName.setOnClickListener(v -> {
+            Intent intent = new Intent(getApplicationContext(), EditUserProfileActivity.class);
+            intent.putExtra(Constants.KEY_EDIT_PROFILETYPE, "firstName");
+            startActivity(intent);
         });
 
-        binding.ChangeFirstName.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), EditUserProfileActivity.class);
-                intent.putExtra(Constants.KEY_EDIT_PROFILETYPE, "firstName");
-                startActivity(intent);
-            }
+        binding.ChangeLastName.setOnClickListener(v -> {
+            Intent intent = new Intent(getApplicationContext(), EditUserProfileActivity.class);
+            intent.putExtra(Constants.KEY_EDIT_PROFILETYPE, "lastName");
+            startActivity(intent);
         });
 
-        binding.ChangeLastName.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), EditUserProfileActivity.class);
-                intent.putExtra(Constants.KEY_EDIT_PROFILETYPE, "lastName");
-                startActivity(intent);
-            }
+        binding.ChangeProfileDateOfBirth.setOnClickListener(v -> {
+            Intent intent = new Intent(getApplicationContext(), EditUserProfileActivity.class);
+            intent.putExtra(Constants.KEY_EDIT_PROFILETYPE, "dateOfBirth");
+            startActivity(intent);
         });
 
-        binding.ChangeProfileDateOfBirth.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), EditUserProfileActivity.class);
-                intent.putExtra(Constants.KEY_EDIT_PROFILETYPE, "dateOfBirth");
-                startActivity(intent);
-            }
+        binding.ChangeProfileGender.setOnClickListener(v -> {
+            Intent intent = new Intent(getApplicationContext(), EditUserProfileActivity.class);
+            intent.putExtra(Constants.KEY_EDIT_PROFILETYPE, "gender");
+            startActivity(intent);
         });
-        binding.ChangeProfileGender.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), EditUserProfileActivity.class);
-                intent.putExtra(Constants.KEY_EDIT_PROFILETYPE, "gender");
-                startActivity(intent);
-            }
-        });
-        binding.ChangeProfileBio.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), EditUserProfileActivity.class);
-                intent.putExtra(Constants.KEY_EDIT_PROFILETYPE, "bio");
-                startActivity(intent);
-            }
+
+        binding.ChangeProfileBio.setOnClickListener(v -> {
+            Intent intent = new Intent(getApplicationContext(), EditUserProfileActivity.class);
+            intent.putExtra(Constants.KEY_EDIT_PROFILETYPE, "bio");
+            startActivity(intent);
         });
     }
 
@@ -135,9 +113,8 @@ public class MyProfileActivity extends BaseActivity {
 
         binding.tvProfileFirstName.setText(mCurrentUser.getFirstName());
         binding.tvProfileLastName.setText(mCurrentUser.getLastName());
-        String temp = mCurrentUser.getDateOfBirth().getDay() +"/"
-                + mCurrentUser.getDateOfBirth().getMonth() + "/"
-                + (mCurrentUser.getDateOfBirth().getYear()+1900);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(Constants.PATTERN_DATE_ONLY_FORMATTER, Locale.CHINA);
+        String temp = simpleDateFormat.format(mCurrentUser.getDateOfBirth());
         binding.tvProfileDateOfBirth.setText(temp);
         binding.tvProfileGender.setText(mCurrentUser.getGender());
         binding.tvProfileBio.setText(mCurrentUser.getBio());
@@ -155,10 +132,8 @@ public class MyProfileActivity extends BaseActivity {
     }
 
     private String encodeImageSuper(Bitmap bitmap) {
-        int previewWidth = HD_RES;
-        int previewHeight = HD_RES;
         //int previewHeight = bitmap.getHeight() * previewWidth / bitmap.getWidth();
-        Bitmap previewBitmap = Bitmap.createScaledBitmap(resizeBitmap(bitmap), previewWidth, previewHeight, false);
+        Bitmap previewBitmap = Bitmap.createScaledBitmap(resizeBitmap(bitmap), HD_RES, HD_RES, false);
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         previewBitmap.compress(Bitmap.CompressFormat.JPEG, 95, byteArrayOutputStream);
         byte[] bytes = byteArrayOutputStream.toByteArray();
@@ -206,10 +181,7 @@ public class MyProfileActivity extends BaseActivity {
                         try {
                             InputStream inputStream = getContentResolver().openInputStream(imageUri);
                             Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-                            //binding.headerBackground.setImageBitmap(bitmap);
-                            encodedImage = encodeImageSuper(bitmap);
-                            byte[] bytes = Base64.decode(encodedImage, Base64.DEFAULT);
-                            Bitmap bitmap2 = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                            String encodedImage = encodeImageSuper(bitmap);
 
                             database.collection(Constants.KEY_COLLECTION_USERS)
                                     .document(mCurrentUser.getID())
@@ -222,7 +194,6 @@ public class MyProfileActivity extends BaseActivity {
                             dupUser.Clone(mCurrentUser);
                             dupUser.setAvatar(encodedImage);
                             mPreferenceManager.putUser(dupUser);
-
                         } catch (FileNotFoundException e) {
                             e.printStackTrace();
                         }
@@ -241,11 +212,6 @@ public class MyProfileActivity extends BaseActivity {
         } else {
             binding.progressBar.setVisibility(View.INVISIBLE);
         }
-    }
-
-    protected void showToast(String message) {
-        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
-
     }
     //endregion
 }

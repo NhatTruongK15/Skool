@@ -40,7 +40,7 @@ public class SignInActivity extends BaseActivity {
         super.onResume();
         // If the app has been signed in
         // then skip the sign in process
-        //if (mPreferenceManager.getUser() != null) onAlreadySignedIn();
+        if (mPreferenceManager.getUser() != null) onAlreadySignedIn();
     }
 
     //region FUNCTIONS

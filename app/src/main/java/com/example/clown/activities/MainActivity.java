@@ -38,8 +38,6 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         Init();
 
-        loadCurrentUserDetails();
-
         loadConversations();
 
         setListeners();

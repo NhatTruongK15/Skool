@@ -78,6 +78,8 @@ public class Constants {
     public static final String KEY_SENDER_AVATAR = "senderImage";
     public static final String KEY_RECEIVER_AVATAR = "receiverImage";
     public static final String PATTERN_DATE_TIME_FORMATTER = "dd/MM/yyyy HH:mm:ss";
+    public static final String PATTERN_DATE_ONLY_FORMATTER = "dd/MM/yyyy";
+    public static final String PATTERN_TIME_ONLY_FORMATTER = "HH:mm:ss";
 
     // Agora
     public static final String AGORA_APP_ID="7bf042d1345441fd9da44293ef98cd6d";

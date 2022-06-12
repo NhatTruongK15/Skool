@@ -1,39 +1,29 @@
 package com.example.clown.activities;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.DatePicker;
-import android.widget.Toast;
 
 import com.example.clown.databinding.ActivityEditUserProfileBinding;
 import com.example.clown.models.User;
 import com.example.clown.utilities.Constants;
-import com.example.clown.utilities.PreferenceManager;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.sql.Date;
-import java.time.LocalDate;
 import java.util.Calendar;
 
 public class EditUserProfileActivity extends BaseActivity {
-    ActivityEditUserProfileBinding binding;
+    private static final String TAG = EditUserProfileActivity.class.getName();
+
+    private ActivityEditUserProfileBinding binding;
     private FirebaseFirestore database;
     private String type;
-    private int curYear, curMonth, curDay;
-    User dupUser = new User();
+    private User dupUser = new User();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
-        curYear = calendar.get(Calendar.YEAR);
-        curMonth = calendar.get(Calendar.MONTH);
-        curDay = calendar.get(Calendar.DAY_OF_MONTH);
-        dupUser.Clone(mCurrentUser);
-
 
         Init();
 
@@ -79,11 +69,19 @@ public class EditUserProfileActivity extends BaseActivity {
                         break;
 
                     case "dateOfBirth":
-                         //currentUser.setDateOfBirth(new Date(curYear, curMonth -1, curDay));
+                        int year = binding.datePicker.getYear();
+                        int month = binding.datePicker.getMonth();
+                        int day = binding.datePicker.getDayOfMonth();
+
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.set(year, month, day);
+
+                        dupUser.setDateOfBirth(calendar.getTime());
+
                         database.collection(Constants.KEY_COLLECTION_USERS)
                                 .document(mCurrentUser.getID())
                                 .update(
-                                        Constants.KEY_DATE_OF_BIRTH, mCurrentUser.getDateOfBirth()
+                                        Constants.KEY_DATE_OF_BIRTH, dupUser.getDateOfBirth()
                                 );
 
                         break;
@@ -115,7 +113,10 @@ public class EditUserProfileActivity extends BaseActivity {
     private void Init() {
         binding = ActivityEditUserProfileBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
         database = FirebaseFirestore.getInstance();
+
+        dupUser.Clone(mCurrentUser);
 
         //set all the control GONE
         binding.newValueForProfile.setVisibility(View.GONE);
@@ -124,7 +125,6 @@ public class EditUserProfileActivity extends BaseActivity {
         binding.datePicker.setVisibility(View.GONE);
 
         type = getIntent().getExtras().getString(Constants.KEY_EDIT_PROFILETYPE);
-
 
         LoadActivityDetails();
     }
@@ -153,17 +153,14 @@ public class EditUserProfileActivity extends BaseActivity {
                 binding.guideline.setText("You can change your last name here. Mininum lenght is 5 character");
                 break;
             case "dateOfBirth":
+                int year = dupUser.getDateOfBirth().getYear();
+                int month = dupUser.getDateOfBirth().getMonth();
+                int date = dupUser.getDateOfBirth().getDate();
+
                 binding.datePicker.setVisibility(View.VISIBLE);
                 binding.typeLabel.setText("Date Of Birth");
                 binding.guideline.setText("Pick your date of birth.");
-                binding.datePicker.init(curYear, curMonth, curDay, new DatePicker.OnDateChangedListener() {
-                    @Override
-                    public void onDateChanged(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                        //Date temp =  new Date(year -1900, monthOfYear, dayOfMonth);
-                        dupUser.setDateOfBirth(new Date(year -1900, monthOfYear, dayOfMonth));
-                    }
-
-                });
+                binding.datePicker.init(year, month, date, null);
                 break;
             case "gender":
                 binding.genderSpinner.setVisibility(View.VISIBLE);
@@ -196,12 +193,6 @@ public class EditUserProfileActivity extends BaseActivity {
     }
 
     //region Utilities
-
-    protected void showToast(String message) {
-        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
-
-    }
-
     private Boolean isValidSignInDetails() {
         boolean flag = false;
         switch (type) {
