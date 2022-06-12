@@ -2,7 +2,8 @@ package com.example.clown.adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Parcelable;
+import android.graphics.Bitmap;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -14,27 +15,35 @@ import com.example.clown.databinding.ItemConversationBinding;
 import com.example.clown.models.Conversation;
 import com.example.clown.utilities.Constants;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class ConversationAdapter extends RecyclerView.Adapter<ConversationAdapter.ConversationViewHolder> {
+public class ConversationAdapter extends RecyclerView.Adapter<ConversationAdapter.ViewHolder> {
+    private static final String TAG = ConversationAdapter.class.getName();
 
     private final List<Conversation> mConversationIDs;
+    private final String mUserID;
     private final Context mContext;
 
-    public ConversationAdapter(Context context, List<Conversation> dataSet) {
+    private static final int BASIC_CONVERSATION = 0;
+    private static final int GROUP_CONVERSATION = 1;
+
+    public ConversationAdapter(Context context, List<Conversation> dataSet, String userID) {
+        Log.e(TAG, "Initialized!");
         this.mConversationIDs = dataSet;
         this.mContext = context;
+        this.mUserID = userID;
     }
 
     @NonNull
     @Override
-    public ConversationViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        return new ConversationViewHolder(ItemConversationBinding.inflate(inflater, parent, false));
+        return new ViewHolder(ItemConversationBinding.inflate(inflater, parent, false), viewType);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ConversationViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.setBinding(mConversationIDs.get(position));
     }
 
@@ -43,27 +52,59 @@ public class ConversationAdapter extends RecyclerView.Adapter<ConversationAdapte
         return mConversationIDs.size();
     }
 
-    public class ConversationViewHolder extends RecyclerView.ViewHolder {
-        ItemConversationBinding binding;
+    @Override
+    public int getItemViewType(int position) {
+        return getType(mConversationIDs.get(position));
+    }
 
-        ConversationViewHolder(ItemConversationBinding itemConversationBinding) {
+    private int getType(Conversation newConversation) {
+        try {
+            Double.parseDouble(newConversation.getId());
+            return GROUP_CONVERSATION;
+        } catch (Exception ex) {
+            return BASIC_CONVERSATION;
+        }
+    }
+
+    protected class ViewHolder extends RecyclerView.ViewHolder {
+        private final ItemConversationBinding binding;
+        private final int mType;
+
+        ViewHolder(ItemConversationBinding itemConversationBinding, int type) {
             super(itemConversationBinding.getRoot());
             binding = itemConversationBinding;
+            mType = type;
         }
 
         void setBinding(Conversation onConversation) {
-            binding.imageProfile.setImageBitmap(onConversation.getReceiverBitmapAvatar());
-            binding.textName.setText(onConversation.getReceiverName());
+            String name = null;
+            Bitmap image = null;
+
+            if (mType == BASIC_CONVERSATION) {
+                name = mUserID.equals(onConversation.getSenderId()) ?
+                        onConversation.getReceiverName() :
+                        onConversation.getSenderName();
+
+                image = mUserID.equals(onConversation.getSenderId()) ?
+                        onConversation.getReceiverBitmapAvatar() :
+                        onConversation.getSenderBitmapAvatar();
+            }
+
+            binding.textName.setText(name);
+            binding.imageProfile.setImageBitmap(image);
             binding.textRecentMessage.setText(onConversation.getLastMessage());
             binding.getRoot().setOnClickListener(v -> beginChat(onConversation));
         }
 
         private void beginChat(Conversation conversation) {
+            ArrayList<String> admins = new ArrayList<>(conversation.getAdmins());
+            ArrayList<String> members = new ArrayList<>(conversation.getMembers());
+
             Intent intent = new Intent(mContext, ChatActivity.class);
             intent.putExtra(Constants.KEY_CONVERSATION_ID, conversation.getId());
             intent.putExtra(Constants.KEY_CONVERSATION_NAME ,conversation.getName());
-            intent.putExtra(Constants.KEY_CONVERSATION_ADMINS, (Parcelable) conversation.getAdmins());
-            intent.putExtra(Constants.KEY_CONVERSATION_MEMBERS, (Parcelable) conversation.getMembers());
+            intent.putStringArrayListExtra(Constants.KEY_CONVERSATION_ADMINS, admins);
+            intent.putStringArrayListExtra(Constants.KEY_CONVERSATION_MEMBERS, members);
             mContext.startActivity(intent);
         }
     }

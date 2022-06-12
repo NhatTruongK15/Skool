@@ -675,7 +675,7 @@ public class ChatActivity extends FirestoreBaseActivity {
 
 
     private void loadReceiverDetails() {
-        receiverUser = (User) getIntent().getSerializableExtra(Constants.KEY_USER);
+        //receiverUser = (User) getIntent().getSerializableExtra(Constants.KEY_USER);
         adminList  = (ArrayList<String>) getIntent().getSerializableExtra(Constants.KEY_LIST_GROUP_ADMIN);
         memberList  = (ArrayList<String>) getIntent().getSerializableExtra(Constants.KEY_LIST_GROUP_MEMBER);
         binding.textName.setText(receiverUser.getUsername());

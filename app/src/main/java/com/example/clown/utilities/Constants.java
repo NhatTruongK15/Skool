@@ -58,13 +58,14 @@ public class Constants {
     public static final String KEY_FRIEND_LIST = "friendList";
     public static final String KEY_RECEIVED_REQUESTS = "receivedRequests";
     public static final String KEY_SENT_REQUESTS = "sentRequests";
-    public static final String VALUE_UN_INITIALIZED = "None";
+    public static final String VALUE_UN_INITIALIZED = null;
     public static final String VALUE_GENDER_MALE = "Male";
     public static final String VALUE_GENDER_FEMALE = "Female";
     public static final String VALUE_GENDER_OTHER = "Other";
 
     // Firestore Conversation Model
     public static final String KEY_CONVERSATION_ID = "conversationId";
+    public static final String KEY_CONVERSATION_IMAGE = "image";
     public static final String KEY_CONVERSATION_NAME = "name";
     public static final String KEY_CONVERSATION_LAST_MESSAGE = "lastMessage";
     public static final String KEY_TIMESTAMP="timeStamp";

@@ -17,6 +17,7 @@ public class Conversation implements Serializable {
     // General
     private String mConversationId;
     protected String mName;
+    protected String mImage;
     private String mLastMessage;
     protected Date mTimeStamp;
     private final List<String> mAdmins;
@@ -39,6 +40,9 @@ public class Conversation implements Serializable {
 
     @PropertyName(Constants.KEY_CONVERSATION_NAME) public String getName() { return mName; }
     @PropertyName(Constants.KEY_CONVERSATION_NAME) public void setName(String mName) { this.mName = mName; }
+
+    @PropertyName(Constants.KEY_CONVERSATION_IMAGE) public String getImage() { return mImage;}
+    @PropertyName(Constants.KEY_CONVERSATION_IMAGE) public void setImage(String mImage) {this.mImage = mImage; }
 
     @PropertyName(Constants.KEY_CONVERSATION_LAST_MESSAGE) public String getLastMessage() { return mLastMessage; }
     @PropertyName(Constants.KEY_CONVERSATION_LAST_MESSAGE) public void setLastMessage(String mLastMessage) { this.mLastMessage = mLastMessage; }
@@ -79,6 +83,10 @@ public class Conversation implements Serializable {
     @PropertyName(Constants.KEY_RECEIVER_AVATAR) public String getReceiverAvatar() { return mReceiverAvatar; }
     @PropertyName(Constants.KEY_RECEIVER_AVATAR) public void setReceiverAvatar(String mReceiverAvatar) { this.mReceiverAvatar = mReceiverAvatar; }
 
+    @Exclude public Bitmap getBitmapImage() {
+        if (mImage == null) return null;
+        return getBitmapImage(mImage);
+    }
     @Exclude public Bitmap getSenderBitmapAvatar() {
         if (mSenderAvatar == null) return null;
         return getBitmapImage(mSenderAvatar);
@@ -92,6 +100,7 @@ public class Conversation implements Serializable {
     public Conversation() {
         setId(Constants.VALUE_UN_INITIALIZED);
         setName(Constants.VALUE_UN_INITIALIZED);
+        setImage(Constants.VALUE_UN_INITIALIZED);
         setLastMessage(Constants.VALUE_UN_INITIALIZED);
         setTimeStamp(new Date());
         setBlock(false);
@@ -111,6 +120,7 @@ public class Conversation implements Serializable {
     public Conversation(Conversation source) {
         setId(source.getId());
         setName(source.getName());
+        setImage(source.getImage());
         setLastMessage(source.getLastMessage());
         setTimeStamp(source.getTimeStamp());
         setBlock(source.isBlocked());
@@ -130,6 +140,7 @@ public class Conversation implements Serializable {
     public void Clone(Conversation source) {
         setId(source.getId());
         setName(source.getName());
+        setImage(source.getImage());
         setLastMessage(source.getLastMessage());
         setTimeStamp(source.getTimeStamp());
         setBlock(source.isBlocked());

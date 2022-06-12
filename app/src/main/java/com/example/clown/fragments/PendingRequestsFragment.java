@@ -24,6 +24,7 @@ import com.example.clown.utilities.Constants;
 import com.example.clown.utilities.PreferenceManager;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -94,6 +95,8 @@ public class PendingRequestsFragment extends Fragment implements ReceivedRequest
         mCurrentUser.getReceivedRequests().remove(requester.getID());
         mCurrentUser.getFriends().add(requester.getID());
 
+        removeRequest();
+
         FirebaseFirestore
                 .getInstance()
                 .collection(Constants.KEY_COLLECTION_USERS)
@@ -102,7 +105,14 @@ public class PendingRequestsFragment extends Fragment implements ReceivedRequest
                         Constants.KEY_FRIEND_LIST, mCurrentUser.getFriends());
 
         // Create new conversation
+        DocumentReference docRef = FirebaseFirestore
+                .getInstance()
+                .collection(Constants.KEY_COLLECTION_CONVERSATIONS)
+                .document();
+
         Conversation newConversation = new Conversation();
+
+        newConversation.setId(docRef.getId());
 
         newConversation.getMembers().add(mCurrentUser.getID());
         newConversation.getMembers().add(requester.getID());
@@ -110,9 +120,15 @@ public class PendingRequestsFragment extends Fragment implements ReceivedRequest
         newConversation.getAdmins().add(mCurrentUser.getID());
         newConversation.getAdmins().add(requester.getID());
 
+        newConversation.setSenderId(mCurrentUser.getID());
+        newConversation.setSenderName(mCurrentUser.getUsername());
+        newConversation.setSenderAvatar(mCurrentUser.getAvatar());
 
+        newConversation.setReceiverId(requester.getID());
+        newConversation.setReceiverName(requester.getUsername());
+        newConversation.setReceiverAvatar(requester.getAvatar());
 
-        removeRequest();
+        docRef.set(newConversation);
 
         // Update local self received request list
         PreferenceManager preferenceManager = new PreferenceManager(requireActivity().getApplicationContext());

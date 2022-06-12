@@ -4,7 +4,6 @@ import android.app.job.JobScheduler;
 import android.content.Intent;
 import android.os.Bundle;
 
-import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 
@@ -19,8 +18,8 @@ import com.example.clown.utilities.Constants;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
@@ -30,8 +29,15 @@ public class MainActivity extends BaseActivity {
     public static final String TAG = MainActivity.class.getName();
 
     private ActivityMainBinding binding;
-    private List<Conversation> mConversations = new ArrayList<>();
-    private ConversationAdapter mConversationAdapter;
+
+    private List<Conversation> mBasicConversations;
+    private List<Conversation> mGroupConversations;
+
+    private ConversationAdapter mBasicConversationAdapter;
+    private ConversationAdapter mGroupConversationAdapter;
+
+    public ConversationAdapter getBasicConversationAdapter() { return mBasicConversationAdapter; }
+    public ConversationAdapter getGroupConversationAdapter() { return mBasicConversationAdapter; }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +58,12 @@ public class MainActivity extends BaseActivity {
     private void Init() {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        mBasicConversations = new ArrayList<>();
+        mGroupConversations = new ArrayList<>();
+
+        mBasicConversationAdapter = new ConversationAdapter(this, mBasicConversations, mCurrentUser.getID());
+        mGroupConversationAdapter = new ConversationAdapter(this, mGroupConversations, mCurrentUser.getID());
 
         setUpConversationsViewPager();
     }
@@ -92,7 +104,7 @@ public class MainActivity extends BaseActivity {
                 .getInstance()
                 .collection(Constants.KEY_COLLECTION_CONVERSATIONS)
                 .whereArrayContains(Constants.KEY_CONVERSATION_MEMBERS, mCurrentUser.getID())
-                .addSnapshotListener(this::onCollectionsChanged);
+                .addSnapshotListener(mConversationListener);
     }
 
     private void setListeners() {
@@ -116,22 +128,38 @@ public class MainActivity extends BaseActivity {
 
     private void addConversation(DocumentChange docChange, int newIndex) {
         Conversation newConversation = docChange.getDocument().toObject(Conversation.class);
-        mConversations.add(newConversation);
-        mConversationAdapter.notifyItemInserted(newIndex);
+
+        if (isBasicConversation(newConversation)) {
+            // Got a new friend! - New basic conversation
+            mBasicConversations.add(newConversation);
+            mBasicConversationAdapter.notifyItemInserted(newIndex);
+        } else {
+            // Join a group! - New group conversation
+            mGroupConversations.add(newConversation);
+            mGroupConversationAdapter.notifyItemInserted(newIndex);
+        }
+    }
+
+    private boolean isBasicConversation(Conversation newConversation) {
+        try {
+            Double.parseDouble(newConversation.getId());
+            return false;
+        } catch (Exception ex) {
+            return true;
+        }
     }
 
     private void removeConversation(int oldIndex) {
-        mConversations.remove(oldIndex);
-        mConversationAdapter.notifyItemRemoved(oldIndex);
+        mBasicConversations.remove(oldIndex);
     }
 
     private void updateConversation(DocumentChange docChange, int oldIndex) {
         Conversation modifiedConversation = docChange.getDocument().toObject(Conversation.class);
-        mConversations.set(oldIndex, modifiedConversation);
-        mConversationAdapter.notifyItemChanged(oldIndex);
+        mBasicConversations.set(oldIndex, modifiedConversation);
     }
 
-    private void onCollectionsChanged(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+    //region CALLBACKS
+    private final EventListener<QuerySnapshot> mConversationListener = (value, error) -> {
         if (error != null) {
             showToast(error.getMessage());
             return;
@@ -150,5 +178,6 @@ public class MainActivity extends BaseActivity {
                         updateConversation(docChange, docChange.getOldIndex()); break;
                 }
             }
-    }
+    };
+    //endregion
 }

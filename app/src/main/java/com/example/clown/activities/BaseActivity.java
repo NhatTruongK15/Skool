@@ -22,7 +22,7 @@ public class BaseActivity extends AppCompatActivity {
     private static final String TAG = BaseActivity.class.getName();
 
     protected static PreferenceManager mPreferenceManager;
-    protected static User mCurrentUser = new User();
+    protected static User mCurrentUser;
 
     protected BaseApplication mBaseApplication;
 
