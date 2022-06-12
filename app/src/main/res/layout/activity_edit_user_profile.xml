@@ -53,18 +53,20 @@
 
 
 
-    <FrameLayout
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="@dimen/_16sdp"
         android:background="@drawable/background_content_bottom"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageBack">
+        app:layout_constraintTop_toBottomOf="@+id/imageBack"
+        android:orientation="vertical">
 
       <LinearLayout
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:orientation="vertical">
+
           <EditText
               android:id="@+id/newValueForProfile"
               android:layout_width="match_parent"
@@ -73,8 +75,43 @@
               android:layout_marginTop="@dimen/_20sdp"
               android:layout_marginEnd="@dimen/_20sdp"
               android:layout_marginBottom="@dimen/_10sdp"
-              android:hint="Your Hint Here"/>
+              android:hint="Your Hint Here"
+              android:minHeight="48dp" />
 
+          <Spinner
+              android:id="@+id/genderSpinner"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_marginStart="@dimen/_20sdp"
+              android:layout_marginTop="@dimen/_20sdp"
+              android:layout_marginEnd="@dimen/_20sdp"
+              android:layout_marginBottom="@dimen/_10sdp"
+              >
+          </Spinner>
+
+          <DatePicker
+              android:id="@+id/datePicker"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:calendarViewShown="false"
+              android:datePickerMode="spinner"
+              android:layout_marginStart="@dimen/_20sdp"
+              android:layout_marginTop="@dimen/_20sdp"
+              android:layout_marginEnd="@dimen/_20sdp"
+              android:layout_marginBottom="@dimen/_10sdp"/>
+          <EditText
+              android:id="@+id/bioEditBox"
+              android:layout_width="match_parent"
+              android:layout_height="@dimen/_200sdp"
+              android:hint="Bio"
+              android:scrollbars="vertical"
+              android:gravity="top|start"
+
+              android:layout_marginStart="@dimen/_20sdp"
+              android:layout_marginTop="@dimen/_20sdp"
+              android:layout_marginEnd="@dimen/_20sdp"
+              android:layout_marginBottom="@dimen/_10sdp"
+              />
           <TextView
               android:id="@+id/guideline"
               android:layout_width="wrap_content"
@@ -105,6 +142,6 @@
 
 
 
-    </FrameLayout>
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

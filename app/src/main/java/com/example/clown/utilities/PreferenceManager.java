@@ -35,12 +35,12 @@ public class PreferenceManager {
     // region -------------- ACCESSORS --------------
     public void putBoolean(String key, Boolean value) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean(key,value);
+        editor.putBoolean(key, value);
         editor.apply();
     }
 
     public Boolean getBoolean(String key) {
-        return sharedPreferences.getBoolean(key,false);
+        return sharedPreferences.getBoolean(key, false);
     }
 
     public void putUser(User value) {

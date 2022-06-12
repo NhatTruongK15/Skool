@@ -4,9 +4,9 @@ import static com.example.clown.utilities.Constants.HD_RES;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -14,6 +14,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -27,13 +28,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
-public class MyProfileActivity extends AppCompatActivity {
+public class MyProfileActivity extends BaseActivity {
 
     ActivityMyProfileBinding binding;
-    private PreferenceManager preferenceManager;
     private FirebaseFirestore database;
     private String encodedImage;
-    private User currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +45,7 @@ public class MyProfileActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        currentUser = preferenceManager.getUser();
+
         LoadUserDetails();
     }
 
@@ -71,15 +70,54 @@ public class MyProfileActivity extends AppCompatActivity {
             }
         });
 
+        binding.ChangeFirstName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), EditUserProfileActivity.class);
+                intent.putExtra(Constants.KEY_EDIT_PROFILETYPE, "firstName");
+                startActivity(intent);
+            }
+        });
+
+        binding.ChangeLastName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), EditUserProfileActivity.class);
+                intent.putExtra(Constants.KEY_EDIT_PROFILETYPE, "lastName");
+                startActivity(intent);
+            }
+        });
+
+        binding.ChangeProfileDateOfBirth.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), EditUserProfileActivity.class);
+                intent.putExtra(Constants.KEY_EDIT_PROFILETYPE, "dateOfBirth");
+                startActivity(intent);
+            }
+        });
+        binding.ChangeProfileGender.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), EditUserProfileActivity.class);
+                intent.putExtra(Constants.KEY_EDIT_PROFILETYPE, "gender");
+                startActivity(intent);
+            }
+        });
+        binding.ChangeProfileBio.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), EditUserProfileActivity.class);
+                intent.putExtra(Constants.KEY_EDIT_PROFILETYPE, "bio");
+                startActivity(intent);
+            }
+        });
     }
 
 
     private void Init() {
         binding = ActivityMyProfileBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        preferenceManager = new PreferenceManager(getApplicationContext());
-        currentUser = preferenceManager.getUser();
-
         database = FirebaseFirestore.getInstance();
 
         loading(false);
@@ -87,15 +125,22 @@ public class MyProfileActivity extends AppCompatActivity {
     }
 
     private void LoadUserDetails() {
-        binding.name.setText(currentUser.getUsername());
-        byte[] bytes = Base64.decode(currentUser.getAvatar(), Base64.DEFAULT);
+        binding.name.setText(mCurrentUser.getUsername());
+        byte[] bytes = Base64.decode(mCurrentUser.getAvatar(), Base64.DEFAULT);
         Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
 
         binding.headerBackground.setImageBitmap(bitmap);
-        binding.tvProfilePhoneNumber.setText(currentUser.getPhoneNumber());
-        binding.tvProfileEmail.setText(currentUser.getEmail());
+        binding.tvProfilePhoneNumber.setText(mCurrentUser.getPhoneNumber());
+        binding.tvProfileEmail.setText(mCurrentUser.getEmail());
 
-
+        binding.tvProfileFirstName.setText(mCurrentUser.getFirstName());
+        binding.tvProfileLastName.setText(mCurrentUser.getLastName());
+        String temp = mCurrentUser.getDateOfBirth().getDay() +"/"
+                + mCurrentUser.getDateOfBirth().getMonth() + "/"
+                + (mCurrentUser.getDateOfBirth().getYear()+1900);
+        binding.tvProfileDateOfBirth.setText(temp);
+        binding.tvProfileGender.setText(mCurrentUser.getGender());
+        binding.tvProfileBio.setText(mCurrentUser.getBio());
     }
 
     //region Images handing references
@@ -145,13 +190,17 @@ public class MyProfileActivity extends AppCompatActivity {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         PickImage.launch(intent);
-
-
     }
 
-    private final ActivityResultLauncher<Intent> PickImage = registerForActivityResult(
+    protected final ActivityResultLauncher<Intent> PickImage = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(), result -> {
                 if (result.getResultCode() == RESULT_OK) {
+
+                    // Broadcast Receiver bind
+                    Log.e("cai gi cung dc","ghi mot cai gi do cung dc");
+                    IntentFilter intentFilter = new IntentFilter(Constants.ACT_UPDATE_CURRENT_USER);
+                    registerReceiver(mBroadcastReceiver, intentFilter);
+
                     if (result.getData() != null) {
                         Uri imageUri = result.getData().getData();
                         try {
@@ -163,20 +212,24 @@ public class MyProfileActivity extends AppCompatActivity {
                             Bitmap bitmap2 = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
 
                             database.collection(Constants.KEY_COLLECTION_USERS)
-                                    .document(currentUser.getID())
+                                    .document(mCurrentUser.getID())
                                     .update(
                                             Constants.KEY_AVATAR, encodedImage
                                     );
 
                             //preference manager
-                            currentUser.setAvatar(encodedImage);
-                            preferenceManager.putUser(currentUser);
-                            LoadUserDetails();
+                            User dupUser = new User();
+                            dupUser.Clone(mCurrentUser);
+                            dupUser.setAvatar(encodedImage);
+                            mPreferenceManager.putUser(dupUser);
+
                         } catch (FileNotFoundException e) {
                             e.printStackTrace();
                         }
                     }
+                    unregisterReceiver(mBroadcastReceiver);
                 }
+
             });
     //endregion
 
@@ -190,7 +243,7 @@ public class MyProfileActivity extends AppCompatActivity {
         }
     }
 
-    private void showToast(String message) {
+    protected void showToast(String message) {
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
 
     }
