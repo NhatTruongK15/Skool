@@ -4,12 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.MyProfileActivity"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context=".activities.MyProfileActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/_370sdp">
+
         <View
             android:id="@+id/viewBackground"
             android:layout_width="match_parent"
@@ -248,24 +249,32 @@
                 android:textStyle="bold" />
 
             <!--First Name-->
-            <TextView
-                android:id="@+id/tvFirstName"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/ChangeFirstName"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/_12sdp"
-                android:hint="@string/first_name_hint"
-                android:textColor="@color/black"
-                android:textColorHint="@color/black"
-                android:textSize="@dimen/_13ssp"
-                android:textStyle="bold" />
+                android:isScrollContainer="true"
+                android:orientation="vertical">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/_12sdp"
-                android:text="@string/first_name_hint"
-                android:textColor="#757575"
-                tools:ignore="TextContrastCheck" />
+                <TextView
+                    android:id="@+id/tvProfileFirstName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/_12sdp"
+                    android:hint="@string/first_name_hint"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/black"
+                    android:textSize="@dimen/_13ssp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/_12sdp"
+                    android:text="@string/first_name_hint"
+                    android:textColor="#757575"
+                    tools:ignore="TextContrastCheck" />
+            </LinearLayout>
 
             <View
                 android:layout_width="match_parent"
@@ -275,24 +284,32 @@
                 android:background="@color/separator_1" />
 
             <!--Last Name-->
-            <TextView
-                android:id="@+id/tvLastName"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/ChangeLastName"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/_12sdp"
-                android:layout_marginTop="@dimen/_12sdp"
-                android:hint="@string/last_name_hint"
-                android:textColor="@color/black"
-                android:textColorHint="@color/black"
-                android:textSize="@dimen/_13ssp"
-                android:textStyle="bold" />
+                android:isScrollContainer="true"
+                android:orientation="vertical">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/_12sdp"
-                android:text="@string/last_name_hint"
-                tools:ignore="TextContrastCheck" />
+                <TextView
+                    android:id="@+id/tvProfileLastName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/_12sdp"
+                    android:layout_marginTop="@dimen/_12sdp"
+                    android:hint="@string/last_name_hint"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/black"
+                    android:textSize="@dimen/_13ssp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/_12sdp"
+                    android:text="@string/last_name_hint"
+                    tools:ignore="TextContrastCheck" />
+            </LinearLayout>
 
             <View
                 android:layout_width="match_parent"
@@ -302,25 +319,33 @@
                 android:background="@color/separator_1" />
 
             <!--Date of Birth-->
-            <TextView
-                android:id="@+id/tvProfileDateOfBirth"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/ChangeProfileDateOfBirth"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/_12sdp"
-                android:layout_marginTop="@dimen/_12sdp"
-                android:hint="@string/date_of_birth_hint"
-                android:textColor="@color/black"
-                android:textColorHint="@color/black"
-                android:textSize="@dimen/_13ssp"
-                android:textStyle="bold" />
+                android:isScrollContainer="true"
+                android:orientation="vertical">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/_12sdp"
-                android:text="@string/date_of_birth_hint"
-                android:textColor="#757575"
-                tools:ignore="TextContrastCheck" />
+                <TextView
+                    android:id="@+id/tvProfileDateOfBirth"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/_12sdp"
+                    android:layout_marginTop="@dimen/_12sdp"
+                    android:hint="@string/date_of_birth_hint"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/black"
+                    android:textSize="@dimen/_13ssp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/_12sdp"
+                    android:text="@string/date_of_birth_hint"
+                    android:textColor="#757575"
+                    tools:ignore="TextContrastCheck" />
+            </LinearLayout>
 
             <View
                 android:layout_width="match_parent"
@@ -330,25 +355,33 @@
                 android:background="@color/separator_1" />
 
             <!--Gender-->
-            <TextView
-                android:id="@+id/tvProfileGender"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/ChangeProfileGender"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/_12sdp"
-                android:layout_marginTop="@dimen/_12sdp"
-                android:hint="@string/gender_hint"
-                android:textColor="@color/black"
-                android:textColorHint="@color/black"
-                android:textSize="@dimen/_13ssp"
-                android:textStyle="bold" />
+                android:isScrollContainer="true"
+                android:orientation="vertical">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/_12sdp"
-                android:text="@string/gender_hint"
-                android:textColor="#757575"
-                tools:ignore="TextContrastCheck" />
+                <TextView
+                    android:id="@+id/tvProfileGender"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/_12sdp"
+                    android:layout_marginTop="@dimen/_12sdp"
+                    android:hint="@string/gender_hint"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/black"
+                    android:textSize="@dimen/_13ssp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/_12sdp"
+                    android:text="@string/gender_hint"
+                    android:textColor="#757575"
+                    tools:ignore="TextContrastCheck" />
+            </LinearLayout>
 
             <View
                 android:layout_width="match_parent"
@@ -358,25 +391,33 @@
                 android:background="@color/separator_1" />
 
             <!--Bio-->
-            <TextView
-                android:id="@+id/tvProfileBio"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/ChangeProfileBio"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/_12sdp"
-                android:layout_marginTop="@dimen/_12sdp"
-                android:hint="@string/bio_hint_1"
-                android:textColor="@color/black"
-                android:textColorHint="@color/black"
-                android:textSize="@dimen/_13ssp"
-                android:textStyle="bold" />
+                android:isScrollContainer="true"
+                android:orientation="vertical">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/_12sdp"
-                android:text="@string/bio_hint_1"
-                android:textColor="#757575"
-                tools:ignore="TextContrastCheck" />
+                <TextView
+                    android:id="@+id/tvProfileBio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/_12sdp"
+                    android:layout_marginTop="@dimen/_12sdp"
+                    android:hint="@string/bio_hint_1"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/black"
+                    android:textSize="@dimen/_13ssp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/_12sdp"
+                    android:text="@string/bio_hint_1"
+                    android:textColor="#757575"
+                    tools:ignore="TextContrastCheck" />
+            </LinearLayout>
 
             <View
                 android:layout_width="match_parent"
