@@ -48,7 +48,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.example.clown.ActivityMediaAndFile;
+import com.example.clown.activities.ActivityMediaAndFile;
 import com.example.clown.adapter.ChatAdapter;
 import com.example.clown.adapter.GroupChatAdapter;
 import com.example.clown.agora.AgoraService;
@@ -501,7 +501,7 @@ public class ChatActivity extends BaseActivity {
         if (!isReceiverAvailable) {
             try {
                 JSONArray tokens = new JSONArray();
-                tokens.put(receiverUser.token);
+//                tokens.put(receiverUser.token);
 
                 JSONObject data = new JSONObject();
 //                data.put(Constants.KEY_DOCUMENT_REFERENCE_ID, mCurrentUser.getID());
@@ -535,10 +535,6 @@ public class ChatActivity extends BaseActivity {
         imglink=null;
         videolocation=null;
         isnotVid=false;
-    }
-
-    private void showToast(String message) {
-        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }
 
     private void sendNotification(String messageBody) {
