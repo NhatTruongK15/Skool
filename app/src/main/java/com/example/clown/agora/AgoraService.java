@@ -61,7 +61,7 @@ public class AgoraService extends Service implements IEventListener, ResultCallb
     @Override
     public void onCreate() {
         super.onCreate();
-        showToast("AgoraService created!");
+        showToast("AgoraCallListenerService created!");
         defaultSetUp();
     }
 
@@ -75,7 +75,7 @@ public class AgoraService extends Service implements IEventListener, ResultCallb
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
             mNM.deleteNotificationChannel(Constants.AGORA_APP_ID);
 
-        showToast("AgoraService destroyed!");
+        showToast("AgoraCallListenerService destroyed!");
     }
 
     @Override
@@ -90,7 +90,7 @@ public class AgoraService extends Service implements IEventListener, ResultCallb
         createNotificationChannel();
         startForegroundNotification();
 
-        showToast("AgoraService started!");
+        showToast("AgoraCallListenerService started!");
         return START_NOT_STICKY;
     }
 

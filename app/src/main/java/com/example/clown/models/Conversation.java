@@ -15,14 +15,14 @@ import java.util.List;
 
 public class Conversation implements Serializable {
     // General
-    private String mConversationId;
-    protected String mName;
-    protected String mImage;
-    private String mLastMessage;
+    protected String mConversationId;
     protected Date mTimeStamp;
+    protected boolean mIsBlocked;
+    private String mName;
+    private String mImage;
+    private String mLastMessage;
     private final List<String> mAdmins;
     private final List<String> mMembers;
-    private boolean mIsBlocked;
 
     // Sender
     protected String mSenderId;
@@ -68,11 +68,11 @@ public class Conversation implements Serializable {
     @PropertyName(Constants.KEY_SENDER_ID) public String getSenderId() { return mSenderId; }
     @PropertyName(Constants.KEY_SENDER_ID) public void setSenderId(String mSenderId) { this.mSenderId = mSenderId; }
 
-    @PropertyName(Constants.KEY_SENDER_NAME) public String getSenderName() { return mSenderName; }
-    @PropertyName(Constants.KEY_SENDER_NAME) public void setSenderName(String mSenderName) { this.mSenderName = mSenderName; }
+    @PropertyName(Constants.KEY_SENDER_NAME) public final String getSenderName() { return mSenderName; }
+    @PropertyName(Constants.KEY_SENDER_NAME) public final void setSenderName(String mSenderName) { this.mSenderName = mSenderName; }
 
-    @PropertyName(Constants.KEY_SENDER_AVATAR) public String getSenderAvatar() { return mSenderAvatar; }
-    @PropertyName(Constants.KEY_SENDER_AVATAR) public void setSenderAvatar(String mSenderAvatar) { this.mSenderAvatar = mSenderAvatar; }
+    @PropertyName(Constants.KEY_SENDER_AVATAR) public final String getSenderAvatar() { return mSenderAvatar; }
+    @PropertyName(Constants.KEY_SENDER_AVATAR) public final void setSenderAvatar(String mSenderAvatar) { this.mSenderAvatar = mSenderAvatar; }
 
     @PropertyName(Constants.KEY_RECEIVER_ID) public String getReceiverId() { return mReceiverId; }
     @PropertyName(Constants.KEY_RECEIVER_ID) public void setReceiverId(String mReceiverId) { this.mReceiverId = mReceiverId; }
@@ -80,18 +80,18 @@ public class Conversation implements Serializable {
     @PropertyName(Constants.KEY_RECEIVER_NAME) public String getReceiverName() { return mReceiverName; }
     @PropertyName(Constants.KEY_RECEIVER_NAME) public void setReceiverName(String mReceiverName) { this.mReceiverName = mReceiverName; }
 
-    @PropertyName(Constants.KEY_RECEIVER_AVATAR) public String getReceiverAvatar() { return mReceiverAvatar; }
-    @PropertyName(Constants.KEY_RECEIVER_AVATAR) public void setReceiverAvatar(String mReceiverAvatar) { this.mReceiverAvatar = mReceiverAvatar; }
+    @PropertyName(Constants.KEY_RECEIVER_AVATAR) public final String getReceiverAvatar() { return mReceiverAvatar; }
+    @PropertyName(Constants.KEY_RECEIVER_AVATAR) public final void setReceiverAvatar(String mReceiverAvatar) { this.mReceiverAvatar = mReceiverAvatar; }
 
-    @Exclude public Bitmap getBitmapImage() {
+    @Exclude public final Bitmap getBitmapImage() {
         if (mImage == null) return null;
         return getBitmapImage(mImage);
     }
-    @Exclude public Bitmap getSenderBitmapAvatar() {
+    @Exclude public final Bitmap getSenderBitmapAvatar() {
         if (mSenderAvatar == null) return null;
         return getBitmapImage(mSenderAvatar);
     }
-    @Exclude public Bitmap getReceiverBitmapAvatar() {
+    @Exclude public final Bitmap getReceiverBitmapAvatar() {
         if (mReceiverAvatar == null) return null;
         return getBitmapImage(mReceiverAvatar);
     }

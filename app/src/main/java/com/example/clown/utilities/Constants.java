@@ -82,6 +82,12 @@ public class Constants {
     public static final String PATTERN_DATE_ONLY_FORMATTER = "dd/MM/yyyy";
     public static final String PATTERN_TIME_ONLY_FORMATTER = "HH:mm:ss";
 
+    // Firestore Message Model
+    public static final String KEY_MESSAGE_ID = "messageId";
+    public static final String KEY_MESSAGE_FILE_NAME = "messageFileName";
+    public static final String KEY_MESSAGE_FILE_URI = "messageFileUri";
+    public static final String KEY_MESSAGE_CONTENT = "messageContent";
+
     // Agora
     public static final String AGORA_APP_ID="7bf042d1345441fd9da44293ef98cd6d";
     public static final String AGORA_APP_CERTIFICATE="d6a903468c3a4cd590d4a560c2ffb44c";
@@ -103,6 +109,17 @@ public class Constants {
     public static final int MSG_AGORA_REMOTE_INVITATION_REFUSED = 9;
     public static final int MSG_AGORA_REMOTE_INVITATION_CANCELED = 10;
     public static final int MSG_AGORA_REMOTE_INVITATION_FAILED = 11;
+
+    public static final String ACT_AGORA_LOG_IN = "agoraLoggedIn";
+    public static final String ACT_AGORA_LOG_OUT = "agoraLoggedOut";
+    public static final String ACT_AGORA_LOCAL_INVITATION_SEND = "agoraLocalInvitationSent";
+    public static final String ACT_AGORA_LOCAL_INVITATION_REFUSED = "agoraLocalInvitationRefused";
+    public static final String ACT_AGORA_LOCAL_INVITATION_CANCELED = "agoraLocalInvitationCanceled";
+    public static final String ACT_AGORA_LOCAL_INVITATION_FAILED = "agoraLocalInvitationFailed";
+    public static final String ACT_AGORA_REMOTE_INVITATION_ACCEPTED = "agoraRemoteInvitationAccepted";
+    public static final String ACT_AGORA_REMOTE_INVITATION_REFUSED = "agoraRemoteInvitationRefused";
+    public static final String ACT_AGORA_REMOTE_INVITATION_CANCELED = "agoraRemoteInvitationCanceled";
+    public static final String ACT_AGORA_REMOTE_INVITATION_FAILED = "agoraRemoteInvitationFailed";
 
     // Application
     public static final String KEY_CHANNEL_ID = "applicationChannelID";

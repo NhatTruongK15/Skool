@@ -241,7 +241,6 @@ public class GroupChatAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHol
             database.collection(Constants.KEY_COLLECTION_USERS)
             .document(senderId)
             .get()
-                    .addOnFailureListener(v -> {})
             .addOnCompleteListener(task -> {
                 if(task.isSuccessful() && task.getResult() != null){
                     binding.textUserName.setText(task.getResult().getString(Constants.KEY_USERNAME));
@@ -331,50 +330,11 @@ public class GroupChatAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHol
 
         }
 
-        public Bitmap getUserImage(String encodeImage)
-        {
+        public Bitmap getUserImage(String encodeImage) {
             byte [] bytes = Base64.decode(encodeImage,Base64.DEFAULT);
             return BitmapFactory.decodeByteArray(bytes,0,bytes.length);
 
         }
-
     }
-
-    public byte[] BitmapToByte(Bitmap bitmap, int quality) {
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, quality, stream);
-        return stream.toByteArray();
-    }
-
-
-
-    /*private String encodeImage(Bitmap bitmap) {
-        int previewWidth = HD_RES;
-        int previewHeight = bitmap.getHeight() * previewWidth / bitmap.getWidth();
-        Bitmap previewBitmap = Bitmap.createScaledBitmap(bitmap, previewWidth, previewHeight, false);
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        previewBitmap.compress(Bitmap.CompressFormat.JPEG, 95, byteArrayOutputStream);
-        byte[] bytes = byteArrayOutputStream.toByteArray();
-        return Base64.encodeToString(bytes, Base64.DEFAULT);
-    }
-
-    private static final float PREFERRED_WIDTH = HD_RES;
-    private static final float PREFERRED_HEIGHT = HD_RES;
-
-    public static Bitmap resizeBitmap(Bitmap bitmap) {
-        int width = bitmap.getWidth();
-        int height = bitmap.getHeight();
-        float scaleWidth = PREFERRED_WIDTH / width;
-        float scaleHeight = PREFERRED_HEIGHT / height;
-
-        Matrix matrix = new Matrix();
-        matrix.postScale(scaleWidth, scaleHeight);
-        Bitmap resizedBitmap = Bitmap.createBitmap(
-                bitmap, 0, 0, width, height, matrix, false);
-        bitmap.recycle();
-        return resizedBitmap;
-    }*/
-
-
 }
 

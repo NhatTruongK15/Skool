@@ -21,7 +21,7 @@ import com.example.clown.utilities.Constants;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendViewHolder> implements Filterable {
+public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder> implements Filterable {
     private final List<User> mFriendsList;
     private final List<User> mFriendsListFull;
     private final Context mContext;
@@ -34,13 +34,13 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendView
 
     @NonNull
     @Override
-    public FriendViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        return new FriendViewHolder(ItemFriendBinding.inflate(inflater, parent, false));
+        return new ViewHolder(ItemFriendBinding.inflate(inflater, parent, false));
     }
 
     @Override
-    public void onBindViewHolder(@NonNull FriendViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         User onFriend = mFriendsList.get(position);
         holder.setBinding(onFriend);
     }
@@ -82,10 +82,10 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendView
         };
     }
 
-    public class FriendViewHolder extends RecyclerView.ViewHolder {
+    protected class ViewHolder extends RecyclerView.ViewHolder {
         private final ItemFriendBinding binding;
 
-        public FriendViewHolder(@NonNull ItemFriendBinding binding) {
+        public ViewHolder(@NonNull ItemFriendBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
         }

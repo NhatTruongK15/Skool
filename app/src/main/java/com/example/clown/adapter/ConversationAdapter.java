@@ -15,7 +15,6 @@ import com.example.clown.databinding.ItemConversationBinding;
 import com.example.clown.models.Conversation;
 import com.example.clown.utilities.Constants;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ConversationAdapter extends RecyclerView.Adapter<ConversationAdapter.ViewHolder> {
@@ -100,15 +99,8 @@ public class ConversationAdapter extends RecyclerView.Adapter<ConversationAdapte
         }
 
         private void beginChat(Conversation conversation) {
-            ArrayList<String> admins = new ArrayList<>(conversation.getAdmins());
-            ArrayList<String> members = new ArrayList<>(conversation.getMembers());
-
             Intent intent = new Intent(mContext, ChatActivity.class);
-            intent.putExtra(Constants.KEY_CONVERSATION_ID, conversation.getId());
-            intent.putExtra(Constants.KEY_CONVERSATION_NAME ,conversation.getName());
-            intent.putStringArrayListExtra(Constants.KEY_CONVERSATION_ADMINS, admins);
-            intent.putStringArrayListExtra(Constants.KEY_CONVERSATION_MEMBERS, members);
-
+            intent.putExtra(Constants.KEY_COLLECTION_CONVERSATIONS, conversation);
             mContext.startActivity(intent);
         }
     }
