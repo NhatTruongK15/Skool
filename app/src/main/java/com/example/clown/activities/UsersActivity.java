@@ -20,15 +20,22 @@ public class UsersActivity extends FirestoreBaseActivity implements UserListener
 
     private ActivityUsersBinding binding;
     private PreferenceManager preferenceManager;
+    private User currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Init();
+
+        setListener();
+        getUsers();
+    }
+
+    private void Init(){
         binding = ActivityUsersBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         preferenceManager = new PreferenceManager(getApplicationContext());
-        setListener();
-        getUsers();
+        currentUser = preferenceManager.getUser();
     }
 
     private void setListener()
@@ -43,7 +50,7 @@ public class UsersActivity extends FirestoreBaseActivity implements UserListener
                 .get()
                 .addOnCompleteListener(task -> {
                     loading(false);
-                    String currentUserId = preferenceManager.getString(Constants.KEY_DOCUMENT_REFERENCE_ID);
+                    String currentUserId = currentUser.getID();
                     if(task.isSuccessful() && task.getResult() != null)
                     {
                         List<User> users = new ArrayList<>();
@@ -52,11 +59,11 @@ public class UsersActivity extends FirestoreBaseActivity implements UserListener
                                 continue;
                             }
                             User user = new User();
-                            user.name = queryDocumentSnapshot.getString(Constants.KEY_NAME);
-                            user.email = queryDocumentSnapshot.getString(Constants.KEY_EMAIL);
-                            user.image = queryDocumentSnapshot.getString(Constants.KEY_IMAGE);
-                            user.token = queryDocumentSnapshot.getString(Constants.KEY_FCM_TOKEN);
-                            user.id = queryDocumentSnapshot.getId();
+                            user.setUsername(queryDocumentSnapshot.getString(Constants.KEY_USERNAME));
+                            user.setEmail(queryDocumentSnapshot.getString(Constants.KEY_EMAIL));
+                            user.setAvatar(queryDocumentSnapshot.getString(Constants.KEY_AVATAR));
+                            //user.setToken(queryDocumentSnapshot.getString(Constants.KEY_FCM_TOKEN));
+                            user.setID(queryDocumentSnapshot.getId());
                             users.add(user);
                         }
                         if(users.size() > 0)

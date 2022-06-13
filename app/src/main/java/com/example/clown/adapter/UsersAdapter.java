@@ -1,8 +1,5 @@
 package com.example.clown.adapter;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -15,8 +12,7 @@ import com.example.clown.models.User;
 
 import java.util.List;
 
-
-public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHolder> {
+public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
     private final List<User> users;
     private final UserListener userListener;
 
@@ -28,16 +24,16 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHold
 
     @NonNull
     @Override
-    public UserViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         ItemContainerUserBinding itemContainerUserBinding = ItemContainerUserBinding.inflate(
                 LayoutInflater.from(parent.getContext()), parent,
                 false
         );
-        return new UserViewHolder(itemContainerUserBinding);
+        return new ViewHolder(itemContainerUserBinding);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull UserViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
             holder.setUserData(users.get(position));
     }
 
@@ -46,28 +42,19 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHold
         return users.size();
     }
 
-    class  UserViewHolder extends RecyclerView.ViewHolder
-    {
-        ItemContainerUserBinding binding;
-        UserViewHolder(ItemContainerUserBinding itemContainerUserBinding)
-        {
+    protected class ViewHolder extends RecyclerView.ViewHolder {
+        private final ItemContainerUserBinding binding;
+
+        ViewHolder(ItemContainerUserBinding itemContainerUserBinding) {
             super(itemContainerUserBinding.getRoot());
             binding = itemContainerUserBinding;
         }
 
-        void setUserData(User user)
-        {
-             binding.textName.setText(user.name);
-             binding.textEmail.setText(user.email);
-             binding.imageProfile.setImageBitmap(getUserImage(user.image));
+        void setUserData(User user) {
+             binding.textName.setText(user.getUsername());
+             binding.textEmail.setText(user.getEmail());
+             binding.imageProfile.setImageBitmap(user.getBitmapAvatar());
              binding.getRoot().setOnClickListener(v -> userListener.onUserClicked(user));
         }
-    }
-
-    private Bitmap getUserImage(String encodeImage)
-    {
-        byte [] bytes = Base64.decode(encodeImage,Base64.DEFAULT);
-        return BitmapFactory.decodeByteArray(bytes,0,bytes.length);
-
     }
 }

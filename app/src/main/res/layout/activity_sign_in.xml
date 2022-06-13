@@ -29,47 +29,52 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_4sdp"
-            android:text="@string/login_to_continue"
+            android:text="@string/login_to_continue_hint"
             android:textColor="@color/secondary_text"
             android:textSize="@dimen/_12ssp"
             android:textStyle="bold" />
+
         <EditText
-            android:id="@+id/inputEmail"
+            android:id="@+id/inputPhoneNumberOrEmail"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_45sdp"
             android:layout_marginTop="@dimen/_40sdp"
             android:background="@drawable/background_input"
-            android:hint="Phone number or Email"
+            android:hint="@string/phone_number_or_email_hint"
             android:imeOptions="actionNext"
             android:importantForAutofill="no"
-            android:inputType="textEmailAddress"
+            android:inputType="textNoSuggestions"
             android:paddingStart="@dimen/_16sdp"
             android:paddingEnd="@dimen/_16sdp"
             android:textColor="@color/primary_text"
-            android:textSize="@dimen/_13ssp"/>
+            android:textSize="@dimen/_13ssp"
+            tools:ignore="TextContrastCheck,TextFields" />
+
         <EditText
             android:id="@+id/inputPassword"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_45sdp"
             android:layout_marginTop="@dimen/_16sdp"
             android:background="@drawable/background_input"
-            android:hint="@string/password"
+            android:hint="@string/password_hint"
             android:imeOptions="actionDone"
             android:importantForAutofill="no"
             android:inputType="textPassword"
             android:paddingStart="@dimen/_16sdp"
             android:paddingEnd="@dimen/_16sdp"
             android:textColor="@color/primary_text"
-            android:textSize="@dimen/_13ssp"/>
+            android:textSize="@dimen/_13ssp"
+            tools:ignore="TextContrastCheck" />
         <TextView
             android:id="@+id/forgetPasswordText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginStart="@dimen/_80sdp"
-            android:text="Forget Passoword??"
+            android:layout_marginEnd="@dimen/_3sdp"
+            android:text="@string/forget_password_option"
             android:textColor="@color/primary"
-            android:textSize="14dp"
+            android:textSize="@dimen/_14ssp"
             android:textStyle="bold"/>
         <FrameLayout
             android:layout_width="match_parent"
@@ -80,7 +85,7 @@
                 android:id="@+id/buttonSignIn"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_50sdp"
-                android:text="@string/sign_in"
+                android:text="@string/sign_in_button"
                 android:textColor="@color/white"
                 android:textSize="@dimen/_13ssp"
                 android:textStyle="bold"
@@ -98,7 +103,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_20sdp"
-            android:text="@string/create_new_account"
+            android:text="@string/create_new_account_option"
             android:textColor="@color/primary"
             android:textSize="@dimen/_13ssp"
             android:textStyle="bold"/>

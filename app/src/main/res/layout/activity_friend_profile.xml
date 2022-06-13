@@ -1,0 +1,468 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.FriendProfileActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/tbProfile"
+            app:title="Profile"
+            app:titleTextColor="@color/white"
+            android:background="@color/primary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/primary"
+            android:orientation="horizontal"
+            android:padding="@dimen/_12sdp">
+            <com.makeramen.roundedimageview.RoundedImageView
+                android:id="@+id/rivProfileAvatar"
+                android:layout_width="@dimen/_50sdp"
+                android:layout_height="@dimen/_50sdp"
+                android:src="@drawable/default_avatar"
+                android:scaleType="centerCrop"
+                app:riv_oval="true"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"/>
+
+            <TextView
+                android:id="@+id/tvUsername"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_12sdp"
+                android:hint="@string/username_hint"
+                android:textColorHint="@color/white"
+                android:textSize="@dimen/_18ssp"
+                android:textStyle="bold"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toRightOf="@id/rivProfileAvatar"
+                app:layout_constraintVertical_bias="0.4"/>
+
+            <View
+                android:background="@color/separator_1"
+                android:layout_width="@dimen/_50sdp"
+                android:layout_height="@dimen/_1sdp"
+                app:layout_constraintTop_toBottomOf="@id/tvUsername"
+                app:layout_constraintLeft_toRightOf="@id/rivProfileAvatar"
+                android:layout_marginStart="@dimen/_12sdp"/>
+
+            <ImageView
+                android:id="@+id/ivProfileStatus"
+                android:contentDescription="@string/status_online"
+                android:src="@drawable/ic_online_circle"
+                android:layout_width="@dimen/_10sdp"
+                android:layout_height="@dimen/_10sdp"
+                android:layout_marginStart="@dimen/_12sdp"
+                android:layout_marginTop="@dimen/_3sdp"
+                app:layout_constraintTop_toBottomOf="@id/tvUsername"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toRightOf="@id/rivProfileAvatar"/>
+
+            <TextView
+                android:id="@+id/tvStatus"
+                android:hint="@string/status_online"
+                android:textColorHint="@color/status_online"
+                android:textSize="@dimen/_10ssp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:layout_marginTop="@dimen/_3sdp"
+                app:layout_constraintTop_toBottomOf="@id/tvUsername"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toRightOf="@id/ivProfileStatus"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:isScrollContainer="true"
+            android:orientation="vertical">
+
+            <!--region ++++++++-ACCOUNT-++++++++-->
+            <TextView
+                android:text="@string/account_section"
+                android:textSize="@dimen/_12ssp"
+                android:textStyle="bold"
+                android:textColor="@color/text_description"
+                android:layout_margin="@dimen/_12sdp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <!--Phone Number-->
+            <TextView
+                android:id="@+id/tvProfilePhoneNumber"
+                android:hint="@string/phone_number_hint"
+                android:textSize="@dimen/_13ssp"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                android:textColorHint="@color/black"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_12sdp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_12sdp"
+                android:text="@string/phone_number_hint"
+                tools:ignore="TextContrastCheck" />
+
+            <View
+                android:background="@color/separator_1"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_1sdp"
+                android:layout_marginTop="@dimen/_6sdp"
+                android:layout_marginHorizontal="@dimen/_12sdp"/>
+
+            <!--Email-->
+            <TextView
+                android:id="@+id/tvProfileEmail"
+                android:hint="@string/email_hint"
+                android:textSize="@dimen/_13ssp"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                android:textColorHint="@color/black"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:layout_marginHorizontal="@dimen/_12sdp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_12sdp"
+                android:text="@string/email_hint"
+                android:textColor="#757575"
+                tools:ignore="TextContrastCheck" />
+
+            <View
+                android:background="@color/separator_2"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_15sdp"
+                android:layout_marginTop="@dimen/_6sdp"/>
+            <!--endregion-->
+
+            <!--region ++++++++-PERSONAL-++++++++-->
+            <TextView
+                android:text="@string/personal_section"
+                android:textSize="@dimen/_12ssp"
+                android:textStyle="bold"
+                android:textColor="@color/text_description"
+                android:layout_margin="@dimen/_12sdp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <!--First Name-->
+            <TextView
+                android:id="@+id/tvFirstName"
+                android:hint="@string/first_name_hint"
+                android:textSize="@dimen/_13ssp"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                android:textColorHint="@color/black"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_12sdp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_12sdp"
+                android:text="@string/first_name_hint"
+                android:textColor="#757575"
+                tools:ignore="TextContrastCheck" />
+
+            <View
+                android:background="@color/separator_1"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_1sdp"
+                android:layout_marginTop="@dimen/_6sdp"
+                android:layout_marginHorizontal="@dimen/_12sdp"/>
+
+            <!--Last Name-->
+            <TextView
+                android:id="@+id/tvLastName"
+                android:hint="@string/last_name_hint"
+                android:textSize="@dimen/_13ssp"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                android:textColorHint="@color/black"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:layout_marginHorizontal="@dimen/_12sdp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_12sdp"
+                android:text="@string/last_name_hint"
+                tools:ignore="TextContrastCheck" />
+
+            <View
+                android:background="@color/separator_1"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_1sdp"
+                android:layout_marginTop="@dimen/_6sdp"
+                android:layout_marginHorizontal="@dimen/_12sdp"/>
+
+            <!--Date of Birth-->
+            <TextView
+                android:id="@+id/tvProfileDateOfBirth"
+                android:hint="@string/date_of_birth_hint"
+                android:textSize="@dimen/_13ssp"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                android:textColorHint="@color/black"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:layout_marginHorizontal="@dimen/_12sdp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_12sdp"
+                android:text="@string/date_of_birth_hint"
+                android:textColor="#757575"
+                tools:ignore="TextContrastCheck" />
+
+            <View
+                android:background="@color/separator_1"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_1sdp"
+                android:layout_marginTop="@dimen/_6sdp"
+                android:layout_marginHorizontal="@dimen/_12sdp"/>
+
+            <!--Gender-->
+            <TextView
+                android:id="@+id/tvProfileGender"
+                android:hint="@string/gender_hint"
+                android:textSize="@dimen/_13ssp"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                android:textColorHint="@color/black"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:layout_marginHorizontal="@dimen/_12sdp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_12sdp"
+                android:text="@string/gender_hint"
+                android:textColor="#757575"
+                tools:ignore="TextContrastCheck" />
+
+            <View
+                android:background="@color/separator_1"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_1sdp"
+                android:layout_marginTop="@dimen/_6sdp"
+                android:layout_marginHorizontal="@dimen/_12sdp"/>
+
+            <!--Bio-->
+            <TextView
+                android:id="@+id/tvProfileBio"
+                android:hint="@string/bio_hint_1"
+                android:textSize="@dimen/_13ssp"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                android:textColorHint="@color/black"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:layout_marginHorizontal="@dimen/_12sdp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_12sdp"
+                android:text="@string/bio_hint_1"
+                android:textColor="#757575"
+                tools:ignore="TextContrastCheck" />
+
+            <View
+                android:background="@color/separator_2"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_15sdp"
+                android:layout_marginTop="@dimen/_6sdp"/>
+            <!--endregion-->
+
+            <!--region ++++++++-SETTINGS-++++++++-->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/_12sdp"
+                android:text="@string/settings_section"
+                android:textColor="@color/text_description"
+                android:textSize="@dimen/_12ssp"
+                android:textStyle="bold"/>
+
+            <!--Notifications and Sounds Option-->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/optNotificationsAndSounds"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/btn_user_option">
+                <ImageView
+                    android:id="@+id/ivNotificationsAndSounds"
+                    android:layout_width="@dimen/_25sdp"
+                    android:layout_height="@dimen/_25sdp"
+                    android:layout_marginVertical="@dimen/_6sdp"
+                    android:src="@drawable/ic_outline_notifications"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginStart="@dimen/_12sdp"
+                    tools:ignore="ImageContrastCheck"
+                    android:contentDescription="@string/notifications_and_sounds"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/notifications_and_sounds"
+                    android:textStyle="bold"
+                    android:textSize="@dimen/_12sdp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toRightOf="@id/ivNotificationsAndSounds"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginStart="@dimen/_12sdp"/>
+
+                <View
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/_1sdp"
+                    android:background="@color/separator_1"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toRightOf="@id/ivNotificationsAndSounds"
+                    android:layout_marginStart="@dimen/_12sdp"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!--Conversation Option-->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/optConversation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/btn_user_option">
+                <ImageView
+                    android:id="@+id/ivConversation"
+                    android:layout_width="@dimen/_25sdp"
+                    android:layout_height="@dimen/_25sdp"
+                    android:layout_marginVertical="@dimen/_6sdp"
+                    android:src="@drawable/ic_outline_chat_bubble"
+                    android:padding="@dimen/_2sdp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginStart="@dimen/_12sdp"
+                    tools:ignore="ImageContrastCheck"
+                    android:contentDescription="@string/conversation"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/conversation"
+                    android:textStyle="bold"
+                    android:textSize="@dimen/_12sdp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toRightOf="@id/ivConversation"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginStart="@dimen/_12sdp"/>
+
+                <View
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/_1sdp"
+                    android:background="@color/separator_1"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toRightOf="@id/ivConversation"
+                    android:layout_marginStart="@dimen/_12sdp"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!--Block Messages Option-->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/optBlockMessages"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/btn_user_option">
+                <ImageView
+                    android:id="@+id/ivBlockMessages"
+                    android:layout_width="@dimen/_25sdp"
+                    android:layout_height="@dimen/_25sdp"
+                    android:layout_marginVertical="@dimen/_6sdp"
+                    android:src="@drawable/ic_block"
+                    android:padding="@dimen/_2sdp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginStart="@dimen/_12sdp"
+                    tools:ignore="ImageContrastCheck"
+                    android:contentDescription="@string/block_messages"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/block_messages"
+                    android:textStyle="bold"
+                    android:textSize="@dimen/_12sdp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toRightOf="@id/ivBlockMessages"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginStart="@dimen/_12sdp"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <View
+                android:background="@color/separator_2"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_15sdp"
+                android:layout_marginTop="@dimen/_6sdp"/>
+            <!--endregion-->
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/optUnfriend"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/btn_user_option">
+                <ImageView
+                    android:id="@+id/ivUnfriend"
+                    android:layout_width="@dimen/_25sdp"
+                    android:layout_height="@dimen/_25sdp"
+                    android:layout_marginVertical="@dimen/_6sdp"
+                    android:src="@drawable/ic_outline_remove"
+                    app:tint="@color/extreme"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginStart="@dimen/_12sdp"
+                    tools:ignore="ImageContrastCheck"
+                    android:contentDescription="@string/unfriend"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/unfriend"
+                    android:textSize="@dimen/_12sdp"
+                    android:textColor="@color/extreme"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toRightOf="@id/ivUnfriend"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginStart="@dimen/_12sdp"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

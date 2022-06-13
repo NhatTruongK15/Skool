@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white">
+    <TextView
+        android:id="@+id/tvTitle"
+        android:text="@string/new_friend_request_title"
+        android:textStyle="bold"
+        android:textSize="@dimen/_15sdp"
+        android:textColor="@color/black"
+        android:paddingTop="@dimen/_6sdp"
+        android:layout_toEndOf="@id/ivIcon"
+        android:paddingStart="@dimen/_10sdp"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_30sdp"
+        android:layout_alignParentTop="true"
+        tools:ignore="RtlSymmetry" />
+
+    <ImageView
+        android:id="@+id/ivIcon"
+        android:src="@drawable/ic_person_add"
+        android:padding="@dimen/_5sdp"
+        android:layout_width="@dimen/_40sdp"
+        android:layout_height="@dimen/_40sdp"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:contentDescription="@string/image_content_description_hint" />
+
+    <TextView
+        android:id="@+id/tvContent"
+        android:text="@string/new_friend_request_content"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_20sdp"
+        android:paddingStart="@dimen/_10sdp"
+        android:layout_toEndOf="@id/ivIcon"
+        android:layout_below="@id/tvTitle"
+        android:layout_marginStart="@dimen/_5sdp"
+        tools:ignore="RtlSymmetry" />
+
+    <Button
+        android:id="@+id/btnAccept"
+        android:backgroundTint="@color/primary"
+        android:text="@string/friend_accept"
+        android:textColor="@color/white"
+        android:layout_marginTop="@dimen/_3sdp"
+        android:layout_marginEnd="@dimen/_5sdp"
+        android:layout_below="@id/tvContent"
+        android:layout_toStartOf="@id/btnDecline"
+        android:layout_width="@dimen/_75sdp"
+        android:layout_height="wrap_content"/>
+
+    <Button
+        android:id="@+id/btnDecline"
+        android:text="@string/friend_decline"
+        android:textColor="@color/white"
+        android:layout_width="@dimen/_75sdp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/_5sdp"
+        android:layout_marginTop="@dimen/_3sdp"
+        android:layout_below="@id/tvContent"
+        android:layout_alignParentEnd="true"
+        android:backgroundTint="@color/secondary_text"/>
+
+    <GridView
+        android:background="@color/separator_1"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_5sdp"
+        android:layout_below="@id/btnAccept"/>
+</RelativeLayout>

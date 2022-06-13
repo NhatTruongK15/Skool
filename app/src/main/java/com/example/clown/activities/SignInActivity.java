@@ -1,283 +1,172 @@
 package com.example.clown.activities;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.app.ActivityManager;
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.IBinder;
-import android.os.Message;
-import android.os.Messenger;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
-import android.widget.Toast;
 
-import com.example.clown.agora.AgoraService;
 import com.example.clown.databinding.ActivitySignInBinding;
+import com.example.clown.models.User;
+import com.example.clown.services.UserListenerService;
 import com.example.clown.utilities.Constants;
 import com.example.clown.utilities.PreferenceManager;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.PhoneAuthCredential;
-import com.google.firebase.auth.PhoneAuthProvider;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
-import io.agora.rtm.RtmClient;
+import java.util.Objects;
 
-public class SignInActivity extends AgoraBaseActivity {
-    private ActivitySignInBinding binding;
-    private PreferenceManager preferenceManager;
-    private ActivityResultLauncher<Intent> launcher;
-    private boolean mIsLoggedIn;
+public class SignInActivity extends BaseActivity {
+    private static final String TAG = SignInActivity.class.getName();
 
-    //firebase auth login
-    private FirebaseAuth auth ;
+    private ActivitySignInBinding mBinding;
+    private String mEmailOrPhoneNumber;
+    private String mPassword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Init();
 
-        launcher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-            @Override
-            public void onActivityResult(ActivityResult result) {
-
-            }
-        });
-        preferenceManager = new PreferenceManager(getApplicationContext());
-
-        initAgoraService();
-
-        binding = ActivitySignInBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
-        setListener();
-        mIsLoggedIn = false;
+        setListeners();
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (!mIsLoggedIn)
-            destroyAgoraService();
+    protected void onResume() {
+        super.onResume();
+        // If the app has been signed in
+        // then skip the sign in process
+        if (mPreferenceManager.getUser() != null) onAlreadySignedIn();
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        bindAgoraService();
+    //region FUNCTIONS
+    private void onAlreadySignedIn() {
+        Log.e(TAG, "Already signed in!");
 
-        // check if we've already logged in
-        if (preferenceManager.getBoolean(Constants.KEY_IS_SIGNED_IN)) {
-            mIsLoggedIn = true;
-            toAgoraService(Constants.MSG_AGORA_LOG_IN, null);
-            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-            startActivity(intent);
-            finish();
-        }
+        mCurrentUser.Clone(mPreferenceManager.getUser());
+
+        if (!isJobServiceOn(getApplicationContext())) startAppService();
+
+        startActivity(TAG, MainActivity.class, null);
+
+        finish();
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        unbindAgoraService();
+    private void Init() {
+        mBinding = ActivitySignInBinding.inflate(getLayoutInflater());
+        setContentView(mBinding.getRoot());
+
+        mPreferenceManager = new PreferenceManager(getApplicationContext());
+        mCurrentUser = new User();
     }
 
-    private void setListener() {
-        binding.textCreateNewAccount.setOnClickListener(v ->
-                startActivity(new Intent(getApplicationContext(), SignUpActivity.class)));
-        binding.buttonSignIn.setOnClickListener(v -> {
-            if (isValidSignInDetails()) {
-                SignIn();
-            }
-        });
-
-        binding.forgetPasswordText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(), ResetPasswordActivity.class));
-            }
-        });
+    private void setListeners() {
+        mBinding.textCreateNewAccount.setOnClickListener(v -> startActivity(TAG, SignUpActivity.class, null));
+        mBinding.forgetPasswordText.setOnClickListener(v -> startActivity(TAG, ResetPasswordActivity.class, null));
+        mBinding.buttonSignIn.setOnClickListener(v -> signIn());
     }
 
-    private void showToast(String message) {
-        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
-    }
+    private void signIn() {
+        if (isValidSignInDetails()) {
+            loading(true);
 
-
-    private void SignIn() {
-        loading(true);
-        //old one-------------------------------------------------------
-        FirebaseFirestore database = FirebaseFirestore.getInstance();
-        auth = FirebaseAuth.getInstance();
-        //-----------------------------------------------------
-    //region old one login using mail
-        /*
-        auth.signInWithEmailAndPassword(binding.inputEmail.getText().toString(), binding.inputPassword.getText().toString())
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d("Login state", "signInWithEmail:success");
-                            FirebaseUser user = auth.getCurrentUser();
-
-                            database.collection(Constants.KEY_COLLECTION_USERS)
-                                    .whereEqualTo(Constants.KEY_USER_ID, auth.getCurrentUser().getUid())
-                                    *//*.whereEqualTo(Constants.KEY_PASSWORD, binding.inputPassword.getText().toString())*//*
-                                    .get()
-                                    .addOnCompleteListener(querySnapshotTask -> {
-                                        if (querySnapshotTask.isSuccessful() && querySnapshotTask.getResult() != null && querySnapshotTask.getResult().getDocuments().size() > 0) {
-                                            DocumentSnapshot documentSnapshot = querySnapshotTask.getResult().getDocuments().get(0);
-                                            preferenceManager.putBoolean(Constants.KEY_IS_SIGNED_IN, true);
-                                            preferenceManager.putString(Constants.KEY_DOCUMENT_REFERENCE_ID, documentSnapshot.getId());
-                                            preferenceManager.putString(Constants.KEY_USER_ID, documentSnapshot.getString(Constants.KEY_USER_ID));
-                                            preferenceManager.putString(Constants.KEY_NAME, documentSnapshot.getString(Constants.KEY_NAME));
-                                            preferenceManager.putString(Constants.KEY_IMAGE, documentSnapshot.getString(Constants.KEY_IMAGE));
-                                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                            startActivity(intent);
-                                        } else {
-                                            loading(false);
-                                            showToast("Unable to sign in");
-                                        }
-                                    });
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w("Login state", "signInWithEmail:failure", task.getException());
-                            Toast.makeText(SignInActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-
-                        }
-                    }
-                });
-                */
-        //endregion
-
-        database.collection(Constants.KEY_COLLECTION_USERS)
-                .whereEqualTo(Constants.KEY_PHONE_NUMBER, binding.inputEmail.getText().toString())
-                .whereEqualTo(Constants.KEY_PASSWORD, binding.inputPassword.getText().toString())
-                .get()
-                .addOnCompleteListener(querySnapshotTask -> {
-                    if (querySnapshotTask.isSuccessful() && querySnapshotTask.getResult() != null
-                            && querySnapshotTask.getResult().getDocuments().size() > 0) {
-                        DocumentSnapshot documentSnapshot = querySnapshotTask.getResult().getDocuments().get(0);
-
-                        mIsLoggedIn = true;
-                        preferenceManager.putBoolean(Constants.KEY_IS_SIGNED_IN, true);
-                        preferenceManager.putString(Constants.KEY_DOCUMENT_REFERENCE_ID, documentSnapshot.getId());
-                        preferenceManager.putString(Constants.KEY_PHONE_NUMBER, documentSnapshot.getString(Constants.KEY_PHONE_NUMBER));
-                        preferenceManager.putString(Constants.KEY_EMAIL, documentSnapshot.getString(Constants.KEY_EMAIL));
-                        preferenceManager.putString(Constants.KEY_USER_ID, documentSnapshot.getString(Constants.KEY_USER_ID));
-                        preferenceManager.putString(Constants.KEY_NAME, documentSnapshot.getString(Constants.KEY_NAME));
-                        preferenceManager.putString(Constants.KEY_IMAGE, documentSnapshot.getString(Constants.KEY_IMAGE));
-
-                        String userId = documentSnapshot.getId();
-                        Bundle bundle = new Bundle();
-                        bundle.putString(Constants.KEY_DOCUMENT_REFERENCE_ID, userId);
-                        toAgoraService(Constants.MSG_AGORA_LOG_IN, bundle);
-
-                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                        //intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        startActivity(intent);
-                        finish();
-                    } else {
-                        loading(false);
-                        showToast("Unable to sign in");
-                    }
-                });
-
-    }
-
-    private void loading(Boolean isLoading) {
-        if (isLoading) {
-            binding.buttonSignIn.setVisibility(View.INVISIBLE);
-            binding.progressBar.setVisibility(View.VISIBLE);
-        } else {
-            binding.progressBar.setVisibility(View.INVISIBLE);
-            binding.buttonSignIn.setVisibility(View.VISIBLE);
+            // Try to sign in
+            FirebaseFirestore
+                    .getInstance()
+                    .collection(Constants.KEY_COLLECTION_USERS)
+                    .whereEqualTo(Constants.KEY_PHONE_NUMBER, mEmailOrPhoneNumber)
+                    .whereEqualTo(Constants.KEY_PASSWORD, mPassword)
+                    .get()
+                    .addOnCompleteListener(mOnSignedInCompleted);
         }
     }
 
     private Boolean isValidSignInDetails() {
-        if (binding.inputEmail.getText().toString().trim().isEmpty()) {
-            showToast("Enter email");
+        mEmailOrPhoneNumber = mBinding.inputPhoneNumberOrEmail.getText().toString().trim();
+        mPassword = mBinding.inputPassword.getText().toString().trim();
+
+        if (mEmailOrPhoneNumber.isEmpty()) {
+            showToast(Constants.TOAST_EMPTY_EMAIL_OR_PHONE_NUMBER);
             return false;
-        } else if (!(Patterns.EMAIL_ADDRESS.matcher(binding.inputEmail.getText().toString()).matches()
-                || Patterns.PHONE.matcher(binding.inputEmail.getText().toString()).matches()))
-        {
-            showToast("Enter valid email");
-            return false;
-        } else if (binding.inputPassword.getText().toString().trim().isEmpty()) {
-            showToast("Enter password");
-            return false;
-        } else {
-            return true;
         }
+
+        if (!Patterns.PHONE.matcher(mEmailOrPhoneNumber).matches() &&
+                !Patterns.EMAIL_ADDRESS.matcher(mEmailOrPhoneNumber).matches()) {
+            showToast(Constants.TOAST_INVALID_EMAIL_OR_PHONE_NUMBER);
+            return false;
+        }
+
+        if (mPassword.isEmpty()) {
+            showToast(Constants.TOAST_EMPTY_PASSWORD);
+            return false;
+        }
+
+        return true;
     }
 
-    private void verifyPhoneNumberWithCode(String verificationId, String code) {
-        // [START verify_with_code]
-        PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationId, code);
-        // [END verify_with_code]
+    private void loading(Boolean isLoading) {
+        int nPBVisibility = isLoading ? View.VISIBLE : View.INVISIBLE;
+        int nBtnVisibility = isLoading ? View.INVISIBLE : View.VISIBLE;
+
+        // Invoke loading UI
+        mBinding.progressBar.setVisibility(nPBVisibility);
+        mBinding.buttonSignIn.setVisibility(nBtnVisibility);
     }
 
-    private void signInWithPhoneAuthCredential(PhoneAuthCredential credential) {
-        FirebaseFirestore database = FirebaseFirestore.getInstance();
+    private static boolean isJobServiceOn(Context context) {
+        JobScheduler scheduler = (JobScheduler) context.getSystemService(JOB_SCHEDULER_SERVICE ) ;
 
-        auth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d("Register state", "signInWithCredential:success");
+        boolean hasBeenScheduled = false ;
 
-                            FirebaseUser user = auth.getCurrentUser();
+        for ( JobInfo jobInfo : scheduler.getAllPendingJobs() ) {
+            if ( jobInfo.getId() == Constants.KEY_SERVICE_ID ) {
+                hasBeenScheduled = true ;
+                break ;
+            }
+        }
 
-                            database.collection(Constants.KEY_COLLECTION_USERS)
-                                    .whereEqualTo(Constants.KEY_USER_ID, auth.getCurrentUser().getUid())
-                                    /*.whereEqualTo(Constants.KEY_PASSWORD, binding.inputPassword.getText().toString())*/
-                                    .get()
-                                    .addOnCompleteListener(querySnapshotTask -> {
-                                        if (querySnapshotTask.isSuccessful() && querySnapshotTask.getResult() != null && querySnapshotTask.getResult().getDocuments().size() > 0) {
-                                            DocumentSnapshot documentSnapshot = querySnapshotTask.getResult().getDocuments().get(0);
-                                            preferenceManager.putBoolean(Constants.KEY_IS_SIGNED_IN, true);
-                                            preferenceManager.putString(Constants.KEY_DOCUMENT_REFERENCE_ID, documentSnapshot.getId());
-                                            preferenceManager.putString(Constants.KEY_USER_ID, documentSnapshot.getString(Constants.KEY_USER_ID));
-                                            preferenceManager.putString(Constants.KEY_NAME, documentSnapshot.getString(Constants.KEY_NAME));
-                                            preferenceManager.putString(Constants.KEY_IMAGE, documentSnapshot.getString(Constants.KEY_IMAGE));
-                                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                                            // intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                            startActivity(intent);
-                                            finish();
-                                        } else {
-                                            loading(false);
-                                            showToast("Unable to sign in");
-                                        }
-                                    });
-                        } else {
-                            // Sign in failed, display a message and update the UI
-                            Log.w("Register state", "signInWithCredential:failure", task.getException());
-                            if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
-                                // The verification code entered was invalid
-                            }
-                        }
-                    }
-                });
+        return hasBeenScheduled ;
     }
+
+    private void startAppService() {
+        ComponentName componentName = new ComponentName(getApplicationContext(), UserListenerService.class);
+        JobInfo jobInfo = new JobInfo.Builder(Constants.KEY_SERVICE_ID, componentName)
+                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED)
+                .setPersisted(true)
+                .build();
+        JobScheduler jobScheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
+        jobScheduler.schedule(jobInfo);
+    }
+    //endregion
+
+    //region CALLBACKS
+    protected final OnCompleteListener<QuerySnapshot> mOnSignedInCompleted = task -> {
+        if (task.isSuccessful() && task.getResult() != null && task.getResult().getDocuments().size() != 0) {
+            Log.e(TAG, "Signed in successfully!");
+
+            // Get validated user
+            User validatedUser = task.getResult().getDocuments().get(0).toObject(User.class);
+            mPreferenceManager.putUser(validatedUser);
+            mCurrentUser.Clone(Objects.requireNonNull(validatedUser));
+
+            // Start app's background listener
+            startAppService();
+
+            // Go to main activity
+            startActivity(TAG, MainActivity.class, null);
+            showToast(Constants.TOAST_SIGN_IN_SUCCESSFULLY);
+
+            finish();
+            return;
+        }
+
+        Log.e(TAG, "Signed in failed!");
+        loading(false);
+        showToast(Constants.TOAST_SIGN_IN_FAILED);
+    };
+    //endregion
 }
-

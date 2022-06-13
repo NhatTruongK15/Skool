@@ -1,321 +1,183 @@
 package com.example.clown.activities;
 
-import android.app.ActivityManager;
-import android.content.ComponentName;
-import android.content.Context;
+import android.app.job.JobScheduler;
 import android.content.Intent;
-import android.content.ServiceConnection;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.IBinder;
-import android.os.Message;
-import android.os.Messenger;
-import android.util.Base64;
-import android.util.Log;
-import android.view.View;
-import android.widget.Toast;
 
-
-import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.clown.R;
-import com.example.clown.adapter.RecentConversationAdapter;
-import com.example.clown.agora.AgoraService;
+import com.example.clown.adapter.ConversationAdapter;
+import com.example.clown.adapter.ViewPager2Adapter;
 import com.example.clown.databinding.ActivityMainBinding;
-import com.example.clown.listeners.ConversationListener;
-import com.example.clown.listeners.GroupChatListener;
-import com.example.clown.models.ChatMessage;
-import com.example.clown.models.GroupUser;
-import com.example.clown.models.User;
+import com.example.clown.fragments.BasicConversationsFragment;
+import com.example.clown.fragments.GroupConversationsFragment;
+import com.example.clown.models.Conversation;
 import com.example.clown.utilities.Constants;
-import com.example.clown.utilities.PreferenceManager;
-import com.google.firebase.auth.FirebaseAuth;
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 import com.google.firebase.firestore.DocumentChange;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 
-public class MainActivity extends FirestoreBaseActivity implements ConversationListener, GroupChatListener {
+public class MainActivity extends BaseActivity {
+    public static final String TAG = MainActivity.class.getName();
 
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    private User user;
     private ActivityMainBinding binding;
-    private PreferenceManager preferenceManager;
-    private List<ChatMessage> conversations;
-    private RecentConversationAdapter conversationAdapter;
-    private FirebaseFirestore database;
 
+    private List<Conversation> mBasicConversations;
+    private List<Conversation> mGroupConversations;
 
-    //region Agora
-    // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    // Agora service manager
-    // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    private final Messenger mMessenger = new Messenger(new MainActivity.IncomingHandler());
-    private Messenger mService;
-    private boolean mIsBound;
+    private ConversationAdapter mBasicConversationAdapter;
+    private ConversationAdapter mGroupConversationAdapter;
 
-    private ServiceConnection mConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            mService = new Messenger(service);
-            toAgoraService(Constants.MSG_REGISTER_CLIENT, null);
-            Log.e("[INFO] ", "AgoraService to MainActivity connected!");
-        }
+    public ConversationAdapter getBasicConversationAdapter() { return mBasicConversationAdapter; }
+    public ConversationAdapter getGroupConversationAdapter() { return mGroupConversationAdapter; }
 
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            mService = null;
-            Log.e("[INFO] ", "AgoraService disconnected!");
-        }
-    };
-
-
-    private class IncomingHandler extends Handler {
-        @Override
-        public void handleMessage(@NonNull Message msg) {
-            super.handleMessage(msg);
-        }
-    }
-
-    private void toAgoraService(int msgNotification, Bundle bundle) {
-        try {
-            Message msg = Message.obtain(null, msgNotification, 0, 0);
-            msg.replyTo = mMessenger;
-            msg.setData(bundle);
-            mService.send(msg);
-        } catch (Exception ex) {
-            Log.e("[ERROR] ", ex.getMessage());
-        }
-    }
-
-    private void bindAgoraService() {
-        if (isServiceRunning(AgoraService.class)) {
-            Intent intent = new Intent(getApplicationContext(), AgoraService.class);
-            bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
-            mIsBound = true;
-            Log.e("[INFO] ", "AgoraService bound!");
-        }
-    }
-
-    private void unbindAgoraService() {
-        if (mIsBound) {
-            toAgoraService(Constants.MSG_UNREGISTER_CLIENT, null);
-            unbindService(mConnection);
-            mIsBound = false;
-            Log.e("[INFO] ", "AgoraService unbound!");
-        }
-    }
-
-    private boolean isServiceRunning(Class<?> serviceClass) {
-        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE))
-            if (serviceClass.getName().equals(service.service.getClassName()))
-                return true;
-        return false;
-    }
-    // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    // Agora service manager
-    // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//endregion
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Init();
+
+        loadConversations();
+
+        setListeners();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadCurrentUserDetails();
+    }
+
+    private void Init() {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        preferenceManager = new PreferenceManager(getApplicationContext());
-        init();
-        loadUserDetails();
-        getToken();
-        setListener();
-        listenConversation();
+
+        mBasicConversations = new ArrayList<>();
+        mGroupConversations = new ArrayList<>();
+
+        mBasicConversationAdapter = new ConversationAdapter(this, mBasicConversations, mCurrentUser.getID());
+        mGroupConversationAdapter = new ConversationAdapter(this, mGroupConversations, mCurrentUser.getID());
+
+        setUpConversationsViewPager();
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        bindAgoraService();
+    private void setUpConversationsViewPager() {
+        // Create & set up ViewPager2 Adapter
+        ViewPager2Adapter conversationVP2Adapter =
+                new ViewPager2Adapter(getSupportFragmentManager(), getLifecycle());
+
+        conversationVP2Adapter.addFragment(new BasicConversationsFragment());
+        conversationVP2Adapter.addFragment(new GroupConversationsFragment());
+
+        binding.vp2Conversations.setAdapter(conversationVP2Adapter);
+
+        // Connect ViewPager2 with TabLayout
+        new TabLayoutMediator(
+                binding.tlMainActivity, 
+                binding.vp2Conversations,
+                this::configConversationViewPager)
+                .attach();
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        unbindAgoraService();
+    private void configConversationViewPager(TabLayout.Tab tab, int position) {
+        if (position == 0)
+            tab.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_chat_bubble));
+        else
+            tab.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_forum));
     }
 
-    private void init() {
-        conversations = new ArrayList<>();
-        conversationAdapter = new RecentConversationAdapter(conversations, this);
-        binding.conversationRecyclerView.setAdapter(conversationAdapter);
-        database = FirebaseFirestore.getInstance();
-        binding.NavMenubarLayout.setVisibility(View.GONE);
+    private void loadCurrentUserDetails() {
+        binding.name.setText(mCurrentUser.getUsername());
+        binding.imageProfile.setImageBitmap(mCurrentUser.getBitmapAvatar());
+        binding.Phone.setText(mCurrentUser.getPhoneNumber());
     }
-    private void setListener() {
+
+    private void loadConversations() {
+        FirebaseFirestore
+                .getInstance()
+                .collection(Constants.KEY_COLLECTION_CONVERSATIONS)
+                .whereArrayContains(Constants.KEY_CONVERSATION_MEMBERS, mCurrentUser.getID())
+                .addSnapshotListener(mConversationListener);
+    }
+
+    private void setListeners() {
         binding.imageSignOut.setOnClickListener(v -> signOut());
-        binding.NewChat.setOnClickListener(v -> {
-            Intent intent = new Intent(getApplicationContext(), UsersActivity.class);
-            intent.putExtra(Constants.KEY_USER, getUser());
-            startActivity(intent);
-        });
-        binding.imageMenu.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-               DrawerLayout drawerLayout = binding.drawerLayout;
-
-                drawerLayout.openDrawer(GravityCompat.START);
-            }
-        });
-
-        binding.buttonContact.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), FriendAddingActivity.class);
-                intent.putExtra(Constants.KEY_USER, getUser());
-                startActivity(intent);
-            }
-        });
-    }
-
-    private void loadUserDetails() {
-        binding.name.setText(preferenceManager.getString(Constants.KEY_NAME));
-        byte[] bytes = Base64.decode(preferenceManager.getString(Constants.KEY_IMAGE), Base64.DEFAULT);
-        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-        binding.imageProfile.setImageBitmap(bitmap);
-        binding.Phone.setText(preferenceManager.getString(Constants.KEY_PHONE_NUMBER));
-        binding.Email.setText(preferenceManager.getString(Constants.KEY_EMAIL));
-    }
-
-    private void showToast(String message) {
-        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
-
-    }
-
-    private void listenConversation() {
-        database.collection(Constants.KEY_COLLECTION_CONVERSATIONS)
-                .whereEqualTo(Constants.KEY_SENDER_ID, preferenceManager.getString(Constants.KEY_DOCUMENT_REFERENCE_ID))
-                .addSnapshotListener(eventListener);
-        database.collection(Constants.KEY_COLLECTION_CONVERSATIONS)
-                .whereEqualTo(Constants.KEY_RECEIVER_ID, preferenceManager.getString(Constants.KEY_DOCUMENT_REFERENCE_ID))
-                .addSnapshotListener(eventListener);
-    }
-
-    private final EventListener<QuerySnapshot> eventListener = (value, error) -> {
-        if (error != null) {
-            return;
-        }
-        if (value != null) {
-            for (DocumentChange documentChange : value.getDocumentChanges()) {
-                if (documentChange.getType() == DocumentChange.Type.ADDED) {
-                    String senderId = documentChange.getDocument().getString(Constants.KEY_SENDER_ID);
-                    String receiverId = documentChange.getDocument().getString(Constants.KEY_RECEIVER_ID);
-                    ChatMessage chatMessage = new ChatMessage();
-                    chatMessage.senderId = senderId;
-                    chatMessage.receiverId = receiverId;
-                    if (preferenceManager.getString(Constants.KEY_USER_ID).equals(senderId)) {
-                        chatMessage.conversationImage = documentChange.getDocument().getString(Constants.KEY_RECEIVER_IMAGE);
-                        chatMessage.conversationName = documentChange.getDocument().getString(Constants.KEY_RECEIVER_NAME);
-                        chatMessage.conversationId = documentChange.getDocument().getString(Constants.KEY_RECEIVER_ID);
-                    } else {
-                        chatMessage.conversationImage = documentChange.getDocument().getString(Constants.KEY_SENDER_IMAGE);
-                        chatMessage.conversationName = documentChange.getDocument().getString(Constants.KEY_SENDER_NAME);
-                        chatMessage.conversationId = documentChange.getDocument().getString(Constants.KEY_SENDER_ID);
-
-                    }
-                    chatMessage.message = documentChange.getDocument().getString(Constants.KEY_LAST_MESSAGE);
-                    chatMessage.dateObject = documentChange.getDocument().getDate(Constants.KEY_TIMESTAMP);
-
-                    conversations.add(chatMessage);
-                } else if (documentChange.getType() == DocumentChange.Type.MODIFIED) {
-                    for (int i = 0; i < conversations.size(); i++) {
-                        String senderId = documentChange.getDocument().getString(Constants.KEY_SENDER_ID);
-                        String receiverId = documentChange.getDocument().getString(Constants.KEY_RECEIVER_ID);
-                        if (conversations.get(i).senderId.equals(senderId) && conversations.get(i).receiverId.equals(receiverId)) {
-                            conversations.get(i).message = documentChange.getDocument().getString(Constants.KEY_LAST_MESSAGE);
-                            conversations.get(i).dateObject = documentChange.getDocument().getDate(Constants.KEY_TIMESTAMP);
-                            break;
-                        }
-                    }
-                }
-            }
-            Collections.sort(conversations, (obj1, obj2) -> obj2.dateObject.compareTo(obj1.dateObject));
-            conversationAdapter.notifyDataSetChanged();
-            binding.conversationRecyclerView.smoothScrollToPosition(0);
-            binding.conversationRecyclerView.setVisibility(View.VISIBLE);
-            binding.progressBar.setVisibility(View.GONE);
-        }
-    };
-
-    private void getToken() {
-        FirebaseMessaging.getInstance().getToken().addOnSuccessListener(this::updateToken);
-    }
-
-    private void updateToken(String token) {
-        preferenceManager.putString(Constants.KEY_FCM_TOKEN, token);
-        FirebaseFirestore database = FirebaseFirestore.getInstance();
-        DocumentReference documentReference =
-                database.collection(Constants.KEY_COLLECTION_USERS).document(
-                        preferenceManager.getString(Constants.KEY_DOCUMENT_REFERENCE_ID)
-                );
-        documentReference.update(Constants.KEY_FCM_TOKEN, token)
-                .addOnFailureListener(e -> showToast("Failed"));
+        binding.imageMenu.setOnClickListener(v -> binding.drawerLayout.openDrawer(GravityCompat.START));
+        binding.buttonContact.setOnClickListener(v -> startActivity(TAG, ContactsActivity.class, null));
+        binding.llcNewGroup.setOnClickListener(v -> startActivity(TAG, NewGroupActivity.class, null));
+        binding.imageProfile.setOnClickListener(v -> startActivity(TAG, MyProfileActivity.class, null));
     }
 
     private void signOut() {
-        showToast("Signing Out...");
+        showToast(Constants.TOAST_ON_SIGN_OUT);
 
-        FirebaseFirestore database = FirebaseFirestore.getInstance();
-        DocumentReference documentReference =
-                database.collection(Constants.KEY_COLLECTION_USERS).document(
-                        preferenceManager.getString(Constants.KEY_DOCUMENT_REFERENCE_ID)
-                );
-        HashMap<String, Object> updates = new HashMap<>();
-        updates.put(Constants.KEY_FCM_TOKEN, FieldValue.delete());
-        documentReference.update(updates)
-                .addOnSuccessListener(unused -> {
-                    preferenceManager.clear();
-                    FirebaseAuth.getInstance().signOut();
-                    toAgoraService(Constants.MSG_AGORA_LOG_OUT, null);
-                    startActivity(new Intent(getApplicationContext(), SignInActivity.class));
-                    finish();
-                })
-                .addOnFailureListener(e -> showToast("Cant sign out"));
+        JobScheduler jobScheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
+        jobScheduler.cancel(Constants.KEY_SERVICE_ID);
+
+        startActivity(new Intent(getApplicationContext(), SignInActivity.class));
+
+        finish();
     }
 
-    @Override
-    public void onConversationClicked(User user) {
-        Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
-        setUser(user);
-        intent.putExtra(Constants.KEY_USER, user);
-        startActivity(intent);
+    private void addConversation(DocumentChange docChange, int newIndex) {
+        Conversation newConversation = docChange.getDocument().toObject(Conversation.class);
+
+        if (isBasicConversation(newConversation)) {
+            // Got a new friend! - New basic conversation
+            mBasicConversations.add(newConversation);
+            mBasicConversationAdapter.notifyItemInserted(newIndex);
+        } else {
+            // Join a group! - New group conversation
+            mGroupConversations.add(newConversation);
+            mGroupConversationAdapter.notifyItemInserted(newIndex);
+        }
     }
 
-
-    @Override
-    public void onGroupChatClicked(GroupUser groupUser) {
-        Intent intent = new Intent(getApplicationContext(), GChatActivity.class);
-        intent.putExtra(Constants.KEY_USER, groupUser);
-        startActivity(intent);
+    private boolean isBasicConversation(Conversation newConversation) {
+        try {
+            Double.parseDouble(newConversation.getId());
+            return false;
+        } catch (Exception ex) {
+            return true;
+        }
     }
 
-    @Override
-    public void onGroupChatClicked(User user) {
+    private void removeConversation(int oldIndex) {
+        mBasicConversations.remove(oldIndex);
     }
+
+    private void updateConversation(DocumentChange docChange, int oldIndex) {
+        Conversation modifiedConversation = docChange.getDocument().toObject(Conversation.class);
+        mBasicConversations.set(oldIndex, modifiedConversation);
+    }
+
+    //region CALLBACKS
+    private final EventListener<QuerySnapshot> mConversationListener = (value, error) -> {
+        if (error != null) {
+            showToast(error.getMessage());
+            return;
+        }
+
+        if (value != null && !value.isEmpty())
+            for (DocumentChange docChange : value.getDocumentChanges()) {
+                switch (docChange.getType()) {
+                    case ADDED:
+                        addConversation(docChange, docChange.getNewIndex()); break;
+
+                    case REMOVED:
+                        removeConversation(docChange.getOldIndex()); break;
+
+                    case MODIFIED:
+                        updateConversation(docChange, docChange.getOldIndex()); break;
+                }
+            }
+    };
+    //endregion
 }

@@ -21,7 +21,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_20sdp"
-            android:text="@string/create_new_account"
+            android:text="@string/create_new_account_option"
             android:textColor="@color/primary_text"
             android:textSize="@dimen/_18ssp"
             android:textStyle="bold" />
@@ -58,7 +58,7 @@
                 android:layout_height="@dimen/_45sdp"
                 android:layout_marginTop="@dimen/_10sdp"
                 android:background="@drawable/background_input"
-                android:hint="@string/name"
+                android:hint="@string/username_hint"
                 android:imeOptions="actionNext"
                 android:importantForAutofill="no"
                 android:inputType="text"
@@ -73,10 +73,10 @@
                 android:layout_height="@dimen/_45sdp"
                 android:layout_marginTop="@dimen/_16sdp"
                 android:background="@drawable/background_input"
-                android:hint="Phone number"
+                android:hint="@string/phone_number_hint"
                 android:imeOptions="actionNext"
                 android:importantForAutofill="no"
-                android:inputType="textPhonetic"
+                android:inputType="phone"
                 android:paddingStart="@dimen/_16sdp"
                 android:paddingEnd="@dimen/_16sdp"
                 android:textColor="@color/primary_text"
@@ -88,7 +88,7 @@
                 android:layout_height="@dimen/_45sdp"
                 android:layout_marginTop="@dimen/_16sdp"
                 android:background="@drawable/background_input"
-                android:hint="@string/email"
+                android:hint="@string/email_hint"
                 android:imeOptions="actionNext"
                 android:importantForAutofill="no"
                 android:inputType="textEmailAddress"
@@ -103,7 +103,7 @@
                 android:layout_height="@dimen/_45sdp"
                 android:layout_marginTop="@dimen/_16sdp"
                 android:background="@drawable/background_input"
-                android:hint="@string/password"
+                android:hint="@string/password_hint"
                 android:imeOptions="actionNext"
                 android:importantForAutofill="no"
                 android:inputType="textPassword"
@@ -118,7 +118,7 @@
                 android:layout_height="@dimen/_45sdp"
                 android:layout_marginTop="@dimen/_16sdp"
                 android:background="@drawable/background_input"
-                android:hint="@string/confirm_password"
+                android:hint="@string/confirm_password_hint"
                 android:imeOptions="actionDone"
                 android:importantForAutofill="no"
                 android:inputType="textPassword"
@@ -157,7 +157,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_1sdp"
-                android:text="@string/sign_in"
+                android:text="@string/sign_in_button"
                 android:textColor="@color/primary"
                 android:textSize="@dimen/_13ssp"
                 android:textStyle="bold" />
@@ -170,9 +170,7 @@
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:orientation="vertical"
-            android:visibility="visible"
-
-            >
+            android:visibility="visible">
 
             <EditText
                 android:id="@+id/verificationCodeEditText"
@@ -180,7 +178,7 @@
                 android:layout_height="@dimen/_45sdp"
                 android:layout_marginTop="@dimen/_10sdp"
                 android:background="@drawable/background_input"
-                android:hint="Enter verification code"
+                android:hint="@string/verification_code_hint"
 
                 android:imeOptions="actionNext"
                 android:importantForAutofill="no"
@@ -202,7 +200,7 @@
                     android:id="@+id/confirm_button"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/_50sdp"
-                    android:text="Submit"
+                    android:text="@string/submit_button"
                     android:textColor="@color/white"
                     android:textSize="@dimen/_13ssp"
                     android:textStyle="bold"
@@ -220,8 +218,6 @@
                 android:id="@+id/resendContent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
-
-
         </LinearLayout>
 
     </LinearLayout>

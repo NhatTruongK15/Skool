@@ -224,7 +224,7 @@ public class FileDisplayActivitiy extends AppCompatActivity {
             out.write(decodedBytes);
             out.close();
             videolocation = Environment.getExternalStorageDirectory() + "/my/Convert.mp4";
-//            binding.vidMessage.setVideoPath(videolocation);
+//            binding.vidMessage.setVideoPath(mVideoLocation);
         } catch (Exception e) {
             // TODO: handle exception
             Log.e("Error", e.toString());

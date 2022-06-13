@@ -11,5 +11,10 @@
     <color name="received_message_background">#090D16</color>
     <color name="black">#000000</color>
     <color name="Trans">#00090D16</color>
-
+    <color name="status_online">#00FF48</color>
+    <color name="status_offline">#999999</color>
+    <color name="text_description">#3789B8</color>
+    <color name="separator_1">#E0A96D</color>
+    <color name="separator_2">#F1F1F1</color>
+    <color name="extreme">#FF0000</color>
 </resources>

@@ -1,8 +1,6 @@
 package com.example.clown.adapter;
 
 import static com.example.clown.utilities.Constants.HD_RES;
-import static com.example.clown.utilities.Constants.HD_RES_860;
-import static com.example.clown.utilities.Constants.PIC_HOLDER;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,28 +9,22 @@ import android.graphics.Matrix;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.util.Base64;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.MediaController;
-import android.widget.Toast;
 
-import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.clown.R;
 import com.example.clown.activities.FileDisplayActivitiy;
-import com.example.clown.activities.MainActivity;
 import com.example.clown.databinding.ItemContainerReceivedMessageBinding;
 import com.example.clown.databinding.ItemContainerSentMessageBinding;
 import com.example.clown.models.ChatMessage;
 
 import java.io.ByteArrayOutputStream;
 import java.util.List;
-import android.content.Intent;
 
 public class ChatAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -105,11 +97,7 @@ public class ChatAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         }
 
-        public byte[] BitmapToByte(Bitmap bitmap, int quality) {
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.PNG, quality, stream);
-            return stream.toByteArray();
-        }
+
 
         void setData(ChatMessage chatMessage) {
             binding.textDateTime.setText(chatMessage.dateTime);
@@ -237,10 +225,13 @@ public class ChatAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder> 
             binding = itemContainerReceivedMessageBinding;
         }
 
+
+
         void setData(ChatMessage chatMessage, Bitmap receiverProfileImage) {
             binding.textDateTime.setText(chatMessage.dateTime);
             binding.imgMessage.setImageBitmap(chatMessage.message_img);
             binding.textMessage.setText(chatMessage.message);
+            binding.imageProfile.setImageBitmap(receiverProfileImage);
 
             if (chatMessage.videoPath != null && chatMessage.videoPath.compareTo("") != 0) {
                 binding.textMessage.setVisibility(View.GONE);
@@ -361,4 +352,3 @@ public class ChatAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
 
 }
-
