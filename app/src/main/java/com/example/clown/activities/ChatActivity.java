@@ -1,49 +1,78 @@
 package com.example.clown.activities;
 
+import static android.os.Environment.DIRECTORY_DOWNLOADS;
+
 import static com.example.clown.utilities.Constants.HD_RES;
+import static com.example.clown.utilities.Constants.HD_RES_860;
+import static com.example.clown.utilities.Constants.PIC_HOLDER;
 
 import android.annotation.SuppressLint;
 import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.app.ActivityManager;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 
 import android.graphics.Matrix;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.Message;
+import android.os.Messenger;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.OpenableColumns;
+import android.text.method.LinkMovementMethod;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.MediaController;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContract;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
+import com.example.clown.activities.ActivityMediaAndFile;
 import com.example.clown.adapter.ChatAdapter;
 import com.example.clown.adapter.GroupChatAdapter;
 import com.example.clown.databinding.ActivityChatBinding;
 import com.example.clown.models.ChatMessage;
 import com.example.clown.models.Conversation;
+import com.example.clown.models.User;
 import com.example.clown.network.APIClient;
 import com.example.clown.network.APIService;
 import com.example.clown.utilities.Constants;
+import com.example.clown.utilities.PreferenceManager;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
@@ -58,6 +87,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -168,7 +198,7 @@ public class ChatActivity extends BaseActivity {
             case ".flac":
             case ".mkv":
             case ".webm":
-
+            case ".txt":
                 result = "etc";
                 break;
             default:
@@ -204,7 +234,7 @@ public class ChatActivity extends BaseActivity {
         int previewHeight = bitmap.getHeight() * previewWidth / bitmap.getWidth();
         Bitmap previewBitmap = Bitmap.createScaledBitmap(resizeBitmap(bitmap), previewWidth, previewHeight, false);
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        previewBitmap.compress(Bitmap.CompressFormat.JPEG,95,byteArrayOutputStream);
+        previewBitmap.compress(Bitmap.CompressFormat.JPEG,100,byteArrayOutputStream);
         byte[] bytes = byteArrayOutputStream.toByteArray();
         return Base64.encodeToString(bytes, Base64.DEFAULT);
     }
@@ -446,15 +476,15 @@ public class ChatActivity extends BaseActivity {
             addConversation(conversation);
 
         }
-        /*if (!isReceiverAvailable) {
+        if (!isReceiverAvailable) {
             try {
-                *//*JSONArray tokens = new JSONArray();
-                tokens.put(receiverUser.getToken());*//*
+                JSONArray tokens = new JSONArray();
+//                tokens.put(receiverUser.token);
 
                 JSONObject data = new JSONObject();
-                data.put(Constants.KEY_DOCUMENT_REFERENCE_ID, mCurrentUser.getID());
-                data.put(Constants.KEY_USERNAME, mCurrentUser.getUsername());
-                //data.put(Constants.KEY_FCM_TOKEN, mCurrentUser.getToken());
+//                data.put(Constants.KEY_DOCUMENT_REFERENCE_ID, mCurrentUser.getID());
+//                data.put(Constants.KEY_USERNAME, mCurrentUser.getUsername());
+//                //data.put(Constants.KEY_FCM_TOKEN, mCurrentUser.getToken());
                 data.put(Constants.KEY_MESSAGE, binding.inputMessage.getText().toString());
                 data.put(Constants.KEY_MESSAGE_IMAGE, encodedImage);
                 data.put(Constants.KEY_MESSAGE_IMAGE_LINK,imglink);
@@ -473,7 +503,7 @@ public class ChatActivity extends BaseActivity {
             } catch (Exception exception) {
                 showToast("how about this one" + exception.getMessage());
             }
-        }*/
+        }
         binding.inputMessage.setText(null);
 
         encodedImage=null;
