@@ -15,13 +15,14 @@ import java.util.List;
 
 public class Conversation implements Serializable {
     // General
-    private String mConversationId;
-    protected String mName;
-    private String mLastMessage;
+    protected String mConversationId;
     protected Date mTimeStamp;
+    protected boolean mIsBlocked;
+    private String mName;
+    private String mImage;
+    private String mLastMessage;
     private final List<String> mAdmins;
     private final List<String> mMembers;
-    private boolean mIsBlocked;
 
     // Sender
     protected String mSenderId;
@@ -39,6 +40,9 @@ public class Conversation implements Serializable {
 
     @PropertyName(Constants.KEY_CONVERSATION_NAME) public String getName() { return mName; }
     @PropertyName(Constants.KEY_CONVERSATION_NAME) public void setName(String mName) { this.mName = mName; }
+
+    @PropertyName(Constants.KEY_CONVERSATION_IMAGE) public String getImage() { return mImage;}
+    @PropertyName(Constants.KEY_CONVERSATION_IMAGE) public void setImage(String mImage) {this.mImage = mImage; }
 
     @PropertyName(Constants.KEY_CONVERSATION_LAST_MESSAGE) public String getLastMessage() { return mLastMessage; }
     @PropertyName(Constants.KEY_CONVERSATION_LAST_MESSAGE) public void setLastMessage(String mLastMessage) { this.mLastMessage = mLastMessage; }
@@ -64,11 +68,11 @@ public class Conversation implements Serializable {
     @PropertyName(Constants.KEY_SENDER_ID) public String getSenderId() { return mSenderId; }
     @PropertyName(Constants.KEY_SENDER_ID) public void setSenderId(String mSenderId) { this.mSenderId = mSenderId; }
 
-    @PropertyName(Constants.KEY_SENDER_NAME) public String getSenderName() { return mSenderName; }
-    @PropertyName(Constants.KEY_SENDER_NAME) public void setSenderName(String mSenderName) { this.mSenderName = mSenderName; }
+    @PropertyName(Constants.KEY_SENDER_NAME) public final String getSenderName() { return mSenderName; }
+    @PropertyName(Constants.KEY_SENDER_NAME) public final void setSenderName(String mSenderName) { this.mSenderName = mSenderName; }
 
-    @PropertyName(Constants.KEY_SENDER_AVATAR) public String getSenderAvatar() { return mSenderAvatar; }
-    @PropertyName(Constants.KEY_SENDER_AVATAR) public void setSenderAvatar(String mSenderAvatar) { this.mSenderAvatar = mSenderAvatar; }
+    @PropertyName(Constants.KEY_SENDER_AVATAR) public final String getSenderAvatar() { return mSenderAvatar; }
+    @PropertyName(Constants.KEY_SENDER_AVATAR) public final void setSenderAvatar(String mSenderAvatar) { this.mSenderAvatar = mSenderAvatar; }
 
     @PropertyName(Constants.KEY_RECEIVER_ID) public String getReceiverId() { return mReceiverId; }
     @PropertyName(Constants.KEY_RECEIVER_ID) public void setReceiverId(String mReceiverId) { this.mReceiverId = mReceiverId; }
@@ -76,14 +80,18 @@ public class Conversation implements Serializable {
     @PropertyName(Constants.KEY_RECEIVER_NAME) public String getReceiverName() { return mReceiverName; }
     @PropertyName(Constants.KEY_RECEIVER_NAME) public void setReceiverName(String mReceiverName) { this.mReceiverName = mReceiverName; }
 
-    @PropertyName(Constants.KEY_RECEIVER_AVATAR) public String getReceiverAvatar() { return mReceiverAvatar; }
-    @PropertyName(Constants.KEY_RECEIVER_AVATAR) public void setReceiverAvatar(String mReceiverAvatar) { this.mReceiverAvatar = mReceiverAvatar; }
+    @PropertyName(Constants.KEY_RECEIVER_AVATAR) public final String getReceiverAvatar() { return mReceiverAvatar; }
+    @PropertyName(Constants.KEY_RECEIVER_AVATAR) public final void setReceiverAvatar(String mReceiverAvatar) { this.mReceiverAvatar = mReceiverAvatar; }
 
-    @Exclude public Bitmap getSenderBitmapAvatar() {
+    @Exclude public final Bitmap getBitmapImage() {
+        if (mImage == null) return null;
+        return getBitmapImage(mImage);
+    }
+    @Exclude public final Bitmap getSenderBitmapAvatar() {
         if (mSenderAvatar == null) return null;
         return getBitmapImage(mSenderAvatar);
     }
-    @Exclude public Bitmap getReceiverBitmapAvatar() {
+    @Exclude public final Bitmap getReceiverBitmapAvatar() {
         if (mReceiverAvatar == null) return null;
         return getBitmapImage(mReceiverAvatar);
     }
@@ -92,6 +100,7 @@ public class Conversation implements Serializable {
     public Conversation() {
         setId(Constants.VALUE_UN_INITIALIZED);
         setName(Constants.VALUE_UN_INITIALIZED);
+        setImage(Constants.VALUE_UN_INITIALIZED);
         setLastMessage(Constants.VALUE_UN_INITIALIZED);
         setTimeStamp(new Date());
         setBlock(false);
@@ -111,6 +120,7 @@ public class Conversation implements Serializable {
     public Conversation(Conversation source) {
         setId(source.getId());
         setName(source.getName());
+        setImage(source.getImage());
         setLastMessage(source.getLastMessage());
         setTimeStamp(source.getTimeStamp());
         setBlock(source.isBlocked());
@@ -130,6 +140,7 @@ public class Conversation implements Serializable {
     public void Clone(Conversation source) {
         setId(source.getId());
         setName(source.getName());
+        setImage(source.getImage());
         setLastMessage(source.getLastMessage());
         setTimeStamp(source.getTimeStamp());
         setBlock(source.isBlocked());

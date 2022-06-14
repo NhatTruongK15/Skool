@@ -117,6 +117,26 @@ public class User implements Serializable {
         mSentRequests = new ArrayList<>();
     }
 
+    public User(User source) {
+        setID(source.getID());
+        setUsername(source.getUsername());
+        setPhoneNumber(source.getPhoneNumber());
+        setEmail(source.getEmail());
+        setPassword(source.getPassword());
+
+        setAvatar(source.getAvatar());
+        setFirstName(source.getFirstName());
+        setLastName(source.getLastName());
+        setDateOfBirth(source.getDateOfBirth());
+        setGender(source.getGender());
+        setBio(source.getBio());
+
+        setAvailability(source.getAvailability());
+        mFriends = new ArrayList<>(source.getFriends());
+        mReceivedRequests = new ArrayList<>(source.getReceivedRequests());
+        mSentRequests = new ArrayList<>(source.getSentRequests());
+    }
+
     public void Clone(User source) {
         setID(source.getID());
         setUsername(source.getUsername());

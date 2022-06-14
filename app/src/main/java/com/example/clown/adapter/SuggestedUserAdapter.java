@@ -18,7 +18,7 @@ import com.example.clown.utilities.Constants;
 
 import java.util.List;
 
-public class SuggestedUserAdapter extends RecyclerView.Adapter<SuggestedUserAdapter.SuggestedUserViewHolder> {
+public class SuggestedUserAdapter extends RecyclerView.Adapter<SuggestedUserAdapter.ViewHolder> {
     private final List<User> mSuggestedUserList;
     private User mCurrentUser;
     private final Context mContext;
@@ -30,13 +30,13 @@ public class SuggestedUserAdapter extends RecyclerView.Adapter<SuggestedUserAdap
 
     @NonNull
     @Override
-    public SuggestedUserViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        return new SuggestedUserViewHolder(ItemSuggestedUserBinding.inflate(inflater, parent, false));
+        return new ViewHolder(ItemSuggestedUserBinding.inflate(inflater, parent, false));
     }
 
     @Override
-    public void onBindViewHolder(@NonNull SuggestedUserViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.setBinding(mSuggestedUserList.get(position));
     }
 
@@ -47,10 +47,10 @@ public class SuggestedUserAdapter extends RecyclerView.Adapter<SuggestedUserAdap
 
     public void setCurrentUser(User currentUser) { mCurrentUser = currentUser; }
 
-    public class SuggestedUserViewHolder extends RecyclerView.ViewHolder {
+    protected class ViewHolder extends RecyclerView.ViewHolder {
         private final ItemSuggestedUserBinding binding;
 
-        public SuggestedUserViewHolder(@NonNull ItemSuggestedUserBinding binding) {
+        public ViewHolder(@NonNull ItemSuggestedUserBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
         }

@@ -7,6 +7,7 @@
     <string name="online">Online</string>
     <string name="mobile">Mobile</string>
     <string name="image_content_description_hint">Image</string>
+    <string name="group_name">Group Name</string>
 
     <!--Main Activity-->
     <string name="new_group_opt">New Group</string>

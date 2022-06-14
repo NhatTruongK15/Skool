@@ -38,6 +38,7 @@ import com.example.clown.adapter.GroupChatAdapter;
 import com.example.clown.agora.AgoraService;
 import com.example.clown.databinding.ActivityChatBinding;
 import com.example.clown.models.ChatMessage;
+import com.example.clown.models.Conversation;
 import com.example.clown.models.User;
 import com.example.clown.network.APIClient;
 import com.example.clown.network.APIService;
@@ -80,21 +81,25 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ChatActivity extends FirestoreBaseActivity {
+public class ChatActivity extends BaseActivity {
+    private Conversation mConversation;
+
+    private String mReceiverId;
+    private String mReceiverName;
+    private String mReceiverAvatar;
+    private Bitmap mReceiverBitmapAvatar;
+
     private ActivityChatBinding binding;
-    private User receiverUser;
     private List<ChatMessage> chatMessages;
     private ArrayList<String> adminList;
     private ArrayList<String> memberList;
     private ChatAdapter chatAdapter;
     private GroupChatAdapter groupChatAdapter;
-    private PreferenceManager preferenceManager;
     private FirebaseFirestore database;
     private String conversationId = null;
     private Boolean checkGroupConversation = false;
     private boolean isReceiverAvailable = false;
     private String encodedImage;
-    private User currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,8 +109,8 @@ public class ChatActivity extends FirestoreBaseActivity {
 
         setListener();
         loadReceiverDetails();
-        if(checkGroupConversation(receiverUser.getID())){
-            conversationId = receiverUser.getID();
+        if(checkGroupConversation(mConversation.getId())){
+            conversationId = mConversation.getId();
             checkGroupConversation = true;
         }
         init();
@@ -129,24 +134,21 @@ public class ChatActivity extends FirestoreBaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        listenAvailabilityOfReceiver();
+        //listenAvailabilityOfReceiver();
     }
 
     private void init() {
 
-        preferenceManager = new PreferenceManager(getApplicationContext());
-        currentUser = preferenceManager.getUser();
         database = FirebaseFirestore.getInstance();
         chatMessages = new ArrayList<>();
+
         if(!checkGroupConversation){
-            chatAdapter = new ChatAdapter(chatMessages,
-                    currentUser.getID(),
-                    getBitmapFromEncodeString(receiverUser.getAvatar()));
+            chatAdapter = new ChatAdapter(chatMessages, mCurrentUser.getID(), mReceiverBitmapAvatar);
             binding.chatRecyclerView.setAdapter(chatAdapter);
         }
         else{
             groupChatAdapter = new GroupChatAdapter(chatMessages,
-                   currentUser.getID(),
+                    mCurrentUser.getID(),
                     database);
             binding.chatRecyclerView.setAdapter(groupChatAdapter);
         }
@@ -417,11 +419,11 @@ public class ChatActivity extends FirestoreBaseActivity {
 
         }
         HashMap<String, Object> message = new HashMap<>();
-        message.put(Constants.KEY_SENDER_ID, currentUser.getID());
+        message.put(Constants.KEY_SENDER_ID, mCurrentUser.getID());
         if(checkGroupConversation)
             message.put(Constants.KEY_RECEIVER_ID,conversationId);
         else
-            message.put(Constants.KEY_RECEIVER_ID, receiverUser.getID());
+            message.put(Constants.KEY_RECEIVER_ID, mReceiverId);
         message.put(Constants.KEY_MESSAGE, binding.inputMessage.getText().toString());
         message.put(Constants.KEY_TIMESTAMP, new Date());
 
@@ -455,26 +457,26 @@ public class ChatActivity extends FirestoreBaseActivity {
             updateConversation(binding.inputMessage.getText().toString());
         } else {
             HashMap<String, Object> conversation = new HashMap<>();
-            conversation.put(Constants.KEY_SENDER_ID, currentUser.getID());
-            conversation.put(Constants.KEY_SENDER_NAME, currentUser.getUsername());
-            conversation.put(Constants.KEY_SENDER_AVATAR, currentUser.getAvatar());
-            conversation.put(Constants.KEY_RECEIVER_ID, receiverUser.getID());
-            conversation.put(Constants.KEY_RECEIVER_NAME, receiverUser.getUsername());
-            conversation.put(Constants.KEY_RECEIVER_AVATAR, receiverUser.getAvatar());
+            conversation.put(Constants.KEY_SENDER_ID, mCurrentUser.getID());
+            conversation.put(Constants.KEY_SENDER_NAME, mCurrentUser.getUsername());
+            conversation.put(Constants.KEY_SENDER_AVATAR, mCurrentUser.getAvatar());
+            conversation.put(Constants.KEY_RECEIVER_ID, mReceiverId);
+            conversation.put(Constants.KEY_RECEIVER_NAME, mReceiverName);
+            conversation.put(Constants.KEY_RECEIVER_AVATAR, mReceiverAvatar);
             conversation.put(Constants.KEY_LAST_MESSAGE, binding.inputMessage.getText().toString());
             conversation.put(Constants.KEY_TIMESTAMP, new Date());
             addConversation(conversation);
 
         }
-        if (!isReceiverAvailable) {
+        /*if (!isReceiverAvailable) {
             try {
-                /*JSONArray tokens = new JSONArray();
-                tokens.put(receiverUser.getToken());*/
+                *//*JSONArray tokens = new JSONArray();
+                tokens.put(receiverUser.getToken());*//*
 
                 JSONObject data = new JSONObject();
-                data.put(Constants.KEY_DOCUMENT_REFERENCE_ID, currentUser.getID());
-                data.put(Constants.KEY_USERNAME, currentUser.getUsername());
-                //data.put(Constants.KEY_FCM_TOKEN, currentUser.getToken());
+                data.put(Constants.KEY_DOCUMENT_REFERENCE_ID, mCurrentUser.getID());
+                data.put(Constants.KEY_USERNAME, mCurrentUser.getUsername());
+                //data.put(Constants.KEY_FCM_TOKEN, mCurrentUser.getToken());
                 data.put(Constants.KEY_MESSAGE, binding.inputMessage.getText().toString());
                 data.put(Constants.KEY_MESSAGE_IMAGE, encodedImage);
                 data.put(Constants.KEY_MESSAGE_IMAGE_LINK,imglink);
@@ -493,7 +495,7 @@ public class ChatActivity extends FirestoreBaseActivity {
             } catch (Exception exception) {
                 showToast("how about this one" + exception.getMessage());
             }
-        }
+        }*/
         binding.inputMessage.setText(null);
 
         encodedImage=null;
@@ -503,10 +505,6 @@ public class ChatActivity extends FirestoreBaseActivity {
         imglink=null;
         videolocation=null;
         isnotVid=false;
-    }
-
-    private void showToast(String message) {
-        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }
 
     private void sendNotification(String messageBody) {
@@ -538,7 +536,7 @@ public class ChatActivity extends FirestoreBaseActivity {
                 }
                 else
                     showToast("Error: " + response.code());
-                }
+            }
 
             @Override
             public void onFailure(@NonNull Call<String> call, @NonNull Throwable t) {
@@ -548,9 +546,10 @@ public class ChatActivity extends FirestoreBaseActivity {
     }
 
     private void listenAvailabilityOfReceiver() {
-        database.collection(Constants.KEY_COLLECTION_USERS).document(
-                receiverUser.getID()
-        ).addSnapshotListener(ChatActivity.this, (value, error) -> {
+        database
+                .collection(Constants.KEY_COLLECTION_USERS)
+                .document(mReceiverId)
+                .addSnapshotListener(ChatActivity.this, (value, error) -> {
             if (error != null) {
                 return;
             }
@@ -562,9 +561,9 @@ public class ChatActivity extends FirestoreBaseActivity {
                     isReceiverAvailable = availability == 1;
                 }
                 //receiverUser.setToken(value.getString(Constants.KEY_FCM_TOKEN));
-                if (receiverUser.getAvatar() == null) {
-                    receiverUser.setAvatar(value.getString(Constants.KEY_AVATAR));
-                    chatAdapter.setReceiverProfileImage(receiverUser.getBitmapAvatar());
+                if (mReceiverAvatar == null) {
+                    //receiverUser.setAvatar(value.getString(Constants.KEY_AVATAR));
+                    chatAdapter.setReceiverProfileImage(mReceiverBitmapAvatar);
                     chatAdapter.notifyItemRangeChanged(0, chatMessages.size());
                 }
             }
@@ -580,18 +579,18 @@ public class ChatActivity extends FirestoreBaseActivity {
     private void listenMessages() {
         if(checkGroupConversation(conversationId)) {
             database.collection(Constants.KEY_COLLECTION_CHAT)
-                    .whereEqualTo(Constants.KEY_RECEIVER_ID,receiverUser.getID())
+                    .whereEqualTo(Constants.KEY_RECEIVER_ID,mReceiverId)
                     .addSnapshotListener(eventGroupListener);
         }
         else{
-        database.collection(Constants.KEY_COLLECTION_CHAT)
-                .whereEqualTo(Constants.KEY_SENDER_ID, currentUser.getID())
-                .whereEqualTo(Constants.KEY_RECEIVER_ID, receiverUser.getID())
-                .addSnapshotListener(eventUserListener);
-        database.collection(Constants.KEY_COLLECTION_CHAT)
-                .whereEqualTo(Constants.KEY_SENDER_ID, receiverUser.getID())
-                .whereEqualTo(Constants.KEY_RECEIVER_ID, currentUser.getID())
-                .addSnapshotListener(eventUserListener);}
+            database.collection(Constants.KEY_COLLECTION_CHAT)
+                    .whereEqualTo(Constants.KEY_SENDER_ID, mCurrentUser.getID())
+                    .whereEqualTo(Constants.KEY_RECEIVER_ID, mReceiverId)
+                    .addSnapshotListener(eventUserListener);
+            database.collection(Constants.KEY_COLLECTION_CHAT)
+                    .whereEqualTo(Constants.KEY_SENDER_ID, mReceiverId)
+                    .whereEqualTo(Constants.KEY_RECEIVER_ID, mCurrentUser.getID())
+                    .addSnapshotListener(eventUserListener);}
     }
 
     private final EventListener<QuerySnapshot> eventGroupListener = ((value, error) -> {
@@ -675,10 +674,27 @@ public class ChatActivity extends FirestoreBaseActivity {
 
 
     private void loadReceiverDetails() {
-        receiverUser = (User) getIntent().getSerializableExtra(Constants.KEY_USER);
+        //receiverUser = (User) getIntent().getSerializableExtra(Constants.KEY_USER);
+
+        mConversation = (Conversation) getIntent().getSerializableExtra(Constants.KEY_COLLECTION_CONVERSATIONS);
+
+        // Load receiver details
+        mReceiverId = mConversation.getReceiverId() == null ? mConversation.getId() :
+                mConversation.getReceiverId().equals(mCurrentUser.getID()) ?
+                        mConversation.getSenderId() : mConversation.getReceiverId();
+
+        mReceiverName = mConversation.getName() != null ? mConversation.getName() :
+                mConversation.getReceiverId().equals(mCurrentUser.getID()) ?
+                        mConversation.getName() : mConversation.getReceiverName();
+
+        mReceiverAvatar = mConversation.getImage() != null ? mConversation.getImage() :
+                mConversation.getReceiverId().equals(mCurrentUser.getID()) ?
+                        mConversation.getSenderAvatar() : mConversation.getReceiverAvatar();
+
+        mReceiverBitmapAvatar = getBitmapFromEncodeString(mReceiverAvatar);
         adminList  = (ArrayList<String>) getIntent().getSerializableExtra(Constants.KEY_LIST_GROUP_ADMIN);
         memberList  = (ArrayList<String>) getIntent().getSerializableExtra(Constants.KEY_LIST_GROUP_MEMBER);
-        binding.textName.setText(receiverUser.getUsername());
+        binding.textName.setText(mReceiverName);
     }
 
     private void setListener() {
@@ -707,7 +723,7 @@ public class ChatActivity extends FirestoreBaseActivity {
 
     private void startCall() {
         Bundle bundle = new Bundle();
-        bundle.putString(Constants.KEY_REMOTE_ID, receiverUser.getID());
+        bundle.putString(Constants.KEY_REMOTE_ID, mReceiverId);
         bundle.putString(Constants.KEY_RTC_CHANNEL_ID, conversationId);
         toAgoraService(Constants.MSG_AGORA_LOCAL_INVITATION_SEND, bundle);
     }
@@ -726,7 +742,7 @@ public class ChatActivity extends FirestoreBaseActivity {
         DocumentReference documentReference =
                 database.collection(Constants.KEY_COLLECTION_CONVERSATIONS).document(conversationId);
         if(checkGroupConversation(conversationId))
-            documentReference.update(Constants.KEY_SENDER_ID,currentUser.getID()
+            documentReference.update(Constants.KEY_SENDER_ID, mCurrentUser.getID()
                     ,Constants.KEY_LAST_MESSAGE, message, Constants.KEY_TIMESTAMP, new Date());
         else
             documentReference.update(Constants.KEY_LAST_MESSAGE, message, Constants.KEY_TIMESTAMP, new Date());
@@ -735,13 +751,13 @@ public class ChatActivity extends FirestoreBaseActivity {
     private void checkConversation() {
         if (chatMessages.size() != 0) {
             checkConversationRemote(
-                    currentUser.getID(),
-                    receiverUser.getID()
+                    mCurrentUser.getID(),
+                    mReceiverId
             );
 
             checkConversationRemote(
-                    receiverUser.getID(),
-                   currentUser.getID()
+                    mReceiverId,
+                    mCurrentUser.getID()
             );
         }
     }

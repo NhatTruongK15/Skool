@@ -87,7 +87,7 @@ public class AgoraBaseActivity extends AppCompatActivity {
             Intent intent = new Intent(getApplicationContext(), AgoraService.class);
             bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
             mIsBound = true;
-            Log.e("[INFO] ", "AgoraService bound!");
+            Log.e("[INFO] ", "AgoraCallListenerService bound!");
         }
     }
 
@@ -96,7 +96,7 @@ public class AgoraBaseActivity extends AppCompatActivity {
             toAgoraService(Constants.MSG_UNREGISTER_CLIENT, null);
             unbindService(mConnection);
             mIsBound = false;
-            Log.e("[INFO] ", "AgoraService unbound!");
+            Log.e("[INFO] ", "AgoraCallListenerService unbound!");
         }
     }
 }

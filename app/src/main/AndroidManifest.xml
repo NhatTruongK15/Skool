@@ -62,10 +62,10 @@
             android:name=".activities.ActivityMediaAndFile"
             android:exported="false" />
         <activity
-            android:name=".activities.GroupActivity"
+            android:name=".activities.GroupConfigActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.GroupChatActivity"
+            android:name=".activities.NewGroupActivity"
             android:exported="false" />
         <activity
             android:name=".activities.ResetPasswordActivity"

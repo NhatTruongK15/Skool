@@ -97,11 +97,7 @@ public class ChatAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         }
 
-        public byte[] BitmapToByte(Bitmap bitmap, int quality) {
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.PNG, quality, stream);
-            return stream.toByteArray();
-        }
+
 
         void setData(ChatMessage chatMessage) {
             binding.textDateTime.setText(chatMessage.dateTime);
@@ -229,6 +225,8 @@ public class ChatAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder> 
             binding = itemContainerReceivedMessageBinding;
         }
 
+
+
         void setData(ChatMessage chatMessage, Bitmap receiverProfileImage) {
             binding.textDateTime.setText(chatMessage.dateTime);
             binding.imgMessage.setImageBitmap(chatMessage.message_img);
@@ -354,4 +352,3 @@ public class ChatAdapter extends  RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
 
 }
-
