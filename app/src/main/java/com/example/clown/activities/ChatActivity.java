@@ -585,22 +585,23 @@ public class ChatActivity extends BaseActivity {
     }
 
     private void listenMessages() {
-        if(checkGroupConversation(conversationId)) {
-            database.collection(Constants.KEY_COLLECTION_CHAT)
-                    .whereEqualTo(Constants.KEY_RECEIVER_ID,mReceiverId)
-                    .addSnapshotListener(eventGroupListener);
-        }
-        else{
-            database.collection(Constants.KEY_COLLECTION_CHAT)
-                    .whereEqualTo(Constants.KEY_SENDER_ID, mCurrentUser.getID())
-                    .whereEqualTo(Constants.KEY_RECEIVER_ID, mReceiverId)
-                    .addSnapshotListener(eventUserListener);
-            database.collection(Constants.KEY_COLLECTION_CHAT)
-                    .whereEqualTo(Constants.KEY_SENDER_ID, mReceiverId)
-                    .whereEqualTo(Constants.KEY_RECEIVER_ID, mCurrentUser.getID())
-                    .addSnapshotListener(eventUserListener);}
-    }
+        if (checkGroupConversation(conversationId)) {
 
+                database.collection(Constants.KEY_COLLECTION_CHAT)
+                        .whereEqualTo(Constants.KEY_RECEIVER_ID, mReceiverId)
+                        .addSnapshotListener(eventGroupListener);
+
+        } else {
+                database.collection(Constants.KEY_COLLECTION_CHAT)
+                        .whereEqualTo(Constants.KEY_SENDER_ID, mCurrentUser.getID())
+                        .whereEqualTo(Constants.KEY_RECEIVER_ID, mReceiverId)
+                        .addSnapshotListener(eventUserListener);
+                database.collection(Constants.KEY_COLLECTION_CHAT)
+                        .whereEqualTo(Constants.KEY_SENDER_ID, mReceiverId)
+                        .whereEqualTo(Constants.KEY_RECEIVER_ID, mCurrentUser.getID())
+                        .addSnapshotListener(eventUserListener);
+        }
+    }
     private final EventListener<QuerySnapshot> eventGroupListener = ((value, error) -> {
         if (error != null) {
             return;
@@ -609,18 +610,23 @@ public class ChatActivity extends BaseActivity {
             int count = chatMessages.size();
             for (DocumentChange documentChange : value.getDocumentChanges()) {
                 if (documentChange.getType() == DocumentChange.Type.ADDED) {
-                    ChatMessage chatMessage = new ChatMessage();
-                    chatMessage.senderId = documentChange.getDocument().getString(Constants.KEY_SENDER_ID);
-                    chatMessage.receiverId = documentChange.getDocument().getId();
-                    chatMessage.message = documentChange.getDocument().getString(Constants.KEY_MESSAGE);
-                    chatMessage.message_img=getBitmapFromEncodeString( documentChange.getDocument().getString(Constants.KEY_MESSAGE_IMAGE));
-                    chatMessage.videoPath=documentChange.getDocument().getString(Constants.KEY_MESSAGE_VIDEO);
-                    chatMessage.filePath=documentChange.getDocument().getString(Constants.KEY_MESSAGE_FILE);
-                    chatMessage.dateTime = getReadableDateTime(documentChange.getDocument().getDate(Constants.KEY_TIMESTAMP));
-                    chatMessage.dateObject = documentChange.getDocument().getDate(Constants.KEY_TIMESTAMP);
-                    chatMessage.message_img_link=documentChange.getDocument().getString(Constants.KEY_MESSAGE_IMAGE_LINK);
-                    chatMessage.finame=documentChange.getDocument().getString(Constants.KEY_MESSAGE_FINAME);
-                    chatMessages.add(chatMessage);
+                    try {
+                        ChatMessage chatMessage = new ChatMessage();
+                        chatMessage.senderId = documentChange.getDocument().getString(Constants.KEY_SENDER_ID);
+                        chatMessage.receiverId = documentChange.getDocument().getId();
+                        chatMessage.message = documentChange.getDocument().getString(Constants.KEY_MESSAGE);
+                        chatMessage.message_img=getBitmapFromEncodeString( documentChange.getDocument().getString(Constants.KEY_MESSAGE_IMAGE));
+                        chatMessage.videoPath=documentChange.getDocument().getString(Constants.KEY_MESSAGE_VIDEO);
+                        chatMessage.filePath=documentChange.getDocument().getString(Constants.KEY_MESSAGE_FILE);
+                        chatMessage.dateTime = getReadableDateTime(documentChange.getDocument().getDate(Constants.KEY_TIMESTAMP));
+                        chatMessage.dateObject = documentChange.getDocument().getDate(Constants.KEY_TIMESTAMP);
+                        chatMessage.message_img_link=documentChange.getDocument().getString(Constants.KEY_MESSAGE_IMAGE_LINK);
+                        chatMessage.finame=documentChange.getDocument().getString(Constants.KEY_MESSAGE_FINAME);
+                        chatMessages.add(chatMessage);
+                    }catch (Exception ex){
+
+                    }
+
                 }
             }
             showMessage(chatMessages,count);
@@ -637,18 +643,23 @@ public class ChatActivity extends BaseActivity {
             int count = chatMessages.size();
             for (DocumentChange documentChange : value.getDocumentChanges()) {
                 if (documentChange.getType() == DocumentChange.Type.ADDED) {
-                    ChatMessage chatMessage = new ChatMessage();
-                    chatMessage.senderId = documentChange.getDocument().getString(Constants.KEY_SENDER_ID);
-                    chatMessage.receiverId = documentChange.getDocument().getString(Constants.KEY_RECEIVER_ID);
-                    chatMessage.message = documentChange.getDocument().getString(Constants.KEY_MESSAGE);
-                    chatMessage.message_img=getBitmapFromEncodeString( documentChange.getDocument().getString(Constants.KEY_MESSAGE_IMAGE));
-                    chatMessage.videoPath=documentChange.getDocument().getString(Constants.KEY_MESSAGE_VIDEO);
-                    chatMessage.filePath=documentChange.getDocument().getString(Constants.KEY_MESSAGE_FILE);
-                    chatMessage.dateTime = getReadableDateTime(documentChange.getDocument().getDate(Constants.KEY_TIMESTAMP));
-                    chatMessage.dateObject = documentChange.getDocument().getDate(Constants.KEY_TIMESTAMP);
-                    chatMessage.message_img_link=documentChange.getDocument().getString(Constants.KEY_MESSAGE_IMAGE_LINK);
-                    chatMessage.finame=documentChange.getDocument().getString(Constants.KEY_MESSAGE_FINAME);
-                    chatMessages.add(chatMessage);
+                    try {
+                        ChatMessage chatMessage = new ChatMessage();
+                        chatMessage.senderId = documentChange.getDocument().getString(Constants.KEY_SENDER_ID);
+                        chatMessage.receiverId = documentChange.getDocument().getString(Constants.KEY_RECEIVER_ID);
+                        chatMessage.message = documentChange.getDocument().getString(Constants.KEY_MESSAGE);
+                        chatMessage.message_img=getBitmapFromEncodeString( documentChange.getDocument().getString(Constants.KEY_MESSAGE_IMAGE));
+                        chatMessage.videoPath=documentChange.getDocument().getString(Constants.KEY_MESSAGE_VIDEO);
+                        chatMessage.filePath=documentChange.getDocument().getString(Constants.KEY_MESSAGE_FILE);
+                        chatMessage.dateTime = getReadableDateTime(documentChange.getDocument().getDate(Constants.KEY_TIMESTAMP));
+                        chatMessage.dateObject = documentChange.getDocument().getDate(Constants.KEY_TIMESTAMP);
+                        chatMessage.message_img_link=documentChange.getDocument().getString(Constants.KEY_MESSAGE_IMAGE_LINK);
+                        chatMessage.finame=documentChange.getDocument().getString(Constants.KEY_MESSAGE_FINAME);
+                        chatMessages.add(chatMessage);
+                    }catch (Exception ex){
+
+                    }
+
                 }
             }
             showMessage(chatMessages,count);

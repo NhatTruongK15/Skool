@@ -120,7 +120,6 @@ public class MainActivity extends BaseActivity {
 
     private void signOut() {
         showToast(Constants.TOAST_ON_SIGN_OUT);
-
         JobScheduler jobScheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
         jobScheduler.cancelAll();
 

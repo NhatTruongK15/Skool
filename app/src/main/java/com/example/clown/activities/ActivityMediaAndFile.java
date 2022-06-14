@@ -59,7 +59,10 @@ public class ActivityMediaAndFile extends BaseActivity {
         binding = ActivityMediaAndFileBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        binding.imageBack.setOnClickListener(v->onBackPressed());
+        binding.imageBack.setOnClickListener(v-> {
+            Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+            startActivity(intent);
+        });
 
         mediaandfile=new ArrayList<>() ;
 
@@ -77,8 +80,6 @@ public class ActivityMediaAndFile extends BaseActivity {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(new MediaAndFileAdapter(this,mediaandfile));
-
-
     }
     private void listenMessages() {
         if(checkGroupConversation(receivedUserId)) {
@@ -110,7 +111,6 @@ public class ActivityMediaAndFile extends BaseActivity {
         preferenceManager = new PreferenceManager(getApplicationContext());
         chatMessages = new ArrayList<>();
         database = FirebaseFirestore.getInstance();
-//        showToast("pre is: "+preferenceManager.getString(Constants.KEY_USER_ID));
     }
 
     private void loadReceiverDetails() {
@@ -120,7 +120,6 @@ public class ActivityMediaAndFile extends BaseActivity {
         if (bundle != null) {
             receivedUserId = bundle.getString(Constants.KEY_RECEIVER_ID);
         }
-//        showToast("recv is: "+receivedUserId);
     }
     private void checkConversation() {
         if (chatMessages.size() != 0) {
@@ -160,8 +159,6 @@ public class ActivityMediaAndFile extends BaseActivity {
             for (DocumentChange documentChange : value.getDocumentChanges()) {
                 if (documentChange.getType() == DocumentChange.Type.ADDED) {
                     ChatMessage chatMessage = new ChatMessage();
-                    chatMessage.senderId = documentChange.getDocument().getString(Constants.KEY_SENDER_ID);
-                    chatMessage.receiverId = documentChange.getDocument().getString(Constants.KEY_RECEIVER_ID);
                     chatMessage.message = documentChange.getDocument().getString(Constants.KEY_MESSAGE);
                     chatMessage.videoPath=documentChange.getDocument().getString(Constants.KEY_MESSAGE_VIDEO);
                     chatMessage.filePath=documentChange.getDocument().getString(Constants.KEY_MESSAGE_FILE);
@@ -189,18 +186,14 @@ public class ActivityMediaAndFile extends BaseActivity {
             checkConversation();
         }
     });
-
-    private final EventListener<QuerySnapshot> eventGroupListener = ((value1, error1) -> {
-        if (error1 != null) {
+    private final EventListener<QuerySnapshot> eventGroupListener = ((value, error) -> {
+        if (error != null) {
             return;
         }
-        if (value1 != null) {
-            int count = chatMessages.size();
-            for (DocumentChange documentChange : value1.getDocumentChanges()) {
+        if (value != null) {
+            for (DocumentChange documentChange : value.getDocumentChanges()) {
                 if (documentChange.getType() == DocumentChange.Type.ADDED) {
                     ChatMessage chatMessage = new ChatMessage();
-                    chatMessage.senderId = documentChange.getDocument().getString(Constants.KEY_SENDER_ID);
-                    chatMessage.receiverId = documentChange.getDocument().getString(Constants.KEY_RECEIVER_ID);
                     chatMessage.message = documentChange.getDocument().getString(Constants.KEY_MESSAGE);
                     chatMessage.videoPath=documentChange.getDocument().getString(Constants.KEY_MESSAGE_VIDEO);
                     chatMessage.filePath=documentChange.getDocument().getString(Constants.KEY_MESSAGE_FILE);
@@ -212,13 +205,7 @@ public class ActivityMediaAndFile extends BaseActivity {
                         SimpleDateFormat sdf=new SimpleDateFormat("dd/MM/yyyy");
                         mediaandfile.add(new MediaAndFile(chatMessage.videoPath,chatMessage.message_img_link,chatMessage.filePath,chatMessage.finame, sdf.format(chatMessage.dateObject)));
                     }
-
-                    chatMessages.add(chatMessage);
                 }
-            }
-            Collections.sort(chatMessages, (obj1, obj2) -> obj1.dateObject.compareTo(obj2.dateObject));
-            if (count == 0) {
-            } else {
             }
         }
         binding.progressBar.setVisibility(View.INVISIBLE);
@@ -226,35 +213,4 @@ public class ActivityMediaAndFile extends BaseActivity {
             checkConversation();
         }
     });
-
-
-    private void openVidDisplay(){
-        Context context = this;
-        Intent intent = new Intent(context, FileDisplayActivitiy.class);
-        intent.putExtra("vidPath", videoPath);
-        intent.putExtra("finame", finame);
-        intent.putExtra("fiPath", "");
-        intent.putExtra("imgPath", "");
-        context.startActivity(intent);
-    }
-
-    private  void openImgDisplay(){
-        Context context = this;
-        Intent intent = new Intent(context, FileDisplayActivitiy.class);
-        intent.putExtra("imgPath", imagePath);
-        intent.putExtra("finame", finame);
-        intent.putExtra("fiPath", "");
-        intent.putExtra("vidPath", "");
-        context.startActivity(intent);
-    }
-
-    private void openFileDisplay(){
-        Context context = this;
-        Intent intent = new Intent(context, FileDisplayActivitiy.class);
-        intent.putExtra("fiPath", filePath);
-        intent.putExtra("finame", finame);
-        intent.putExtra("imgPath", "");
-        intent.putExtra("vidPath", "");
-        context.startActivity(intent);
-    }
 }
