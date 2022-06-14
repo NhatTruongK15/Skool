@@ -119,7 +119,7 @@ public class MainActivity extends BaseActivity {
         showToast(Constants.TOAST_ON_SIGN_OUT);
 
         JobScheduler jobScheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
-        jobScheduler.cancel(Constants.KEY_SERVICE_ID);
+        jobScheduler.cancelAll();
 
         startActivity(new Intent(getApplicationContext(), SignInActivity.class));
 

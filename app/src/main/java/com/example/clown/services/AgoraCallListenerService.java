@@ -1,5 +1,7 @@
 package com.example.clown.services;
 
+import static io.agora.rtm.RtmClient.createInstance;
+
 import android.app.job.JobParameters;
 import android.app.job.JobService;
 import android.content.BroadcastReceiver;
@@ -33,7 +35,7 @@ public class AgoraCallListenerService extends JobService implements IEventListen
     private final static String appCertificate = Constants.AGORA_APP_CERTIFICATE;
     private final static int expiredTimeStamp = Constants.EXPIRED_TIME_STAMP;
 
-    private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+    protected final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             switch (intent.getAction()) {
@@ -60,13 +62,11 @@ public class AgoraCallListenerService extends JobService implements IEventListen
 
     private RtmClient mRtmClient;
     private RtmCallManager mRtmCallManager;
-    private EngineEventListener mEngineEventListener;
 
     private LocalInvitation mLocalInvitation;
     private RemoteInvitation mRemoteInvitation;
 
     private String mUserId;
-    private String mRtmToken;
     private boolean mIsLoggedIn;
 
     private volatile boolean mIsCanceled;
@@ -75,12 +75,16 @@ public class AgoraCallListenerService extends JobService implements IEventListen
     public boolean onStartJob(JobParameters params) {
         Initialize();
 
+        logIn();
+
+        startListener(params);
+
         return true;
     }
 
     @Override
     public boolean onStopJob(JobParameters params) {
-        Log.e(TAG, "UserListener stopped!");
+        Log.e(TAG, "AgoraService stopped!");
 
         cleanUp();
 
@@ -89,14 +93,16 @@ public class AgoraCallListenerService extends JobService implements IEventListen
 
     //region FUNCTIONS
     private void Initialize() {
+        Log.e(TAG, "AgoraService Initialize!");
+
         // Get current user ID
         PreferenceManager preferenceManager = new PreferenceManager(getApplicationContext());
         mUserId = preferenceManager.getUser().getID();
 
         // AgoraRtm Init
         try {
-            mEngineEventListener = new EngineEventListener();
-            mRtmClient = RtmClient.createInstance(this, appId, mEngineEventListener);
+            EngineEventListener mEngineEventListener = new EngineEventListener();
+            mRtmClient = createInstance(this, appId, mEngineEventListener);
             mRtmCallManager = mRtmClient.getRtmCallManager();
             mRtmCallManager.setEventListener(mEngineEventListener);
             mEngineEventListener.registerEventListener(this);
@@ -115,6 +121,25 @@ public class AgoraCallListenerService extends JobService implements IEventListen
         intentFilter.addAction(Constants.ACT_AGORA_REMOTE_INVITATION_ACCEPTED);
         intentFilter.addAction(Constants.ACT_AGORA_REMOTE_INVITATION_REFUSED);
         registerReceiver(mBroadcastReceiver, intentFilter);
+
+        mIsCanceled = false;
+    }
+
+    private void startListener(JobParameters params) {
+        Log.e(TAG, "Listener stared!");
+
+        Runnable task = () -> {
+
+            //noinspection StatementWithEmptyBody
+            while (!mIsCanceled);
+
+            logOut();
+
+            jobFinished(params, false);
+        };
+
+        Thread thread = new Thread(task);
+        thread.start();
     }
 
     private void cleanUp() {
@@ -157,7 +182,7 @@ public class AgoraCallListenerService extends JobService implements IEventListen
 
     private void logIn() {
         try {
-            mRtmToken = rtmTokenGenerator();
+            String mRtmToken = rtmTokenGenerator();
             mRtmClient.login(mRtmToken, mUserId, this);
             mIsLoggedIn = true;
             Log.e(TAG, "Agora logged in!");

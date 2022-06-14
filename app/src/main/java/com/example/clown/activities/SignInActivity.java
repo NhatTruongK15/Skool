@@ -11,6 +11,7 @@ import android.view.View;
 
 import com.example.clown.databinding.ActivitySignInBinding;
 import com.example.clown.models.User;
+import com.example.clown.services.AgoraCallListenerService;
 import com.example.clown.services.UserListenerService;
 import com.example.clown.utilities.Constants;
 import com.example.clown.utilities.PreferenceManager;
@@ -49,7 +50,7 @@ public class SignInActivity extends BaseActivity {
 
         mCurrentUser.Clone(mPreferenceManager.getUser());
 
-        if (!isJobServiceOn(getApplicationContext())) startAppService();
+        isJobServiceOn(getApplicationContext());
 
         startActivity(TAG, MainActivity.class, null);
 
@@ -117,29 +118,46 @@ public class SignInActivity extends BaseActivity {
         mBinding.buttonSignIn.setVisibility(nBtnVisibility);
     }
 
-    private static boolean isJobServiceOn(Context context) {
+    private void isJobServiceOn(Context context) {
         JobScheduler scheduler = (JobScheduler) context.getSystemService(JOB_SCHEDULER_SERVICE ) ;
 
-        boolean hasBeenScheduled = false ;
+        boolean hasUserBeenScheduled = false ;
+        boolean hasAgoraBeenScheduled = false ;
 
         for ( JobInfo jobInfo : scheduler.getAllPendingJobs() ) {
-            if ( jobInfo.getId() == Constants.KEY_SERVICE_ID ) {
-                hasBeenScheduled = true ;
-                break ;
-            }
+            if ( jobInfo.getId() == Constants.KEY_SERVICE_ID )
+                hasUserBeenScheduled = true;
+
+            if ( jobInfo.getId() == Constants.KEY_AGORA_SERVICE_ID )
+                hasAgoraBeenScheduled = true ;
         }
 
-        return hasBeenScheduled ;
+        if (!hasUserBeenScheduled) startAppService();
+        if (!hasAgoraBeenScheduled) startAgoraService();
     }
 
     private void startAppService() {
         ComponentName componentName = new ComponentName(getApplicationContext(), UserListenerService.class);
+
         JobInfo jobInfo = new JobInfo.Builder(Constants.KEY_SERVICE_ID, componentName)
                 .setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED)
                 .setPersisted(true)
                 .build();
+
         JobScheduler jobScheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
         jobScheduler.schedule(jobInfo);
+    }
+
+    private void startAgoraService() {
+        ComponentName agoraComponentName = new ComponentName(getApplicationContext(), AgoraCallListenerService.class);
+
+        JobInfo agoraJobInfo = new JobInfo.Builder(Constants.KEY_AGORA_SERVICE_ID, agoraComponentName)
+                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED)
+                .setPersisted(true)
+                .build();
+
+        JobScheduler jobScheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
+        jobScheduler.schedule(agoraJobInfo);
     }
     //endregion
 

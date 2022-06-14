@@ -125,6 +125,7 @@ public class Constants {
     public static final String KEY_CHANNEL_ID = "applicationChannelID";
     public static final String KEY_CURRENT_USER = "currentUser";
     public static final int KEY_SERVICE_ID = 613;
+    public static final int KEY_AGORA_SERVICE_ID = 614;
 
     // Notifications
     public static final String NOTIFICATION_FRIEND_REQUEST_TITLE = "New friend request!";

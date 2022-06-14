@@ -61,7 +61,7 @@ public class BaseActivity extends AppCompatActivity {
     private void baseInit() {
         mBaseApplication = (BaseApplication) getApplicationContext();
 
-        if (mCurrentUser != null && !mCurrentUser.getAvailability())
+        if (mCurrentUser != null && mCurrentUser.getID() != null && !mCurrentUser.getAvailability())
             updateUserAvailability();
     }
 

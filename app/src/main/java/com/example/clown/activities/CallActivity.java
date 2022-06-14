@@ -11,9 +11,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.os.Messenger;
 import android.os.SystemClock;
 import android.util.Base64;
 import android.util.Log;
@@ -32,11 +29,10 @@ import io.agora.rtc.RtcEngine;
 import io.agora.rtc.video.VideoCanvas;
 import io.agora.rtc.video.VideoEncoderConfiguration;
 
-public class CallActivity extends AgoraBaseActivity {
+public class CallActivity extends BaseActivity {
     private ActivityCallBinding binding;
 
     private String channelId;
-    private String mRtcToken;
     private boolean isCaller;
     private boolean isConnected;
     private boolean isCameraEnable;
@@ -58,18 +54,6 @@ public class CallActivity extends AgoraBaseActivity {
         super.onDestroy();
         rtcRelease();
         Log.e("[INFO] ", "CallActivity destroyed!");
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        bindAgoraService();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        unbindAgoraService();
     }
 
     @Override
@@ -102,7 +86,6 @@ public class CallActivity extends AgoraBaseActivity {
     }
 
     private void initMembers() {
-        mMessenger = new Messenger(new CallActivity.IncomingHandler());
         Intent intent = getIntent();
         binding = ActivityCallBinding.inflate(getLayoutInflater());
         Bundle bundle = intent.getBundleExtra(Constants.KEY_REMOTE_USER_DATA);
@@ -126,7 +109,7 @@ public class CallActivity extends AgoraBaseActivity {
         database.collection(Constants.KEY_COLLECTION_USERS)
                 .document(bundle.getString(Constants.KEY_DOCUMENT_REFERENCE_ID))
                 .get().addOnCompleteListener(t -> {
-            if (t.isSuccessful() && t.getResult() != null) {
+            if (t.isSuccessful() && t.getResult() != null && t.getResult().getData() != null) {
                 String remoteName = (String) t.getResult().getData().get(Constants.KEY_USERNAME);
                 String remoteImage = (String) t.getResult().getData().get(Constants.KEY_AVATAR);
                 if (remoteName != null)
@@ -205,7 +188,7 @@ public class CallActivity extends AgoraBaseActivity {
             });
         }
         else
-            runOnUiThread(() -> {binding.localVideoContainer.removeAllViews();});
+            runOnUiThread(() -> binding.localVideoContainer.removeAllViews());
 
         mRtcEngine.muteLocalVideoStream(!isCameraEnable);
         mRtcEngine.enableLocalVideo(isCameraEnable);
@@ -251,7 +234,7 @@ public class CallActivity extends AgoraBaseActivity {
     }
 
     private void joinRtcChannel() {
-        mRtcToken = rtcTokenGenerator(channelId, 0);
+        String mRtcToken = rtcTokenGenerator(channelId, 0);
         try {
             mRtcEngine.joinChannel(mRtcToken, channelId, null, 0);
             Log.e("[INFO] ", "RtcChannel joined!");
@@ -269,7 +252,7 @@ public class CallActivity extends AgoraBaseActivity {
     }
 
     private void cancelLocalInvitation() {
-        toAgoraService(Constants.MSG_AGORA_LOCAL_INVITATION_CANCELED, null);
+        sendBroadcast(new Intent(Constants.ACT_AGORA_LOCAL_INVITATION_CANCELED));
     }
 
     private String rtcTokenGenerator(String channelId, int uid) {
@@ -323,7 +306,7 @@ public class CallActivity extends AgoraBaseActivity {
         @Override
         public void onUserOffline(int uid, int reason) {
             super.onUserOffline(uid, reason);
-            runOnUiThread(() -> { binding.chronoCallTime.stop();});
+            runOnUiThread(() -> binding.chronoCallTime.stop());
             leaveChannel();
         }
 
@@ -348,19 +331,4 @@ public class CallActivity extends AgoraBaseActivity {
             }
         }
     };
-
-    private class IncomingHandler extends Handler {
-        @Override
-        public void handleMessage(@NonNull Message msg) {
-            switch (msg.what) {
-                case Constants.MSG_AGORA_LOCAL_INVITATION_FAILED:
-                case Constants.MSG_AGORA_LOCAL_INVITATION_REFUSED:
-                    finish();
-                    break;
-
-                default:
-                    super.handleMessage(msg);
-            }
-        }
-    }
 }

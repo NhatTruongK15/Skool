@@ -1,22 +1,18 @@
 package com.example.clown.activities;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.os.Messenger;
 import android.util.Base64;
-
-import androidx.annotation.NonNull;
 
 import com.example.clown.R;
 import com.example.clown.databinding.ActivityCallReceivedBinding;
 import com.example.clown.utilities.Constants;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-public class CallReceivedActivity extends AgoraBaseActivity {
+public class CallReceivedActivity extends BaseActivity {
     private ActivityCallReceivedBinding binding;
     private MediaPlayer mRingTone;
 
@@ -33,20 +29,7 @@ public class CallReceivedActivity extends AgoraBaseActivity {
         stopRinging();
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        bindAgoraService();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        unbindAgoraService();
-    }
-
     private void Init() {
-        mMessenger = new Messenger(new CallReceivedActivity.IncomingHandler());
         mRingTone = startRinging();
         initUI();
     }
@@ -64,7 +47,7 @@ public class CallReceivedActivity extends AgoraBaseActivity {
         database.collection(Constants.KEY_COLLECTION_USERS)
                 .document(bundle.getString(Constants.KEY_DOCUMENT_REFERENCE_ID))
                 .get().addOnCompleteListener(t -> {
-            if (t.isSuccessful() && t.getResult() != null) {
+            if (t.isSuccessful() && t.getResult() != null && t.getResult().getData() != null) {
                 String remoteName = (String) t.getResult().getData().get(Constants.KEY_USERNAME);
                 String remoteImage = (String) t.getResult().getData().get(Constants.KEY_AVATAR);
                 if (remoteName != null)
@@ -85,12 +68,12 @@ public class CallReceivedActivity extends AgoraBaseActivity {
     }
 
     private void acceptRemoteInvitation() {
-        toAgoraService(Constants.MSG_AGORA_REMOTE_INVITATION_ACCEPTED, null);
+        sendBroadcast(new Intent(Constants.ACT_AGORA_REMOTE_INVITATION_ACCEPTED));
         finish();
     }
 
     private void refuseRemoteInvitation() {
-        toAgoraService(Constants.MSG_AGORA_REMOTE_INVITATION_REFUSED, null);
+        sendBroadcast(new Intent(Constants.ACT_AGORA_REMOTE_INVITATION_REFUSED));
         finish();
     }
 
@@ -106,21 +89,6 @@ public class CallReceivedActivity extends AgoraBaseActivity {
             mRingTone.stop();
             mRingTone.release();
             mRingTone = null;
-        }
-    }
-
-    private class IncomingHandler extends Handler {
-        @Override
-        public void handleMessage(@NonNull Message msg) {
-            switch (msg.what) {
-                case Constants.MSG_AGORA_REMOTE_INVITATION_CANCELED:
-                case Constants.MSG_AGORA_REMOTE_INVITATION_FAILED:
-                    finish();
-                    break;
-
-                default:
-                    super.handleMessage(msg);
-            }
         }
     }
 }

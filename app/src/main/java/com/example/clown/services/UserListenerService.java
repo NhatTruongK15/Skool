@@ -60,9 +60,11 @@ public class UserListenerService extends JobService {
     public boolean onStopJob(JobParameters params) {
         Log.e(TAG, "UserListener stopped!");
 
-        updateUserAvailability();
+        //updateUserAvailability();
 
         cleanUp();
+
+        mIsCanceled = true;
 
         return true;
     }
@@ -123,7 +125,8 @@ public class UserListenerService extends JobService {
 
         Runnable task = () -> {
 
-            while (true) if (mIsCanceled) break;
+            //noinspection StatementWithEmptyBody
+            while (!mIsCanceled);
 
             Log.e(TAG, "CurrentUserListener finished!");
 
@@ -137,12 +140,13 @@ public class UserListenerService extends JobService {
     }
 
     private void cleanUp() {
+        Log.e(TAG, "UserListenerService cleaning up!");
+
         mPreferenceManager.unRegisterChangesListener(mPreferenceListener);
         mPreferenceManager.clear();
 
         mListenerRegister.remove();
 
-        mIsCanceled = true;
     }
 
     private void checkFriendsChanges(List<String> oldFriends, List<String> newFriends, int nType) {
