@@ -22,10 +22,10 @@ public class SuggestedUserAdapter extends RecyclerView.Adapter<SuggestedUserAdap
     private final List<User> mSuggestedUserList;
     private User mCurrentUser;
     private final Context mContext;
-    private final SuggestedUserAdapter.IReceivedSuggestListener requestItemListener;
+    private final ISuggestedUserListener requestItemListener;
 
 
-    public SuggestedUserAdapter(Context context, List<User> suggestedList, SuggestedUserAdapter.IReceivedSuggestListener listener) {
+    public SuggestedUserAdapter(Context context, List<User> suggestedList, ISuggestedUserListener listener) {
         mContext = context;
         mSuggestedUserList = suggestedList;
         requestItemListener = listener;
@@ -81,7 +81,7 @@ public class SuggestedUserAdapter extends RecyclerView.Adapter<SuggestedUserAdap
             binding.tvRequestSent.setVisibility(View.GONE);
             binding.btnAddFriend.setVisibility(View.VISIBLE);
 
-            binding.btnAddFriend.setOnClickListener(v -> requestItemListener.onRequestItemClicked(onUser));
+            binding.btnAddFriend.setOnClickListener(v -> requestItemListener.onSuggestedUserClicked(onUser));
             //endregion
         }
 
@@ -101,9 +101,7 @@ public class SuggestedUserAdapter extends RecyclerView.Adapter<SuggestedUserAdap
 
 
     }
-    public interface IReceivedSuggestListener {
-        void onRequestItemClicked(User requester);
-        void onAcceptBtnClicked(User requester);
-        void onDeclineBtnClicked(User requester);
+    public interface ISuggestedUserListener {
+        void onSuggestedUserClicked(User suggestedUser);
     }
 }

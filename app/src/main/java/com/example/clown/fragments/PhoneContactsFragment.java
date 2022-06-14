@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class PhoneContactsFragment extends Fragment implements SuggestedUserAdapter.IReceivedSuggestListener {
+public class PhoneContactsFragment extends Fragment implements SuggestedUserAdapter.ISuggestedUserListener {
     private static final String TAG = PhoneContactsFragment.class.getName();
 
     private FragmentPhoneContactsBinding binding;
@@ -72,7 +72,6 @@ public class PhoneContactsFragment extends Fragment implements SuggestedUserAdap
         super.onResume();
         mActivityResultLauncher.launch(Manifest.permission.READ_CONTACTS);
         mSuggestedUsersList.clear();
-
     }
 
     private void filterPhoneContactsAppUsers() {
@@ -148,16 +147,16 @@ public class PhoneContactsFragment extends Fragment implements SuggestedUserAdap
 
 
     @Override
-    public void onRequestItemClicked(User requester) { // requester nguoi nhan
+    public void onSuggestedUserClicked(User suggestedUser) { // requester nguoi nhan
         String senderID = mCurrentUser.getID();
-        String receiverID = requester.getID();
+        String receiverID = suggestedUser.getID();
 
-        requester.getReceivedRequests().add(senderID);
+        suggestedUser.getReceivedRequests().add(senderID);
         FirebaseFirestore
                 .getInstance()
                 .collection(Constants.KEY_COLLECTION_USERS)
-                .document(requester.getID())
-                .update(Constants.KEY_RECEIVED_REQUESTS, requester.getReceivedRequests());
+                .document(suggestedUser.getID())
+                .update(Constants.KEY_RECEIVED_REQUESTS, suggestedUser.getReceivedRequests());
 
         mCurrentUser.getSentRequests().add(receiverID);
         FirebaseFirestore
@@ -175,20 +174,11 @@ public class PhoneContactsFragment extends Fragment implements SuggestedUserAdap
         List<User> oldList = new ArrayList<>(mSuggestedUsersList);
 
         for (User friend : oldList)
+            //noinspection SuspiciousMethodCalls
             if (!mSuggestedUsersList.contains(friend.getID())) {
                 int i = oldList.indexOf(friend);
                 mSuggestedUsersList.remove(i);
                 mPhoneContactsAdapter.notifyItemRemoved(i);
             }
-    }
-
-    @Override
-    public void onAcceptBtnClicked(User requester) {
-
-    }
-
-    @Override
-    public void onDeclineBtnClicked(User requester) {
-
     }
 }

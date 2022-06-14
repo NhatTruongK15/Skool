@@ -715,6 +715,10 @@ public class ChatActivity extends BaseActivity {
         activityResultLauncher=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
             @Override
             public void onActivityResult(ActivityResult result) {
+                if (result == null ||
+                        result.getData() == null ||
+                        result.getData().getData() == null) return;
+
                 fileuri= result.getData().getData();
                 finame=getFileName(fileuri);
                 loading(true);
@@ -727,6 +731,12 @@ public class ChatActivity extends BaseActivity {
         binding.layoutFile.setOnClickListener(v -> pickFile());
 
         binding.imageCall.setOnClickListener(v -> startCall());
+
+        binding.imageInfo.setOnClickListener(v -> {
+            Intent intent = new Intent(this, ActivityMediaAndFile.class);
+            intent.putExtra(Constants.KEY_RECEIVER_ID, mReceiverId);
+            startActivity(intent);
+        });
     }
 
     private void startCall() {

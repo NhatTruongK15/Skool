@@ -180,7 +180,6 @@ public class UserListenerService extends JobService {
                 new Intent(Constants.ACT_FRIEND_ADDED) :
                 new Intent(Constants.ACT_FRIEND_REMOVED);
         sendBroadcast(intent);
-
     }
 
     private void notifyReceivedRequestsChanged(String requesterID, boolean bIsRequestAdded) {
