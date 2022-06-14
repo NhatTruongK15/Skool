@@ -33,12 +33,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class PhoneContactsFragment extends Fragment {
+public class PhoneContactsFragment extends Fragment implements SuggestedUserAdapter.IReceivedSuggestListener {
     private static final String TAG = PhoneContactsFragment.class.getName();
 
     private FragmentPhoneContactsBinding binding;
 
-    private SuggestedUserAdapter mPhoneContactsAdapter ;
+    private SuggestedUserAdapter mPhoneContactsAdapter;
     private List<String> mPhoneContactsList;
     private List<User> mSuggestedUsersList;
     private User mCurrentUser;
@@ -51,12 +51,17 @@ public class PhoneContactsFragment extends Fragment {
             }
 
         setUpRecyclerView();
+        SetListener();
     };
+
+    private void SetListener() {
+
+    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentPhoneContactsBinding.inflate(inflater, container, false);
-        
+
         Init();
 
         return binding.getRoot();
@@ -66,6 +71,8 @@ public class PhoneContactsFragment extends Fragment {
     public void onResume() {
         super.onResume();
         mActivityResultLauncher.launch(Manifest.permission.READ_CONTACTS);
+        mSuggestedUsersList.clear();
+
     }
 
     private void filterPhoneContactsAppUsers() {
@@ -87,7 +94,8 @@ public class PhoneContactsFragment extends Fragment {
 
     private void setUpRecyclerView() {
         Log.e(TAG, "Set up phone contacts RecyclerView");
-        mPhoneContactsAdapter = new SuggestedUserAdapter(getContext(), mSuggestedUsersList);
+
+        mPhoneContactsAdapter = new SuggestedUserAdapter(getContext(), mSuggestedUsersList, this);
         mPhoneContactsAdapter.setCurrentUser(mCurrentUser);
         binding.phoneContactsRecyclerView.setAdapter(mPhoneContactsAdapter);
     }
@@ -105,7 +113,7 @@ public class PhoneContactsFragment extends Fragment {
 
         if ((cursor != null ? cursor.getCount() : 0) > 0) {
             while (cursor.moveToNext()) {
-                colIndex= cursor.getColumnIndex(ContactsContract.Contacts._ID);
+                colIndex = cursor.getColumnIndex(ContactsContract.Contacts._ID);
                 id = cursor.getString(colIndex);
                 colIndex = cursor.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER);
 
@@ -137,4 +145,50 @@ public class PhoneContactsFragment extends Fragment {
                     ((ContactsActivity) requireActivity()).getContactViewPager().setCurrentItem(FRAGMENT_FRIENDS_POS, true);
                 }
             });
+
+
+    @Override
+    public void onRequestItemClicked(User requester) { // requester nguoi nhan
+        String senderID = mCurrentUser.getID();
+        String receiverID = requester.getID();
+
+        requester.getReceivedRequests().add(senderID);
+        FirebaseFirestore
+                .getInstance()
+                .collection(Constants.KEY_COLLECTION_USERS)
+                .document(requester.getID())
+                .update(Constants.KEY_RECEIVED_REQUESTS, requester.getReceivedRequests());
+
+        mCurrentUser.getSentRequests().add(receiverID);
+        FirebaseFirestore
+                .getInstance()
+                .collection(Constants.KEY_COLLECTION_USERS)
+                .document(mCurrentUser.getID())
+                .update(Constants.KEY_SENT_REQUESTS, mCurrentUser.getSentRequests());
+
+        removeRequest();
+    }
+
+    private void removeRequest() {
+        Log.e(TAG, "Requests removed!");
+
+        List<User> oldList = new ArrayList<>(mSuggestedUsersList);
+
+        for (User friend : oldList)
+            if (!mSuggestedUsersList.contains(friend.getID())) {
+                int i = oldList.indexOf(friend);
+                mSuggestedUsersList.remove(i);
+                mPhoneContactsAdapter.notifyItemRemoved(i);
+            }
+    }
+
+    @Override
+    public void onAcceptBtnClicked(User requester) {
+
+    }
+
+    @Override
+    public void onDeclineBtnClicked(User requester) {
+
+    }
 }

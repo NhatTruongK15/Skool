@@ -172,7 +172,7 @@ public class MyProfileActivity extends BaseActivity {
                 if (result.getResultCode() == RESULT_OK) {
 
                     // Broadcast Receiver bind
-                    Log.e("cai gi cung dc","ghi mot cai gi do cung dc");
+
                     IntentFilter intentFilter = new IntentFilter(Constants.ACT_UPDATE_CURRENT_USER);
                     registerReceiver(mBroadcastReceiver, intentFilter);
 
@@ -194,7 +194,9 @@ public class MyProfileActivity extends BaseActivity {
                             dupUser.Clone(mCurrentUser);
                             dupUser.setAvatar(encodedImage);
                             mPreferenceManager.putUser(dupUser);
-                        } catch (FileNotFoundException e) {
+                            mCurrentUser = mPreferenceManager.getUser();
+                        }
+                        catch (FileNotFoundException e) {
                             e.printStackTrace();
                         }
                     }

@@ -94,16 +94,15 @@ public class GroupConfigActivity extends BaseActivity {
                 .document(mNewGroupConversation.getId())
                 .set(mNewGroupConversation);
 
-        //methodSwitchToChat();
+        methodSwitchToChat();
     }
 
     private void methodSwitchToChat() {
 
-        /*Intent intent1 = new Intent(getApplicationContext(), ChatActivity.class);
-        intent1.putExtra(Constants.KEY_USER, currentGroup);
-        intent1.putExtra(Constants.KEY_LIST_GROUP_ADMIN, mAdminIDs);
-        intent1.putExtra(Constants.KEY_LIST_GROUP_MEMBER, mMemberIDs);
-        startActivity(intent1);*/
+        Intent intent1 = new Intent(getApplicationContext(), ChatActivity.class);
+        intent1.putExtra(Constants.KEY_COLLECTION_CONVERSATIONS,mNewGroupConversation);
+        startActivity(intent1);
+        finish();
     }
 
 
