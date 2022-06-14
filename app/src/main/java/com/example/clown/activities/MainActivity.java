@@ -54,6 +54,7 @@ public class MainActivity extends BaseActivity {
         setContentView(binding.getRoot());
 
         setUpConversationsViewPager();
+        mConversationAdapter = new ConversationAdapter(getApplicationContext(),mConversations);
     }
 
     private void setUpConversationsViewPager() {

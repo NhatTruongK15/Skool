@@ -1,5 +1,7 @@
 package com.example.clown.activities;
 
+import static com.example.clown.utilities.Constants.HD_RES;
+
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -224,28 +226,57 @@ public class SignUpActivity extends BaseActivity {
     }
 
     //region IMAGE FORMATTING SUPPORT FUNCTIONS
-    private String encodeImageSuper(Bitmap bitmap){
-        Bitmap previewBitmap = Bitmap.createScaledBitmap(resizeBitmap(bitmap), PREFERRED_VALUE_INT, PREFERRED_VALUE_INT, false);
+    private String encodeImageSuper(Bitmap bitmap) {
+        //int previewHeight = bitmap.getHeight() * previewWidth / bitmap.getWidth();
+        Bitmap previewBitmap = Bitmap.createScaledBitmap(resizeBitmap(bitmap), HD_RES, HD_RES, false);
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        previewBitmap.compress(Bitmap.CompressFormat.JPEG,80,byteArrayOutputStream);
+        previewBitmap.compress(Bitmap.CompressFormat.JPEG, 95, byteArrayOutputStream);
         byte[] bytes = byteArrayOutputStream.toByteArray();
         return Base64.encodeToString(bytes, Base64.DEFAULT);
     }
+    private static final float PREFERRED_WIDTH = HD_RES;
+    private static final float PREFERRED_HEIGHT = HD_RES;
 
     public static Bitmap resizeBitmap(Bitmap bitmap) {
         int width = bitmap.getWidth();
         int height = bitmap.getHeight();
-        float scaleWidth = PREFERRED_VALUE_FLOAT / width;
-        float scaleHeight = PREFERRED_VALUE_FLOAT / height;
+        float scaleWidth = PREFERRED_WIDTH / width;
+        float scaleHeight = PREFERRED_HEIGHT / height;
 
         Matrix matrix = new Matrix();
         matrix.postScale(scaleWidth, scaleHeight);
         Bitmap resizedBitmap = Bitmap.createBitmap(
                 bitmap, 0, 0, width, height, matrix, false);
-
+      /*  if (resizedBitmap != null && !resizedBitmap.isRecycled()) {
+            resizedBitmap.recycle();
+            resizedBitmap = null;
+        }*/
         bitmap.recycle();
         return resizedBitmap;
     }
+    private final ActivityResultLauncher<Intent> PickImage = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(), result -> {
+                if (result.getResultCode() == RESULT_OK) {
+                    if (result.getData() != null) {
+                        Uri imageUri = result.getData().getData();
+                        try {
+                            InputStream inputStream = getContentResolver().openInputStream(imageUri);
+                            Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                            mEncodedAvatar = encodeImageSuper(bitmap);
+
+                            byte [] encodeByte = Base64.decode(mEncodedAvatar,Base64.DEFAULT);
+                            bitmap = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
+
+                            binding.imageProfile.setImageBitmap(bitmap);
+
+                            //binding.textAddImage.setVisibility(View.GONE);
+                        }
+                        catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            });
     //endregion
 
     //region CALLBACKS FUNCTIONS
@@ -308,23 +339,7 @@ public class SignUpActivity extends BaseActivity {
         }
     };
 
-    private final ActivityResultLauncher<Intent> PickImage = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(), result -> {
-                if (result.getResultCode() == RESULT_OK) {
-                    if (result.getData() != null) {
-                        Uri imageUri = result.getData().getData();
-                        try {
-                            InputStream inputStream = getContentResolver().openInputStream(imageUri);
-                            Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-                            binding.imageProfile.setImageBitmap(bitmap);
-                            //binding.textAddImage.setVisibility(View.GONE);
-                            mEncodedAvatar = encodeImageSuper(bitmap);
-                        } catch (FileNotFoundException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            });
+
 
     public void onExistedPhoneNumberCheckComplete(@NonNull Task<QuerySnapshot> task) {
         loading(false);

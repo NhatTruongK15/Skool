@@ -90,15 +90,15 @@ public class EditUserProfileActivity extends BaseActivity {
                         database.collection(Constants.KEY_COLLECTION_USERS)
                                 .document(mCurrentUser.getID())
                                 .update(
-                                        Constants.KEY_BIO, binding.genderSpinner.getSelectedItem().toString()
+                                        Constants.KEY_GENDER, binding.genderSpinner.getSelectedItem().toString()
                                 );
                         break;
-                    case "Bio":
+                    case "bio":
                         dupUser.setLastName(binding.newValueForProfile.getText().toString());
                         database.collection(Constants.KEY_COLLECTION_USERS)
                                 .document(mCurrentUser.getID())
                                 .update(
-                                        Constants.KEY_BIO, binding.newValueForProfile.getText().toString()
+                                        Constants.KEY_BIO, binding.bioEditBox.getText().toString()
                                 );
                         break;
                 }
@@ -174,7 +174,7 @@ public class EditUserProfileActivity extends BaseActivity {
                 binding.typeLabel.setText("Gender");
                 binding.guideline.setText("Select your gender here.");
                 break;
-            case "Bio":
+            case "bio":
                 binding.bioEditBox.setVisibility(View.VISIBLE);
                 binding.typeLabel.setText("Bio");
                 binding.guideline.setText("Let us and everyone something about yourself here.");
