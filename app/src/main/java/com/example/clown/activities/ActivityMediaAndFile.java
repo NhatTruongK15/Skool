@@ -48,6 +48,7 @@ public class ActivityMediaAndFile extends BaseActivity {
 
     private ImageView display;
 
+
     private RecyclerView recyclerView;
 
     private List<MediaAndFile> mediaandfile;
