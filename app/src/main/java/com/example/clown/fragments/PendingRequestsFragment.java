@@ -75,7 +75,6 @@ public class PendingRequestsFragment extends Fragment implements ReceivedRequest
     public void onRequestItemClicked(User requester) {
 
     }
-
     @Override
     public void onAcceptBtnClicked(User requester) {
         Log.e(TAG, "Request Accepted!");

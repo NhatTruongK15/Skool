@@ -94,7 +94,7 @@ public class EditUserProfileActivity extends BaseActivity {
                                 );
                         break;
                     case "bio":
-                        dupUser.setLastName(binding.newValueForProfile.getText().toString());
+                        dupUser.setBio(binding.bioEditBox.getText().toString());
                         database.collection(Constants.KEY_COLLECTION_USERS)
                                 .document(mCurrentUser.getID())
                                 .update(

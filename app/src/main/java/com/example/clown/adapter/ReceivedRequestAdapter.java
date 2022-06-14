@@ -69,7 +69,7 @@ public class ReceivedRequestAdapter extends RecyclerView.Adapter<ReceivedRequest
                     mutualFriends.size() + " mutual friend";
         }
     }
-
+//034
     public interface IReceivedRequestItemListener {
         void onRequestItemClicked(User requester);
         void onAcceptBtnClicked(User requester);

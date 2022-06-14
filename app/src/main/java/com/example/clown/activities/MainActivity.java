@@ -36,6 +36,8 @@ public class MainActivity extends BaseActivity {
     private ConversationAdapter mBasicConversationAdapter;
     private ConversationAdapter mGroupConversationAdapter;
 
+
+
     public ConversationAdapter getBasicConversationAdapter() { return mBasicConversationAdapter; }
     public ConversationAdapter getGroupConversationAdapter() { return mGroupConversationAdapter; }
 
@@ -66,7 +68,7 @@ public class MainActivity extends BaseActivity {
         mGroupConversationAdapter = new ConversationAdapter(this, mGroupConversations, mCurrentUser.getID());
 
         setUpConversationsViewPager();
-        mConversationAdapter = new ConversationAdapter(getApplicationContext(),mConversations);
+
     }
 
     private void setUpConversationsViewPager() {
