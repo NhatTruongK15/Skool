@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -24,6 +25,7 @@ import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.SimpleDateFormat;
@@ -79,17 +81,31 @@ public class ActivityMediaAndFile extends BaseActivity {
 
     }
     private void listenMessages() {
-        database.collection(Constants.KEY_COLLECTION_CHAT)
-                .whereEqualTo(Constants.KEY_SENDER_ID, mCurrentUser.getID())
-                .whereEqualTo(Constants.KEY_RECEIVER_ID, receivedUserId)
-                .addSnapshotListener(eventListener);
-        database.collection(Constants.KEY_COLLECTION_CHAT)
-                .whereEqualTo(Constants.KEY_SENDER_ID, receivedUserId)
-                .whereEqualTo(Constants.KEY_RECEIVER_ID, mCurrentUser.getID())
-                .addSnapshotListener(eventListener);
-
-
+        if(checkGroupConversation(receivedUserId)) {
+            database.collection(Constants.KEY_COLLECTION_CHAT)
+                    .whereEqualTo(Constants.KEY_RECEIVER_ID,receivedUserId)
+                    .addSnapshotListener(eventGroupListener);
+        } else {
+            database.collection(Constants.KEY_COLLECTION_CHAT)
+                    .whereEqualTo(Constants.KEY_SENDER_ID, mCurrentUser.getID())
+                    .whereEqualTo(Constants.KEY_RECEIVER_ID, receivedUserId)
+                    .addSnapshotListener(eventListener);
+            database.collection(Constants.KEY_COLLECTION_CHAT)
+                    .whereEqualTo(Constants.KEY_SENDER_ID, receivedUserId)
+                    .whereEqualTo(Constants.KEY_RECEIVER_ID, mCurrentUser.getID())
+                    .addSnapshotListener(eventListener);
+        }
     }
+
+    private boolean checkGroupConversation(String conversationId) {
+        try {
+            Double.parseDouble(conversationId);
+            return true;
+        } catch (Exception ex) {
+            return false;
+        }
+    }
+
     private void init() {
         preferenceManager = new PreferenceManager(getApplicationContext());
         chatMessages = new ArrayList<>();
@@ -167,11 +183,50 @@ public class ActivityMediaAndFile extends BaseActivity {
             } else {
             }
         }
+
         binding.progressBar.setVisibility(View.INVISIBLE);
         if (conversationId == null) {
             checkConversation();
         }
     });
+
+    private final EventListener<QuerySnapshot> eventGroupListener = ((value1, error1) -> {
+        if (error1 != null) {
+            return;
+        }
+        if (value1 != null) {
+            int count = chatMessages.size();
+            for (DocumentChange documentChange : value1.getDocumentChanges()) {
+                if (documentChange.getType() == DocumentChange.Type.ADDED) {
+                    ChatMessage chatMessage = new ChatMessage();
+                    chatMessage.senderId = documentChange.getDocument().getString(Constants.KEY_SENDER_ID);
+                    chatMessage.receiverId = documentChange.getDocument().getString(Constants.KEY_RECEIVER_ID);
+                    chatMessage.message = documentChange.getDocument().getString(Constants.KEY_MESSAGE);
+                    chatMessage.videoPath=documentChange.getDocument().getString(Constants.KEY_MESSAGE_VIDEO);
+                    chatMessage.filePath=documentChange.getDocument().getString(Constants.KEY_MESSAGE_FILE);
+                    chatMessage.dateObject = documentChange.getDocument().getDate(Constants.KEY_TIMESTAMP);
+                    chatMessage.message_img_link=documentChange.getDocument().getString(Constants.KEY_MESSAGE_IMAGE_LINK);
+                    chatMessage.finame=documentChange.getDocument().getString(Constants.KEY_MESSAGE_FINAME);
+
+                    if(documentChange.getDocument().getString(Constants.KEY_MESSAGE_FINAME)!=null){
+                        SimpleDateFormat sdf=new SimpleDateFormat("dd/MM/yyyy");
+                        mediaandfile.add(new MediaAndFile(chatMessage.videoPath,chatMessage.message_img_link,chatMessage.filePath,chatMessage.finame, sdf.format(chatMessage.dateObject)));
+                    }
+
+                    chatMessages.add(chatMessage);
+                }
+            }
+            Collections.sort(chatMessages, (obj1, obj2) -> obj1.dateObject.compareTo(obj2.dateObject));
+            if (count == 0) {
+            } else {
+            }
+        }
+        binding.progressBar.setVisibility(View.INVISIBLE);
+        if (conversationId == null) {
+            checkConversation();
+        }
+    });
+
 
     private void openVidDisplay(){
         Context context = this;
