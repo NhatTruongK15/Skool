@@ -41,7 +41,7 @@ public class SignInActivity extends BaseActivity {
         super.onResume();
         // If the app has been signed in
         // then skip the sign in process
-        if (mPreferenceManager.getUser() != null) onAlreadySignedIn();
+        if (mPreferenceManager.getBoolean(Constants.KEY_IS_SIGNED_IN)) onAlreadySignedIn();
     }
 
     //region FUNCTIONS
@@ -168,6 +168,7 @@ public class SignInActivity extends BaseActivity {
 
             // Get validated user
             User validatedUser = task.getResult().getDocuments().get(0).toObject(User.class);
+            mPreferenceManager.putBoolean(Constants.KEY_IS_SIGNED_IN, true);
             mPreferenceManager.putUser(validatedUser);
             mCurrentUser.Clone(Objects.requireNonNull(validatedUser));
 

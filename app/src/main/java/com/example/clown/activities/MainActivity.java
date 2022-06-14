@@ -121,6 +121,8 @@ public class MainActivity extends BaseActivity {
     private void signOut() {
         showToast(Constants.TOAST_ON_SIGN_OUT);
 
+        mPreferenceManager.putBoolean(Constants.KEY_IS_SIGNED_IN, false);
+
         JobScheduler jobScheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
         jobScheduler.cancelAll();
 

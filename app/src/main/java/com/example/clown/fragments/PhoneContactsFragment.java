@@ -51,12 +51,20 @@ public class PhoneContactsFragment extends Fragment implements SuggestedUserAdap
             }
 
         setUpRecyclerView();
-        SetListener();
     };
 
-    private void SetListener() {
+    protected final ActivityResultLauncher<String> mActivityResultLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), bIsGranted -> {
+                if (bIsGranted) {
+                    Log.e(TAG, "Permission's granted!");
+                    getPhoneContacts(requireActivity().getApplicationContext());
 
-    }
+                    filterPhoneContactsAppUsers();
+                } else {
+                    Log.e(TAG, "Permission's denied!");
+                    ((ContactsActivity) requireActivity()).getContactViewPager().setCurrentItem(FRAGMENT_FRIENDS_POS, true);
+                }
+            });
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -131,20 +139,6 @@ public class PhoneContactsFragment extends Fragment implements SuggestedUserAdap
             cursor.close();
         }
     }
-
-    protected final ActivityResultLauncher<String> mActivityResultLauncher =
-            registerForActivityResult(new ActivityResultContracts.RequestPermission(), bIsGranted -> {
-                if (bIsGranted) {
-                    Log.e(TAG, "Permission's granted!");
-                    getPhoneContacts(requireActivity().getApplicationContext());
-
-                    filterPhoneContactsAppUsers();
-                } else {
-                    Log.e(TAG, "Permission's denied!");
-                    ((ContactsActivity) requireActivity()).getContactViewPager().setCurrentItem(FRAGMENT_FRIENDS_POS, true);
-                }
-            });
-
 
     @Override
     public void onSuggestedUserClicked(User suggestedUser) { // requester nguoi nhan

@@ -1,5 +1,6 @@
 package com.example.clown.activities;
 
+import static com.example.clown.activities.ContactsActivity.FRAGMENT_FRIENDS_POS;
 import static com.example.clown.utilities.Constants.HD_RES;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -237,6 +238,8 @@ public class SignUpActivity extends BaseActivity {
     private static final float PREFERRED_WIDTH = HD_RES;
     private static final float PREFERRED_HEIGHT = HD_RES;
 
+    private static final String TOAST_PICTURE_PERMISSION_DENIED = "Please accept permission to change your avatar";
+
     public static Bitmap resizeBitmap(Bitmap bitmap) {
         int width = bitmap.getWidth();
         int height = bitmap.getHeight();
@@ -254,6 +257,14 @@ public class SignUpActivity extends BaseActivity {
         bitmap.recycle();
         return resizedBitmap;
     }
+
+    protected final ActivityResultLauncher<String> mActivityResultLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), bIsGranted -> {
+                if (bIsGranted) {
+                    Log.e(TAG, "Permission's granted!");
+                } else { showToast(TOAST_PICTURE_PERMISSION_DENIED); }
+            });
+
     private final ActivityResultLauncher<Intent> PickImage = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(), result -> {
                 if (result.getResultCode() == RESULT_OK) {
@@ -338,8 +349,6 @@ public class SignUpActivity extends BaseActivity {
             binding.verificationCodeEditText.setHint(R.string.verification_code_hint);
         }
     };
-
-
 
     public void onExistedPhoneNumberCheckComplete(@NonNull Task<QuerySnapshot> task) {
         loading(false);
