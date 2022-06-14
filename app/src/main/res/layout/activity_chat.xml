@@ -175,6 +175,7 @@
             android:layout_width="65dp"
             android:layout_height="63dp"
             android:padding="@dimen/_8sdp"
+            android:visibility="gone"
             android:src="@drawable/ic_emoji"
             app:tint="@color/white" />
 
@@ -191,7 +192,7 @@
         android:imeOptions="actionDone"
         android:importantForAutofill="no"
         android:inputType="text"
-        android:paddingStart="@dimen/_16sdp"
+        android:paddingStart="@dimen/_5sdp"
         android:paddingEnd="@dimen/_16sdp"
         android:textColor="@color/white"
         android:textColorHint="@color/secondary_text"
