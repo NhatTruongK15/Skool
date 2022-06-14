@@ -29,6 +29,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Clown">
         <activity
+            android:name=".activities.CommunityActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.PendingProfileActivity"
             android:exported="false" />
         <activity

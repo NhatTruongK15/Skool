@@ -101,6 +101,7 @@ public class SuggestedUserAdapter extends RecyclerView.Adapter<SuggestedUserAdap
 
 
     }
+
     public interface ISuggestedUserListener {
         void onSuggestedUserClicked(User suggestedUser);
     }

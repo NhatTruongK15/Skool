@@ -1,6 +1,5 @@
 package com.example.clown.activities;
 
-import static com.example.clown.activities.ContactsActivity.FRAGMENT_FRIENDS_POS;
 import static com.example.clown.utilities.Constants.HD_RES;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -51,8 +50,8 @@ public class SignUpActivity extends BaseActivity {
     private static final String TAG = SignUpActivity.class.getName();
 
     private static final String PHONE_NUMBER_PREFIX = "+84";
-    private static final float PREFERRED_VALUE_FLOAT = 720;
-    private static final int PREFERRED_VALUE_INT = 720;
+    private static final float PREFERRED_WIDTH = HD_RES;
+    private static final float PREFERRED_HEIGHT = HD_RES;
 
     private ActivitySignUpBinding binding;
     private String mEncodedAvatar;
@@ -89,13 +88,13 @@ public class SignUpActivity extends BaseActivity {
 
     private void setListeners() {
         binding.textSignIn.setOnClickListener(v -> onBackPressed());
-        binding.layoutImage.setOnClickListener(v -> getAvatarFromStorage());
+        binding.layoutImage.setOnClickListener(v -> pickImage());
         binding.buttonSignUp.setOnClickListener(v -> signUp());
         binding.confirmButton.setOnClickListener(v -> onSubmitVerificationCode());
         binding.resendContent.setOnClickListener(v -> resendCode());
     }
 
-    private void getAvatarFromStorage() {
+    private void pickImage() {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         PickImage.launch(intent);
@@ -235,10 +234,6 @@ public class SignUpActivity extends BaseActivity {
         byte[] bytes = byteArrayOutputStream.toByteArray();
         return Base64.encodeToString(bytes, Base64.DEFAULT);
     }
-    private static final float PREFERRED_WIDTH = HD_RES;
-    private static final float PREFERRED_HEIGHT = HD_RES;
-
-    private static final String TOAST_PICTURE_PERMISSION_DENIED = "Please accept permission to change your avatar";
 
     public static Bitmap resizeBitmap(Bitmap bitmap) {
         int width = bitmap.getWidth();
@@ -250,20 +245,9 @@ public class SignUpActivity extends BaseActivity {
         matrix.postScale(scaleWidth, scaleHeight);
         Bitmap resizedBitmap = Bitmap.createBitmap(
                 bitmap, 0, 0, width, height, matrix, false);
-      /*  if (resizedBitmap != null && !resizedBitmap.isRecycled()) {
-            resizedBitmap.recycle();
-            resizedBitmap = null;
-        }*/
         bitmap.recycle();
         return resizedBitmap;
     }
-
-    protected final ActivityResultLauncher<String> mActivityResultLauncher =
-            registerForActivityResult(new ActivityResultContracts.RequestPermission(), bIsGranted -> {
-                if (bIsGranted) {
-                    Log.e(TAG, "Permission's granted!");
-                } else { showToast(TOAST_PICTURE_PERMISSION_DENIED); }
-            });
 
     private final ActivityResultLauncher<Intent> PickImage = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(), result -> {

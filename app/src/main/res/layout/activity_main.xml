@@ -19,7 +19,8 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/nearlyEveryThingConstraintLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/_10sdp">
 
             <ImageView
                 android:id="@+id/imageMenu"
@@ -55,12 +56,29 @@
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@id/imageMenu"/>
 
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/vp2Conversations"
-            android:orientation="horizontal"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/white"/>
+            android:background="@color/white">
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/vp2Conversations"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/white"/>
+
+            <com.makeramen.roundedimageview.RoundedImageView
+                android:id="@+id/btnFindFriend"
+                android:layout_width="@dimen/_45sdp"
+                android:layout_height="@dimen/_45sdp"
+                android:background="@drawable/btn_find_user"
+                android:src="@drawable/ic_add"
+                android:padding="@dimen/_10sdp"
+                android:layout_marginEnd="@dimen/_30sdp"
+                android:layout_marginBottom="@dimen/_45sdp"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </LinearLayout>
     <!--nav bar Layout-->
         <!--menu sidebar-->

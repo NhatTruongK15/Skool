@@ -8,6 +8,7 @@
     android:overScrollMode="never"
     android:padding="@dimen/_24sdp"
     android:scrollbars="none"
+    android:background="@color/white"
     tools:context=".activities.SignInActivity">
 
     <LinearLayout

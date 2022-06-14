@@ -36,8 +36,6 @@ public class MainActivity extends BaseActivity {
     private ConversationAdapter mBasicConversationAdapter;
     private ConversationAdapter mGroupConversationAdapter;
 
-
-
     public ConversationAdapter getBasicConversationAdapter() { return mBasicConversationAdapter; }
     public ConversationAdapter getGroupConversationAdapter() { return mGroupConversationAdapter; }
 
@@ -116,6 +114,14 @@ public class MainActivity extends BaseActivity {
         binding.buttonContact.setOnClickListener(v -> startActivity(TAG, ContactsActivity.class, null));
         binding.llcNewGroup.setOnClickListener(v -> startActivity(TAG, NewGroupActivity.class, null));
         binding.imageProfile.setOnClickListener(v -> startActivity(TAG, MyProfileActivity.class, null));
+        binding.btnFindFriend.setOnClickListener(v -> onFindFriendBtnClicked());
+    }
+
+    private void onFindFriendBtnClicked() {
+        if (binding.tlMainActivity.getSelectedTabPosition() == 1)
+            startActivity(TAG, NewGroupActivity.class, null);
+        else
+            startActivity(TAG, CommunityActivity.class, null);
     }
 
     private void signOut() {
