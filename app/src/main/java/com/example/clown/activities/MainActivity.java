@@ -116,11 +116,11 @@ public class MainActivity extends BaseActivity implements ConversationAdapter.IC
     }
 
     private void setListeners() {
-        binding.imageSignOut.setOnClickListener(v -> signOut());
+        binding.llcLogout.setOnClickListener(v -> signOut());
         binding.imageMenu.setOnClickListener(v -> binding.drawerLayout.openDrawer(GravityCompat.START));
         binding.buttonContact.setOnClickListener(v -> startActivity(TAG, ContactsActivity.class, null));
         binding.llcNewGroup.setOnClickListener(v -> startActivity(TAG, NewGroupActivity.class, null));
-        binding.imageProfile.setOnClickListener(v -> startActivity(TAG, MyProfileActivity.class, null));
+        binding.btnSetting.setOnClickListener(v -> startActivity(TAG, MyProfileActivity.class, null));
         binding.btnFindFriend.setOnClickListener(v -> onFindFriendBtnClicked());
         binding.llcLogout.setOnClickListener(v->signOut());
     }
@@ -223,8 +223,6 @@ public class MainActivity extends BaseActivity implements ConversationAdapter.IC
                         updateConversation(docChange, docChange.getOldIndex()); break;
                 }
             }
-        Collections.sort(mBasicConversations,(obj1,obj2) -> obj2.getTimeStamp().compareTo(obj1.getTimeStamp()));
-        Collections.sort(mGroupConversations,(obj1,obj2) -> obj2.getTimeStamp().compareTo(obj1.getTimeStamp()));
     };
 
     @Override

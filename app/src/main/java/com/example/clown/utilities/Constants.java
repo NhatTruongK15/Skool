@@ -140,6 +140,7 @@ public class Constants {
     public static final String KEY_TRANSFER_DATA = "transferData";
 
     // SignIn Activity
+    public static final String TOAST_ACCOUNT_SIGNED_IN = "This account has been signed in!";
     public static final String TOAST_EMPTY_EMAIL_OR_PHONE_NUMBER = "Empty email or phone number!";
     public static final String TOAST_INVALID_EMAIL_OR_PHONE_NUMBER = "Invalid email or phone number!";
     public static final String TOAST_EMPTY_PASSWORD = "Empty password!";

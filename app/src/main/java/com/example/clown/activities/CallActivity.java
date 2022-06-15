@@ -74,6 +74,8 @@ public class CallActivity extends BaseActivity {
         initMembers();
         initUI();
         initRtc();
+        mRtcEngine.enableAudio();
+        mRtcEngine.enableLocalAudio(true);
     }
 
     private void initRtc() {
@@ -301,6 +303,12 @@ public class CallActivity extends BaseActivity {
             super.onUserJoined(uid, elapsed);
             isConnected = true;
             startTimer();
+        }
+
+        @Override
+        public void onJoinChannelSuccess(String channel, int uid, int elapsed) {
+            super.onJoinChannelSuccess(channel, uid, elapsed);
+
         }
 
         @Override
