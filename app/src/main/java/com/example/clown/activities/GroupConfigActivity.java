@@ -175,12 +175,12 @@ public class GroupConfigActivity extends BaseActivity {
     //endregion
 
     //region Utilities
-    private void loading(Boolean isLoading) {
+    /*private void loading(Boolean isLoading) {
         if (isLoading) {
             binding.progressBar.setVisibility(View.VISIBLE);
         } else {
             binding.progressBar.setVisibility(View.INVISIBLE);
         }
-    }
+    }*/
     //endregion
 }

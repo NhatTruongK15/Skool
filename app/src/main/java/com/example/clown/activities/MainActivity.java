@@ -36,8 +36,13 @@ public class MainActivity extends BaseActivity {
     private ConversationAdapter mBasicConversationAdapter;
     private ConversationAdapter mGroupConversationAdapter;
 
-    public ConversationAdapter getBasicConversationAdapter() { return mBasicConversationAdapter; }
-    public ConversationAdapter getGroupConversationAdapter() { return mGroupConversationAdapter; }
+    public ConversationAdapter getBasicConversationAdapter() {
+        return mBasicConversationAdapter;
+    }
+
+    public ConversationAdapter getGroupConversationAdapter() {
+        return mGroupConversationAdapter;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +67,11 @@ public class MainActivity extends BaseActivity {
         mBasicConversations = new ArrayList<>();
         mGroupConversations = new ArrayList<>();
 
+        if (mCurrentUser == null) {
+            showToast("null currenuser");
+            return;
+        }
+
         mBasicConversationAdapter = new ConversationAdapter(this, mBasicConversations, mCurrentUser.getID());
         mGroupConversationAdapter = new ConversationAdapter(this, mGroupConversations, mCurrentUser.getID());
 
@@ -81,7 +91,7 @@ public class MainActivity extends BaseActivity {
 
         // Connect ViewPager2 with TabLayout
         new TabLayoutMediator(
-                binding.tlMainActivity, 
+                binding.tlMainActivity,
                 binding.vp2Conversations,
                 this::configConversationViewPager)
                 .attach();
@@ -180,13 +190,14 @@ public class MainActivity extends BaseActivity {
             for (DocumentChange docChange : value.getDocumentChanges()) {
                 switch (docChange.getType()) {
                     case ADDED:
-                        addConversation(docChange, docChange.getNewIndex()); break;
-
+                        addConversation(docChange, docChange.getNewIndex());
+                        break;
                     case REMOVED:
-                        removeConversation(docChange.getOldIndex()); break;
-
+                        removeConversation(docChange.getOldIndex());
+                        break;
                     case MODIFIED:
-                        updateConversation(docChange, docChange.getOldIndex()); break;
+                        updateConversation(docChange, docChange.getOldIndex());
+                        break;
                 }
             }
     };
