@@ -20,6 +20,7 @@ public class User implements Serializable {
     private String mPhoneNumber;
     private String mPassword;
     private String mEmail;
+    private String mFcmToken;
 
     // Personal
     private String mAvatar;
@@ -50,6 +51,9 @@ public class User implements Serializable {
 
     @PropertyName(Constants.KEY_PASSWORD) public String getPassword() { return mPassword; }
     @PropertyName(Constants.KEY_PASSWORD) public void setPassword(String mPassword) { this.mPassword = mPassword; }
+
+    @PropertyName(Constants.KEY_FCM_TOKEN) public String getFcmToken() { return mFcmToken; }
+    @PropertyName(Constants.KEY_FCM_TOKEN) public void setFcmToken(String mFcmToken) { this.mFcmToken = mFcmToken; }
 
     @PropertyName(Constants.KEY_AVATAR) public String getAvatar() { return mAvatar; }
     @PropertyName(Constants.KEY_AVATAR) public void setAvatar(String avatar) { this.mAvatar = avatar; }

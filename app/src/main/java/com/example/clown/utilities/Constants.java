@@ -1,7 +1,5 @@
 package com.example.clown.utilities;
 
-import android.app.Application;
-
 import java.util.HashMap;
 
 public class Constants {
@@ -17,7 +15,6 @@ public class Constants {
     public static final String KEY_REFERENCE_NAME = "clown";
     public static final String KEY_IS_SIGNED_IN = "isSignedIn";
     public static final String KEY_DOCUMENT_REFERENCE_ID = "documentReferenceID"; // userID cũ (  thực chất là ID của document )
-    public static final String KEY_FCM_TOKEN = "fcmToken";
     public static final String KEY_EDIT_PROFILETYPE = "editProfileType";
     public static final String KEY_USER = "user";
     public static final String KEY_COLLECTION_CHAT = "chat";
@@ -48,6 +45,7 @@ public class Constants {
     public static final String KEY_PASSWORD = "password";
     public static final String KEY_PHONE_NUMBER = "phoneNumber";
     public static final String KEY_EMAIL = "email";
+    public static final String KEY_FCM_TOKEN = "fcmToken";
     public static final String KEY_AVATAR = "avatar";
     public static final String KEY_AVAILABILITY="availability";
     public static final String KEY_FIRST_NAME = "firstName";
