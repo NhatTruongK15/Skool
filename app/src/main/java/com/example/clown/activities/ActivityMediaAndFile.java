@@ -62,7 +62,7 @@ public class ActivityMediaAndFile extends BaseActivity {
         binding = ActivityMediaAndFileBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         binding.imageBack.setOnClickListener(v-> onBackPressed());
-        mediaandfile=new ArrayList<>() ;
+        mediaandfile = new ArrayList<>() ;
         init();
         loadReceiverDetails();
         listenMessages();
@@ -76,14 +76,6 @@ public class ActivityMediaAndFile extends BaseActivity {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(new MediaAndFileAdapter(this,mediaandfile));
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-            Intent intent = new Intent(this,MainActivity.class);
-            startActivity(intent);
-
     }
 
     private void listenMessages() {
