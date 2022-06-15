@@ -73,10 +73,9 @@ public class ActivityMediaAndFile extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-//        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-//        startActivity(intent);
-//        finish();
+//        super.onBackPressed();
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        startActivity(intent);
     }
 
     private void loadRecyclerView() {

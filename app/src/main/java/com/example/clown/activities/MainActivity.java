@@ -27,7 +27,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class MainActivity extends BaseActivity {
+public class MainActivity extends BaseActivity implements ConversationAdapter.IConversationItemListener{
     public static final String TAG = MainActivity.class.getName();
 
     private ActivityMainBinding binding;
@@ -69,8 +69,8 @@ public class MainActivity extends BaseActivity {
             return;
         }
 
-        mBasicConversationAdapter = new ConversationAdapter(this, mBasicConversations, mCurrentUser.getID());
-        mGroupConversationAdapter = new ConversationAdapter(this, mGroupConversations, mCurrentUser.getID());
+        mBasicConversationAdapter = new ConversationAdapter(this, mBasicConversations, mCurrentUser.getID(),this);
+        mGroupConversationAdapter = new ConversationAdapter(this, mGroupConversations, mCurrentUser.getID(),this);
 
         setUpConversationsViewPager();
 
@@ -188,7 +188,6 @@ public class MainActivity extends BaseActivity {
             mBasicConversationAdapter.notifyItemChanged(oldIndex);
         } else {
             // Group conversation changed
-            oldIndex = oldIndex - mBasicConversations.size();
             mGroupConversations.set(oldIndex, modifiedConversation);
             mGroupConversationAdapter.notifyItemChanged(oldIndex);
         }
@@ -222,6 +221,15 @@ public class MainActivity extends BaseActivity {
                         updateConversation(docChange, docChange.getOldIndex()); break;
                 }
             }
+        Collections.sort(mBasicConversations,(obj1,obj2) -> obj2.getTimeStamp().compareTo(obj1.getTimeStamp()));
+        Collections.sort(mGroupConversations,(obj1,obj2) -> obj2.getTimeStamp().compareTo(obj1.getTimeStamp()));
     };
+
+    @Override
+    public void onConversationClicked(Conversation conversation) {
+        Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
+        intent.putExtra(Constants.KEY_COLLECTION_CONVERSATIONS, conversation);
+        this.startActivity(intent);
+    }
     //endregion
 }

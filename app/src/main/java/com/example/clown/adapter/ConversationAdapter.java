@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.clown.activities.ChatActivity;
 import com.example.clown.databinding.ItemConversationBinding;
 import com.example.clown.models.Conversation;
+import com.example.clown.models.User;
 import com.example.clown.utilities.Constants;
 
 import java.util.List;
@@ -24,14 +25,16 @@ public class ConversationAdapter extends RecyclerView.Adapter<ConversationAdapte
     private final String mUserID;
     private final Context mContext;
 
+    private final IConversationItemListener iConversationItemListener;
     private static final int BASIC_CONVERSATION = 0;
     private static final int GROUP_CONVERSATION = 1;
 
-    public ConversationAdapter(Context context, List<Conversation> dataSet, String userID) {
+    public ConversationAdapter(Context context, List<Conversation> dataSet, String userID, IConversationItemListener iConversationItemListener) {
         Log.e(TAG, "Initialized!");
         this.mConversationIDs = dataSet;
         this.mContext = context;
         this.mUserID = userID;
+        this.iConversationItemListener = iConversationItemListener;
     }
 
     @NonNull
@@ -95,7 +98,7 @@ public class ConversationAdapter extends RecyclerView.Adapter<ConversationAdapte
             binding.textName.setText(name);
             binding.imageProfile.setImageBitmap(image);
             binding.textRecentMessage.setText(onConversation.getLastMessage());
-            binding.getRoot().setOnClickListener(v -> beginChat(onConversation));
+            binding.getRoot().setOnClickListener(v -> iConversationItemListener.onConversationClicked(onConversation));
         }
 
         private void beginChat(Conversation conversation) {
@@ -104,4 +107,10 @@ public class ConversationAdapter extends RecyclerView.Adapter<ConversationAdapte
             mContext.startActivity(intent);
         }
     }
+
+    public interface IConversationItemListener {
+        void onConversationClicked(Conversation conversation);
+    }
+
+
 }

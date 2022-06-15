@@ -147,7 +147,8 @@ public class ChatActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        listenAvailabilityOfReceiver();
+        if(!checkGroupConversation)
+            listenAvailabilityOfReceiver();
     }
 
     private void init() {
@@ -563,37 +564,33 @@ public class ChatActivity extends BaseActivity {
     }
 
     private void listenAvailabilityOfReceiver() {
-        if (!checkGroupConversation)
-            database
-                    .collection(Constants.KEY_COLLECTION_USERS)
-                    .document(mReceiverId)
-                    .addSnapshotListener(ChatActivity.this, (value, error) -> {
-                        if (error != null) {
-                            return;
+        database
+                .collection(Constants.KEY_COLLECTION_USERS)
+                .document(mReceiverId)
+                .addSnapshotListener(ChatActivity.this, (value, error) -> {
+                    if (error != null) {
+                        return;
+                    }
+                    if (value != null) {
+                        if (value.getBoolean(Constants.KEY_AVAILABILITY) != null) {
+                            boolean availability = Objects.requireNonNull(
+                                    value.getBoolean(Constants.KEY_AVAILABILITY)
+                            );
+                            isReceiverAvailable = availability;
                         }
-                        if (value != null) {
-                            if (value.getBoolean(Constants.KEY_AVAILABILITY) != null) {
-                                boolean availability = Objects.requireNonNull(
-                                        value.getBoolean(Constants.KEY_AVAILABILITY)
-                                );
-                                isReceiverAvailable = availability;
-                            }
-                            receiverUser.setFcmToken(value.getString(Constants.KEY_FCM_TOKEN));
-                            if (receiverUser.getAvatar() == null) {
-                                receiverUser.setAvatar(value.getString(Constants.KEY_AVATAR));
-                                chatAdapter.setReceiverProfileImage(mReceiverBitmapAvatar);
-                                chatAdapter.notifyItemRangeChanged(0, chatMessages.size());
-                            }
+                        receiverUser.setFcmToken(value.getString(Constants.KEY_FCM_TOKEN));
+                        if (receiverUser.getAvatar() == null) {
+                            receiverUser.setAvatar(value.getString(Constants.KEY_AVATAR));
+                            chatAdapter.setReceiverProfileImage(mReceiverBitmapAvatar);
+                            chatAdapter.notifyItemRangeChanged(0, chatMessages.size());
                         }
-                        if (isReceiverAvailable) {
-                            binding.textAvailability.setVisibility(View.VISIBLE);
-                        } else {
-                            binding.textAvailability.setVisibility(View.GONE);
-                        }
-                    });
-        else{
-            isReceiverAvailable = false;
-        }
+                    }
+                    if (isReceiverAvailable) {
+                        binding.textAvailability.setVisibility(View.VISIBLE);
+                    } else {
+                        binding.textAvailability.setVisibility(View.GONE);
+                    }
+                });
 
     }
 
@@ -745,6 +742,7 @@ public class ChatActivity extends BaseActivity {
         adminList = (ArrayList<String>) getIntent().getSerializableExtra(Constants.KEY_LIST_GROUP_ADMIN);
         memberList = (ArrayList<String>) getIntent().getSerializableExtra(Constants.KEY_LIST_GROUP_MEMBER);
         binding.textName.setText(mReceiverName);
+
 
 
     }
