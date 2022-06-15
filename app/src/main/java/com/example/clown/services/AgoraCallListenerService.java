@@ -10,6 +10,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
+
+import androidx.core.content.ContextCompat;
 
 import com.example.clown.activities.CallActivity;
 import com.example.clown.activities.CallReceivedActivity;
@@ -73,8 +76,10 @@ public class AgoraCallListenerService extends JobService implements IEventListen
 
     @Override
     public boolean onStartJob(JobParameters params) {
+        showToast("Agora job service started");
+        
         Initialize();
-
+        
         logIn();
 
         startListener(params);
@@ -84,7 +89,7 @@ public class AgoraCallListenerService extends JobService implements IEventListen
 
     @Override
     public boolean onStopJob(JobParameters params) {
-        Log.e(TAG, "AgoraService stopped!");
+        showToast("AgoraService stopped!");
 
         cleanUp();
 
@@ -132,6 +137,8 @@ public class AgoraCallListenerService extends JobService implements IEventListen
 
             //noinspection StatementWithEmptyBody
             while (!mIsCanceled);
+
+            showToast ("Agora job service finished!");
 
             logOut();
 
@@ -182,6 +189,7 @@ public class AgoraCallListenerService extends JobService implements IEventListen
 
     private void logIn() {
         try {
+            showToast("Agora logged in!");
             String mRtmToken = rtmTokenGenerator();
             mRtmClient.login(mRtmToken, mUserId, this);
             mIsLoggedIn = true;
@@ -191,6 +199,7 @@ public class AgoraCallListenerService extends JobService implements IEventListen
 
     private void logOut() {
         try {
+            showToast("Agora logged out!");
             mRtmClient.logout(this);
             mIsLoggedIn = false;
             Log.e(TAG, "Agora logged out!");
@@ -226,6 +235,12 @@ public class AgoraCallListenerService extends JobService implements IEventListen
         } catch (Exception ex) {
             Log.e("[ERROR] ", ex.getMessage());
         }
+    }
+
+    private void showToast(String msg) {
+        ContextCompat
+                .getMainExecutor(getApplicationContext())
+                .execute(() -> Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show());
     }
     //endregion
 

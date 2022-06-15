@@ -86,7 +86,7 @@ public class SuggestedUserAdapter extends RecyclerView.Adapter<SuggestedUserAdap
             binding.tvRequestSent.setVisibility(View.GONE);
             binding.btnAddFriend.setVisibility(View.VISIBLE);
 
-            binding.btnAddFriend.setOnClickListener(v -> requestItemListener.onSuggestedUserClicked(onUser));
+            binding.btnAddFriend.setOnClickListener(v -> requestItemListener.onSentFriendRequest(onUser));
             //endregion
         }
 
@@ -127,6 +127,6 @@ public class SuggestedUserAdapter extends RecyclerView.Adapter<SuggestedUserAdap
     }
 
     public interface ISuggestedUserListener {
-        void onSuggestedUserClicked(User suggestedUser);
+        void onSentFriendRequest(User suggestedUser);
     }
 }

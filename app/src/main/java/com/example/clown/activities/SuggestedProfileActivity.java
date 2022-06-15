@@ -13,6 +13,8 @@ import com.example.clown.utilities.Constants;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 import java.util.Objects;
 
 public class SuggestedProfileActivity extends BaseActivity {
@@ -51,6 +53,12 @@ public class SuggestedProfileActivity extends BaseActivity {
         binding.tvUsername.setText(mSuggestedUser.getUsername());
         binding.tvProfileEmail.setText(mSuggestedUser.getEmail());
         binding.optAddFriend.setOnClickListener(v -> addFriend());
+        binding.tvProfileBio.setText(mSuggestedUser.getBio());
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(Constants.PATTERN_DATE_ONLY_FORMATTER, Locale.CHINA);
+        binding.tvProfileDateOfBirth.setText(simpleDateFormat.format(mSuggestedUser.getDateOfBirth()));
+        binding.tvFirstName.setText(mSuggestedUser.getFirstName());
+        binding.tvLastName.setText(mSuggestedUser.getLastName());
+        binding.tvProfileGender.setText(mSuggestedUser.getGender());
 
         if (mCurrentUser.getSentRequests().contains(mSuggestedUser.getID()))
             disableAddFriendOption();
@@ -84,14 +92,18 @@ public class SuggestedProfileActivity extends BaseActivity {
                 .getInstance()
                 .collection(Constants.KEY_COLLECTION_USERS)
                 .document(mSuggestedUser.getID())
-                .update("pendingRequests", FieldValue.arrayUnion(mCurrentUser.getID()));
+                .update(Constants.KEY_RECEIVED_REQUESTS, FieldValue.arrayUnion(mCurrentUser.getID()));
     }
 
     private void updateCurrentUserSentRequests() {
+        User temp = new User();
+        temp.Clone(mCurrentUser);
+        temp.getSentRequests().add(mSuggestedUser.getID());
+        mPreferenceManager.putUser(temp);
         FirebaseFirestore
                 .getInstance()
                 .collection(Constants.KEY_COLLECTION_USERS)
                 .document(mCurrentUser.getID())
-                .update("sentRequests", FieldValue.arrayUnion(mSuggestedUser.getID()));
+                .update(Constants.KEY_SENT_REQUESTS, FieldValue.arrayUnion(mSuggestedUser.getID()));
     }
 }

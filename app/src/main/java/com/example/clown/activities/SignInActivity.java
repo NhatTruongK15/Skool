@@ -173,7 +173,7 @@ public class SignInActivity extends BaseActivity {
             mCurrentUser.Clone(Objects.requireNonNull(validatedUser));
 
             // Start app's background listener
-            startAppService();
+            isJobServiceOn(getApplicationContext());
 
             // Go to main activity
             startActivity(TAG, MainActivity.class, null);

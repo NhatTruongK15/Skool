@@ -38,13 +38,8 @@ public class MainActivity extends BaseActivity {
     private ConversationAdapter mBasicConversationAdapter;
     private ConversationAdapter mGroupConversationAdapter;
 
-    public ConversationAdapter getBasicConversationAdapter() {
-        return mBasicConversationAdapter;
-    }
-
-    public ConversationAdapter getGroupConversationAdapter() {
-        return mGroupConversationAdapter;
-    }
+    public ConversationAdapter getBasicConversationAdapter() { return mBasicConversationAdapter; }
+    public ConversationAdapter getGroupConversationAdapter() { return mGroupConversationAdapter; }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,6 +129,8 @@ public class MainActivity extends BaseActivity {
             startActivity(TAG, NewGroupActivity.class, null);
         else
             startActivity(TAG, CommunityActivity.class, null);
+        finish();
+    }
 
 
     private void signOut() {
@@ -154,12 +151,46 @@ public class MainActivity extends BaseActivity {
 
         if (isBasicConversation(newConversation)) {
             // Got a new friend! - New basic conversation
+            newIndex = newIndex - mGroupConversations.size();
             mBasicConversations.add(newConversation);
             mBasicConversationAdapter.notifyItemInserted(newIndex);
         } else {
             // Join a group! - New group conversation
+            newIndex = newIndex - mBasicConversations.size();
             mGroupConversations.add(newConversation);
             mGroupConversationAdapter.notifyItemInserted(newIndex);
+        }
+    }
+
+    private void removeConversation(DocumentChange docChange) {
+        Conversation removingConversation = docChange.getDocument().toObject(Conversation.class);
+
+        if (isBasicConversation(removingConversation)) {
+            // Remove a friend! - Remove basic conversation
+            int index = mBasicConversations.indexOf(removingConversation);
+            mBasicConversations.remove(removingConversation);
+            mBasicConversationAdapter.notifyItemRemoved(index);
+        } else {
+            // Leave a group! - Remove group conversation
+            int index = mGroupConversations.indexOf(removingConversation);
+            mGroupConversations.remove(removingConversation);
+            mGroupConversationAdapter.notifyItemRemoved(index);
+        }
+    }
+
+    private void updateConversation(DocumentChange docChange, int oldIndex) {
+        Conversation modifiedConversation = docChange.getDocument().toObject(Conversation.class);
+
+        if (isBasicConversation(modifiedConversation)) {
+            // Basic conversation changed
+            oldIndex = oldIndex - mGroupConversations.size();
+            mBasicConversations.set(oldIndex, modifiedConversation);
+            mBasicConversationAdapter.notifyItemChanged(oldIndex);
+        } else {
+            // Group conversation changed
+            oldIndex = oldIndex - mBasicConversations.size();
+            mGroupConversations.set(oldIndex, modifiedConversation);
+            mGroupConversationAdapter.notifyItemChanged(oldIndex);
         }
     }
 
@@ -171,15 +202,6 @@ public class MainActivity extends BaseActivity {
             return true;
         }
     }
-
-    private void removeConversation(int oldIndex) {
-        mBasicConversations.remove(oldIndex);
-    }
-
-    private void updateConversation(DocumentChange docChange, int oldIndex) {
-
-    }
-
     //region CALLBACKS
     private final EventListener<QuerySnapshot> mConversationListener = (value, error) -> {
         if (error != null) {
@@ -189,21 +211,17 @@ public class MainActivity extends BaseActivity {
 
         if (value != null && !value.isEmpty())
             for (DocumentChange docChange : value.getDocumentChanges()) {
-
                 switch (docChange.getType()) {
                     case ADDED:
-                        addConversation(docChange, docChange.getNewIndex());
-                        break;
+                        addConversation(docChange, docChange.getNewIndex()); break;
+
                     case REMOVED:
-                        removeConversation(docChange.getOldIndex());
-                        break;
+                        removeConversation(docChange); break;
+
                     case MODIFIED:
-                        updateConversation( docChange, docChange.getOldIndex());
-                        break;
+                        updateConversation(docChange, docChange.getOldIndex()); break;
                 }
             }
-        Collections.sort(mBasicConversations, (obj1, obj2) -> obj2.getTimeStamp().compareTo(obj1.getTimeStamp()));
-        Collections.sort(mGroupConversations, (obj1, obj2) -> obj2.getTimeStamp().compareTo(obj1.getTimeStamp()));
     };
     //endregion
 }

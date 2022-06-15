@@ -44,6 +44,7 @@ public class UserListenerService extends JobService {
     @Override
     public boolean onStartJob(JobParameters params) {
         Log.e(TAG, "UserListener started!");
+        showToast("UserListener started!");
 
         Initialize();
 
@@ -58,6 +59,7 @@ public class UserListenerService extends JobService {
 
     @Override
     public boolean onStopJob(JobParameters params) {
+        showToast("UserListener stopped!");
         Log.e(TAG, "UserListener stopped!");
 
         //updateUserAvailability();
@@ -124,7 +126,6 @@ public class UserListenerService extends JobService {
         Log.e(TAG, "UserListener stared!");
 
         Runnable task = () -> {
-
             //noinspection StatementWithEmptyBody
             while (!mIsCanceled);
 
