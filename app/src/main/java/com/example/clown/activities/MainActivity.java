@@ -116,7 +116,7 @@ public class MainActivity extends BaseActivity implements ConversationAdapter.IC
     }
 
     private void setListeners() {
-        binding.imageSignOut.setOnClickListener(v -> signOut());
+        //binding.imageSignOut.setOnClickListener(v -> signOut());
         binding.imageMenu.setOnClickListener(v -> binding.drawerLayout.openDrawer(GravityCompat.START));
         binding.buttonContact.setOnClickListener(v -> startActivity(TAG, ContactsActivity.class, null));
         binding.llcNewGroup.setOnClickListener(v -> startActivity(TAG, NewGroupActivity.class, null));

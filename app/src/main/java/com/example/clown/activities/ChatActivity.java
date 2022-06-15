@@ -54,6 +54,7 @@ import com.example.clown.adapter.GroupChatAdapter;
 import com.example.clown.databinding.ActivityChatBinding;
 import com.example.clown.models.ChatMessage;
 import com.example.clown.models.Conversation;
+import com.example.clown.models.MediaAndFile;
 import com.example.clown.models.User;
 import com.example.clown.network.APIClient;
 import com.example.clown.network.APIService;
@@ -147,7 +148,7 @@ public class ChatActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if(!checkGroupConversation)
+        if (!checkGroupConversation)
             listenAvailabilityOfReceiver();
     }
 
@@ -743,10 +744,23 @@ public class ChatActivity extends BaseActivity {
         memberList = (ArrayList<String>) getIntent().getSerializableExtra(Constants.KEY_LIST_GROUP_MEMBER);
         binding.textName.setText(mReceiverName);
 
+        FirebaseFirestore
+                .getInstance()
+                .collection(Constants.KEY_COLLECTION_USERS)
+                .document(mReceiverId)
+                .addSnapshotListener(eventListener);
 
 
     }
 
+    private final EventListener<DocumentSnapshot> eventListener = ((docSnap, error) -> {
+        if (error != null) {
+            return;
+        }
+        if (docSnap != null && docSnap.exists() ) {
+            receiverUser = docSnap.toObject(User.class);
+        }
+    });
     private final OnCompleteListener<DocumentSnapshot> mOnLoadsCompleted = (task -> {
         if (task.isSuccessful()) {
             User temp = task.getResult().toObject(User.class);
