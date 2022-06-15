@@ -134,7 +134,7 @@ public class ChatActivity extends BaseActivity {
 
         setListener();
         loadReceiverDetails();
-
+        getToken();
         conversationId = mConversation.getId();
         if (checkGroupConversation(conversationId))
             checkGroupConversation = true;
