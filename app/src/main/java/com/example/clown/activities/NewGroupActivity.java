@@ -1,5 +1,6 @@
 package com.example.clown.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
@@ -19,7 +20,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NewGroupActivity extends BaseActivity implements GroupChatListener, GroupUserAdapter.IGroupUserListener {
+public class NewGroupActivity extends BaseActivity implements GroupAddMemberAdapter.IGroupAddMemberItemListener, GroupUserAdapter.IGroupUserListener {
     private static final String TAG = NewGroupActivity.class.getName();
 
     private ActivityNewGroupBinding binding;
@@ -147,19 +148,20 @@ public class NewGroupActivity extends BaseActivity implements GroupChatListener,
         } else showError();
     };
 
-    @Override
-    public void onGroupChatClicked(User user) {
-        listMembers.remove(user);
-        listFriends.add(user);
-        methodSetAdapterForList(listFriends, VIEW_OF_USERS);
-        methodSetAdapterForList(listMembers, VIEW_OF_GROUP_USERS);
-    }
 
     @Override
     public void onGroupUserClicked(User user) {
         listFriends.remove(user);
         methodSetAdapterForList(listFriends, VIEW_OF_USERS);
         listMembers.add(user);
+        methodSetAdapterForList(listMembers, VIEW_OF_GROUP_USERS);
+    }
+
+    @Override
+    public void onGroupAddMemberClicked(User user) {
+        listMembers.remove(user);
+        listFriends.add(user);
+        methodSetAdapterForList(listFriends, VIEW_OF_USERS);
         methodSetAdapterForList(listMembers, VIEW_OF_GROUP_USERS);
     }
 }

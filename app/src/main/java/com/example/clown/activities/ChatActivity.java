@@ -147,7 +147,8 @@ public class ChatActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        listenAvailabilityOfReceiver();
+        if(!checkGroupConversation)
+            listenAvailabilityOfReceiver();
     }
 
     private void init() {
@@ -489,14 +490,13 @@ public class ChatActivity extends BaseActivity {
         if (!isReceiverAvailable) {
             try {
                 JSONArray tokens = new JSONArray();
-                tokens.put(receiverUser.getFcmToken());
+//                tokens.put(receiverUser.token);
 
                 JSONObject data = new JSONObject();
-                data.put(Constants.KEY_DOCUMENT_REFERENCE_ID, mCurrentUser.getID());
-                data.put(Constants.KEY_USERNAME, mCurrentUser.getUsername());
-                data.put(Constants.KEY_FCM_TOKEN, mCurrentUser.getFcmToken());
+//                data.put(Constants.KEY_DOCUMENT_REFERENCE_ID, mCurrentUser.getID());
+//                data.put(Constants.KEY_USERNAME, mCurrentUser.getUsername());
+//                //data.put(Constants.KEY_FCM_TOKEN, mCurrentUser.getToken());
                 data.put(Constants.KEY_MESSAGE, binding.inputMessage.getText().toString());
-
                 data.put(Constants.KEY_MESSAGE_IMAGE, encodedImage);
                 data.put(Constants.KEY_MESSAGE_IMAGE_LINK, imglink);
                 data.put(Constants.KEY_MESSAGE_IMAGE_FINAME, finame);
@@ -723,7 +723,6 @@ public class ChatActivity extends BaseActivity {
 
         mConversation = (Conversation) getIntent().getSerializableExtra(Constants.KEY_COLLECTION_CONVERSATIONS);
 
-
         // Load receiver details
         mReceiverId = mConversation.getReceiverId() == null ? mConversation.getId() :
                 mConversation.getReceiverId().equals(mCurrentUser.getID()) ?
@@ -742,12 +741,7 @@ public class ChatActivity extends BaseActivity {
         memberList = (ArrayList<String>) getIntent().getSerializableExtra(Constants.KEY_LIST_GROUP_MEMBER);
         binding.textName.setText(mReceiverName);
 
-        FirebaseFirestore
-                .getInstance()
-                .collection(Constants.KEY_COLLECTION_USERS)
-                .document(mReceiverId)
-                .get()
-                .addOnCompleteListener(mOnLoadsCompleted);
+
 
     }
 

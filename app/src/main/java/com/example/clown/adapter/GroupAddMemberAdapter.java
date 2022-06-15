@@ -8,17 +8,18 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.clown.databinding.ItemConteainerAddGroupMemberBinding;
 import com.example.clown.listeners.GroupChatListener;
+import com.example.clown.models.Conversation;
 import com.example.clown.models.User;
 
 import java.util.List;
 
 public class GroupAddMemberAdapter extends RecyclerView.Adapter<GroupAddMemberAdapter.ViewHolder> {
     private final List<User> users;
-    private final GroupChatListener groupChatListener;
+    private final IGroupAddMemberItemListener listener;
 
-    public GroupAddMemberAdapter(List<User> users, GroupChatListener groupChatListener) {
+    public GroupAddMemberAdapter(List<User> users, IGroupAddMemberItemListener listener) {
         this.users = users;
-        this.groupChatListener = groupChatListener;
+        this.listener = listener;
     }
 
     @NonNull
@@ -48,7 +49,14 @@ public class GroupAddMemberAdapter extends RecyclerView.Adapter<GroupAddMemberAd
             binding.textName.setText(user.getUsername());
 
             binding.imageProfile.setImageBitmap(user.getBitmapAvatar());
-            binding.getRoot().setOnClickListener(v -> groupChatListener.onGroupChatClicked(user));
+            binding.getRoot().setOnClickListener(v -> onItemClicked(user));
         }
+
+        private void onItemClicked(User user) {
+            if (listener != null) listener.onGroupAddMemberClicked(user);
+        }
+    }
+    public interface IGroupAddMemberItemListener {
+        void onGroupAddMemberClicked(User user);
     }
 }
