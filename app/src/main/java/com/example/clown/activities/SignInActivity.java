@@ -86,6 +86,8 @@ public class SignInActivity extends BaseActivity {
         }
     }
 
+
+
     private Boolean isValidSignInDetails() {
         mEmailOrPhoneNumber = mBinding.inputPhoneNumberOrEmail.getText().toString().trim();
         mPassword = mBinding.inputPassword.getText().toString().trim();
