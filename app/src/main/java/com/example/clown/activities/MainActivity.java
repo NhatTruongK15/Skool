@@ -62,6 +62,11 @@ public class MainActivity extends BaseActivity {
         mBasicConversations = new ArrayList<>();
         mGroupConversations = new ArrayList<>();
 
+        if (mCurrentUser == null) {
+            showToast("null currenuser");
+            return;
+        }
+
         mBasicConversationAdapter = new ConversationAdapter(this, mBasicConversations, mCurrentUser.getID());
         mGroupConversationAdapter = new ConversationAdapter(this, mGroupConversations, mCurrentUser.getID());
 
@@ -114,7 +119,7 @@ public class MainActivity extends BaseActivity {
         binding.buttonContact.setOnClickListener(v -> startActivity(TAG, ContactsActivity.class, null));
         binding.llcNewGroup.setOnClickListener(v -> startActivity(TAG, NewGroupActivity.class, null));
         binding.imageProfile.setOnClickListener(v -> startActivity(TAG, MyProfileActivity.class, null));
-        binding.btnFindFriend.setOnClickListener(v -> onFindFriendBtnClicked() );
+        binding.btnFindFriend.setOnClickListener(v -> onFindFriendBtnClicked());
     }
 
     private void onFindFriendBtnClicked() {

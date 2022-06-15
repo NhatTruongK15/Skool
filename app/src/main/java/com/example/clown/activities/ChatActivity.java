@@ -129,10 +129,8 @@ public class ChatActivity extends BaseActivity {
 
         setListener();
         loadReceiverDetails();
-        if(checkGroupConversation(mConversation.getId())){
-            conversationId = mConversation.getId();
-            checkGroupConversation = true;
-        }
+        conversationId = mConversation.getId();
+        checkGroupConversation = true;
         init();
 
 
@@ -150,11 +148,10 @@ public class ChatActivity extends BaseActivity {
         database = FirebaseFirestore.getInstance();
         chatMessages = new ArrayList<>();
 
-        if(!checkGroupConversation){
+        if (!checkGroupConversation) {
             chatAdapter = new ChatAdapter(chatMessages, mCurrentUser.getID(), mReceiverBitmapAvatar);
             binding.chatRecyclerView.setAdapter(chatAdapter);
-        }
-        else{
+        } else {
             groupChatAdapter = new GroupChatAdapter(chatMessages,
                     mCurrentUser.getID(),
                     database);
@@ -163,17 +160,16 @@ public class ChatActivity extends BaseActivity {
     }
 
     private boolean checkGroupConversation(String id) {
-        try{
+        try {
             double val = Double.parseDouble(id);
             return true;
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             return false;
         }
     }
 
 
-    public String filetype(String file){
+    public String filetype(String file) {
         return file.substring(file.lastIndexOf("."));
     }
 
@@ -207,7 +203,7 @@ public class ChatActivity extends BaseActivity {
         return result;
     }
 
-    private String encodeImageFromUri(Uri fileuri){
+    private String encodeImageFromUri(Uri fileuri) {
         try {
             InputStream inputStream = getContentResolver().openInputStream(fileuri);
             Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
@@ -219,27 +215,27 @@ public class ChatActivity extends BaseActivity {
     }
 
     private Bitmap getBitmapFromEncodeString(String encodedImage) {
-        if(encodedImage != null)
-        {
+        if (encodedImage != null) {
             byte[] bytes = Base64.decode(encodedImage, Base64.DEFAULT);
             return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-        }
-        else
-        {
+        } else {
             return null;
         }
     }
-    private String encodeImage(Bitmap bitmap){
+
+    private String encodeImage(Bitmap bitmap) {
         int previewWidth = HD_RES;
         int previewHeight = bitmap.getHeight() * previewWidth / bitmap.getWidth();
         Bitmap previewBitmap = Bitmap.createScaledBitmap(resizeBitmap(bitmap), previewWidth, previewHeight, false);
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        previewBitmap.compress(Bitmap.CompressFormat.JPEG,100,byteArrayOutputStream);
+        previewBitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
         byte[] bytes = byteArrayOutputStream.toByteArray();
         return Base64.encodeToString(bytes, Base64.DEFAULT);
     }
+
     private static final float PREFERRED_WIDTH = HD_RES;
     private static final float PREFERRED_HEIGHT = HD_RES;
+
     public static Bitmap resizeBitmap(Bitmap bitmap) {
         int width = bitmap.getWidth();
         int height = bitmap.getHeight();
@@ -254,20 +250,21 @@ public class ChatActivity extends BaseActivity {
         return resizedBitmap;
     }
 
-    public String filelink="";
+    public String filelink = "";
     String finame;
     Uri fileuri;
-    String imglink="";
+    String imglink = "";
     ActivityResultLauncher<Intent> activityResultLauncher;
 
-    public void pickFile(){
-        int i=0;
+    public void pickFile() {
+        int i = 0;
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_GET_CONTENT);
         intent.setType("*/*");
         activityResultLauncher.launch(intent);
         //startActivityForResult(Intent.createChooser(intent, "Select Picture"), 1);
     }
+
     @SuppressLint("Range")
     public String getFileName(Uri uri) {
         String result = null;
@@ -290,25 +287,26 @@ public class ChatActivity extends BaseActivity {
         }
         return result;
     }
-    Boolean isfailupload=false;
 
-    private void SendFileToDatabase(Uri  fileuri,String finame) {
-        isfailupload=false;
+    Boolean isfailupload = false;
+
+    private void SendFileToDatabase(Uri fileuri, String finame) {
+        isfailupload = false;
         StorageReference storageReference = FirebaseStorage.getInstance().getReference(finame);
         storageReference.putFile(fileuri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                isfailupload=false;
+                isfailupload = false;
                 loading(true);
                 getLinkDownload(finame);
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                isfailupload=true;
+                isfailupload = true;
                 showToast("failed  ");
                 loading(false);
-                isUploadingFile=false;
+                isUploadingFile = false;
             }
         });
 
@@ -316,40 +314,38 @@ public class ChatActivity extends BaseActivity {
     }
 
     private void downloadFile(Context context, String fileName, String fileExtension, String destinationDirectory, String url) {
-        DownloadManager downloadManager=(DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
-        Uri uri=Uri.parse(url);
-        DownloadManager.Request request=new DownloadManager.Request(uri);
-        request.setDestinationInExternalFilesDir(context,destinationDirectory,fileName+fileExtension);
+        DownloadManager downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+        Uri uri = Uri.parse(url);
+        DownloadManager.Request request = new DownloadManager.Request(uri);
+        request.setDestinationInExternalFilesDir(context, destinationDirectory, fileName + fileExtension);
         downloadManager.enqueue(request);
     }
 
-    public Boolean isUploadingFile=false;
+    public Boolean isUploadingFile = false;
 
-    private void loading(Boolean isLoading)
-    {
-        if(isLoading){
+    private void loading(Boolean isLoading) {
+        if (isLoading) {
             binding.progressBar.setVisibility(View.VISIBLE);
-        }else
-        {
+        } else {
             binding.progressBar.setVisibility(View.INVISIBLE);
         }
     }
 
-    public void getLinkDownload(String finame){
+    public void getLinkDownload(String finame) {
         StorageReference storageReference = FirebaseStorage.getInstance().getReference(finame);
         storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
                 filelink = uri.toString();
                 loading(false);
-                isUploadingFile=false;
+                isUploadingFile = false;
                 showToast("get link success");
 
             }
         });
     }
 
-    public String VideoToBase64(String finame){
+    public String VideoToBase64(String finame) {
         File tempFile = new File(finame);
         String encodedString = null;
         InputStream inputStream = null;
@@ -375,16 +371,17 @@ public class ChatActivity extends BaseActivity {
         return encodedString;
     }
 
-    public String videolocation=null;
-    public void Base64ToVideo(String encodedString){
-        byte[] decodedBytes = Base64.decode(encodedString.getBytes(),Base64.DEFAULT);
+    public String videolocation = null;
+
+    public void Base64ToVideo(String encodedString) {
+        byte[] decodedBytes = Base64.decode(encodedString.getBytes(), Base64.DEFAULT);
         try {
             FileOutputStream out = new FileOutputStream(
                     Environment.getExternalStorageDirectory()
                             + "/my/Convert.mp4");
             out.write(decodedBytes);
             out.close();
-            videolocation=Environment.getExternalStorageDirectory()+ "/my/Convert.mp4";
+            videolocation = Environment.getExternalStorageDirectory() + "/my/Convert.mp4";
 //            binding.vidMessage.setVideoPath(videolocation);
         } catch (Exception e) {
             // TODO: handle exception
@@ -392,76 +389,82 @@ public class ChatActivity extends BaseActivity {
         }
     }
 
-    Boolean isnotVid=false;
+    Boolean isnotVid = false;
+
     private void sendMessage() {
-        if( (binding.inputMessage.getText().toString().isEmpty()&&finame==null)||isUploadingFile==true){
+        if ((binding.inputMessage.getText().toString().isEmpty() && finame == null) || isUploadingFile == true) {
             return;
         }
-        if(isfailupload){
-            encodedImage=null;
-            finame=null;
-            fileuri=null;
-            filelink=null;
-            imglink=null;
-            videolocation=null;
-            isfailupload=false;
-            isnotVid=false;
+        String temp = binding.inputMessage.getText().toString();
+        if (isfailupload) {
+            encodedImage = null;
+            finame = null;
+            fileuri = null;
+            filelink = null;
+            imglink = null;
+            videolocation = null;
+            isfailupload = false;
+            isnotVid = false;
             return;
         }
-        if(fileuri!=null) {
+        if (fileuri != null) {
             if (checkFileType(finame).compareTo("vid") == 0) {
 //                loading(true);
 //                getLinkDownload(finame);
                 binding.inputMessage.setText("");
             }
             if (checkFileType(finame).compareTo("img") == 0) {
-                imglink=filelink;
-                filelink=null;
+                imglink = filelink;
+                filelink = null;
                 encodedImage = encodeImageFromUri(fileuri);
                 binding.inputMessage.setText("");
             }
-            if(checkFileType(finame).compareTo("etc")==0){
-                isnotVid=true;
+            if (checkFileType(finame).compareTo("etc") == 0) {
+                isnotVid = true;
                 binding.inputMessage.setText(finame);
             }
 
         }
+
         HashMap<String, Object> message = new HashMap<>();
         message.put(Constants.KEY_SENDER_ID, mCurrentUser.getID());
-        if(checkGroupConversation)
-            message.put(Constants.KEY_RECEIVER_ID,conversationId);
+        if (checkGroupConversation)
+            message.put(Constants.KEY_RECEIVER_ID, conversationId);
         else
             message.put(Constants.KEY_RECEIVER_ID, mReceiverId);
         message.put(Constants.KEY_MESSAGE, binding.inputMessage.getText().toString());
         message.put(Constants.KEY_TIMESTAMP, new Date());
 
-        if(filelink!=null) {
-            if(isnotVid==false){
+        if (filelink != null) {
+            if (isnotVid == false) {
                 message.put(Constants.KEY_MESSAGE_VIDEO, filelink);
             }
-            message.put(Constants.KEY_MESSAGE_FILE,filelink);
+            message.put(Constants.KEY_MESSAGE_FILE, filelink);
             message.put(Constants.KEY_MESSAGE_IMAGE, "");
-        }
-        else{
-            message.put(Constants.KEY_MESSAGE_VIDEO,"");
+            binding.inputMessage.setText(mCurrentUser.getUsername() + " đã gửi 1 video");
+
+        } else {
+            message.put(Constants.KEY_MESSAGE_VIDEO, "");
 
         }
-        if(encodedImage!=null){
-            message.put(Constants.KEY_MESSAGE_IMAGE,encodedImage);
-            message.put(Constants.KEY_MESSAGE_IMAGE_LINK,imglink);
-        }
-        else{
-            message.put(Constants.KEY_MESSAGE_IMAGE,"");
-            message.put(Constants.KEY_MESSAGE_IMAGE_LINK,"");
+        if (encodedImage != null) {
+            message.put(Constants.KEY_MESSAGE_IMAGE, encodedImage);
+            message.put(Constants.KEY_MESSAGE_IMAGE_LINK, imglink);
+            binding.inputMessage.setText(mCurrentUser.getUsername() + " đã gửi 1 ảnh");
+        } else {
+            message.put(Constants.KEY_MESSAGE_IMAGE, "");
+            message.put(Constants.KEY_MESSAGE_IMAGE_LINK, "");
 
         }
 
-        message.put(Constants.KEY_MESSAGE_FINAME,finame);
-
+        message.put(Constants.KEY_MESSAGE_FINAME, finame);
 
 
         database.collection(Constants.KEY_COLLECTION_CHAT).add(message);
         if (conversationId != null) {
+            if (fileuri == null) {
+                binding.inputMessage.setText(temp);
+            }
             updateConversation(binding.inputMessage.getText().toString());
         } else {
             HashMap<String, Object> conversation = new HashMap<>();
@@ -487,12 +490,11 @@ public class ChatActivity extends BaseActivity {
 //                //data.put(Constants.KEY_FCM_TOKEN, mCurrentUser.getToken());
                 data.put(Constants.KEY_MESSAGE, binding.inputMessage.getText().toString());
                 data.put(Constants.KEY_MESSAGE_IMAGE, encodedImage);
-                data.put(Constants.KEY_MESSAGE_IMAGE_LINK,imglink);
-                data.put(Constants.KEY_MESSAGE_IMAGE_FINAME,finame);
-                data.put(Constants.KEY_MESSAGE_FINAME,finame);
-
-                data.put(Constants.KEY_MESSAGE_VIDEO,filelink);
-                data.put(Constants.KEY_MESSAGE_FILE,filelink);
+                data.put(Constants.KEY_MESSAGE_IMAGE_LINK, imglink);
+                data.put(Constants.KEY_MESSAGE_IMAGE_FINAME, finame);
+                data.put(Constants.KEY_MESSAGE_FINAME, finame);
+                data.put(Constants.KEY_MESSAGE_VIDEO, filelink);
+                data.put(Constants.KEY_MESSAGE_FILE, filelink);
 
 
                 JSONObject body = new JSONObject();
@@ -506,13 +508,13 @@ public class ChatActivity extends BaseActivity {
         }
         binding.inputMessage.setText(null);
 
-        encodedImage=null;
-        finame=null;
-        fileuri=null;
-        filelink=null;
-        imglink=null;
-        videolocation=null;
-        isnotVid=false;
+        encodedImage = null;
+        finame = null;
+        fileuri = null;
+        filelink = null;
+        imglink = null;
+        videolocation = null;
+        isnotVid = false;
     }
 
     private void sendNotification(String messageBody) {
@@ -533,16 +535,15 @@ public class ChatActivity extends BaseActivity {
                                 return;
                             }
                             showToast("success");
-                            Log.d("test","success");
+                            Log.d("test", "success");
                         }
 
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        Log.d("test","success maybe");
+                        Log.d("test", "success maybe");
 
                     }
-                }
-                else
+                } else
                     showToast("Error: " + response.code());
             }
 
@@ -558,50 +559,51 @@ public class ChatActivity extends BaseActivity {
                 .collection(Constants.KEY_COLLECTION_USERS)
                 .document(mReceiverId)
                 .addSnapshotListener(ChatActivity.this, (value, error) -> {
-            if (error != null) {
-                return;
-            }
-            if (value != null) {
-                if (value.getLong(Constants.KEY_AVAILABILITY) != null) {
-                    int availability = Objects.requireNonNull(
-                            value.getLong(Constants.KEY_AVAILABILITY)
-                    ).intValue();
-                    isReceiverAvailable = availability == 1;
-                }
-                //receiverUser.setToken(value.getString(Constants.KEY_FCM_TOKEN));
-                if (mReceiverAvatar == null) {
-                    //receiverUser.setAvatar(value.getString(Constants.KEY_AVATAR));
-                    chatAdapter.setReceiverProfileImage(mReceiverBitmapAvatar);
-                    chatAdapter.notifyItemRangeChanged(0, chatMessages.size());
-                }
-            }
-            if (isReceiverAvailable) {
-                binding.textAvailability.setVisibility(View.VISIBLE);
-            } else {
-                binding.textAvailability.setVisibility(View.GONE);
-            }
-        });
+                    if (error != null) {
+                        return;
+                    }
+                    if (value != null) {
+                        if (value.getLong(Constants.KEY_AVAILABILITY) != null) {
+                            int availability = Objects.requireNonNull(
+                                    value.getLong(Constants.KEY_AVAILABILITY)
+                            ).intValue();
+                            isReceiverAvailable = availability == 1;
+                        }
+                        //receiverUser.setToken(value.getString(Constants.KEY_FCM_TOKEN));
+                        if (mReceiverAvatar == null) {
+                            //receiverUser.setAvatar(value.getString(Constants.KEY_AVATAR));
+                            chatAdapter.setReceiverProfileImage(mReceiverBitmapAvatar);
+                            chatAdapter.notifyItemRangeChanged(0, chatMessages.size());
+                        }
+                    }
+                    if (isReceiverAvailable) {
+                        binding.textAvailability.setVisibility(View.VISIBLE);
+                    } else {
+                        binding.textAvailability.setVisibility(View.GONE);
+                    }
+                });
 
     }
 
     private void listenMessages() {
         if (checkGroupConversation(conversationId)) {
 
-                database.collection(Constants.KEY_COLLECTION_CHAT)
-                        .whereEqualTo(Constants.KEY_RECEIVER_ID, mReceiverId)
-                        .addSnapshotListener(eventGroupListener);
+            database.collection(Constants.KEY_COLLECTION_CHAT)
+                    .whereEqualTo(Constants.KEY_RECEIVER_ID, mReceiverId)
+                    .addSnapshotListener(eventGroupListener);
 
         } else {
-                database.collection(Constants.KEY_COLLECTION_CHAT)
-                        .whereEqualTo(Constants.KEY_SENDER_ID, mCurrentUser.getID())
-                        .whereEqualTo(Constants.KEY_RECEIVER_ID, mReceiverId)
-                        .addSnapshotListener(eventUserListener);
-                database.collection(Constants.KEY_COLLECTION_CHAT)
-                        .whereEqualTo(Constants.KEY_SENDER_ID, mReceiverId)
-                        .whereEqualTo(Constants.KEY_RECEIVER_ID, mCurrentUser.getID())
-                        .addSnapshotListener(eventUserListener);
+            database.collection(Constants.KEY_COLLECTION_CHAT)
+                    .whereEqualTo(Constants.KEY_SENDER_ID, mCurrentUser.getID())
+                    .whereEqualTo(Constants.KEY_RECEIVER_ID, mReceiverId)
+                    .addSnapshotListener(eventUserListener);
+            database.collection(Constants.KEY_COLLECTION_CHAT)
+                    .whereEqualTo(Constants.KEY_SENDER_ID, mReceiverId)
+                    .whereEqualTo(Constants.KEY_RECEIVER_ID, mCurrentUser.getID())
+                    .addSnapshotListener(eventUserListener);
         }
     }
+
     private final EventListener<QuerySnapshot> eventGroupListener = ((value, error) -> {
         if (error != null) {
             return;
@@ -615,21 +617,21 @@ public class ChatActivity extends BaseActivity {
                         chatMessage.senderId = documentChange.getDocument().getString(Constants.KEY_SENDER_ID);
                         chatMessage.receiverId = documentChange.getDocument().getId();
                         chatMessage.message = documentChange.getDocument().getString(Constants.KEY_MESSAGE);
-                        chatMessage.message_img=getBitmapFromEncodeString( documentChange.getDocument().getString(Constants.KEY_MESSAGE_IMAGE));
-                        chatMessage.videoPath=documentChange.getDocument().getString(Constants.KEY_MESSAGE_VIDEO);
-                        chatMessage.filePath=documentChange.getDocument().getString(Constants.KEY_MESSAGE_FILE);
+                        chatMessage.message_img = getBitmapFromEncodeString(documentChange.getDocument().getString(Constants.KEY_MESSAGE_IMAGE));
+                        chatMessage.videoPath = documentChange.getDocument().getString(Constants.KEY_MESSAGE_VIDEO);
+                        chatMessage.filePath = documentChange.getDocument().getString(Constants.KEY_MESSAGE_FILE);
                         chatMessage.dateTime = getReadableDateTime(documentChange.getDocument().getDate(Constants.KEY_TIMESTAMP));
                         chatMessage.dateObject = documentChange.getDocument().getDate(Constants.KEY_TIMESTAMP);
-                        chatMessage.message_img_link=documentChange.getDocument().getString(Constants.KEY_MESSAGE_IMAGE_LINK);
-                        chatMessage.finame=documentChange.getDocument().getString(Constants.KEY_MESSAGE_FINAME);
+                        chatMessage.message_img_link = documentChange.getDocument().getString(Constants.KEY_MESSAGE_IMAGE_LINK);
+                        chatMessage.finame = documentChange.getDocument().getString(Constants.KEY_MESSAGE_FINAME);
                         chatMessages.add(chatMessage);
-                    }catch (Exception ex){
+                    } catch (Exception ex) {
 
                     }
 
                 }
             }
-            showMessage(chatMessages,count);
+            showMessage(chatMessages, count);
         }
         binding.progressBar.setVisibility(View.GONE);
 
@@ -648,39 +650,37 @@ public class ChatActivity extends BaseActivity {
                         chatMessage.senderId = documentChange.getDocument().getString(Constants.KEY_SENDER_ID);
                         chatMessage.receiverId = documentChange.getDocument().getString(Constants.KEY_RECEIVER_ID);
                         chatMessage.message = documentChange.getDocument().getString(Constants.KEY_MESSAGE);
-                        chatMessage.message_img=getBitmapFromEncodeString( documentChange.getDocument().getString(Constants.KEY_MESSAGE_IMAGE));
-                        chatMessage.videoPath=documentChange.getDocument().getString(Constants.KEY_MESSAGE_VIDEO);
-                        chatMessage.filePath=documentChange.getDocument().getString(Constants.KEY_MESSAGE_FILE);
+                        chatMessage.message_img = getBitmapFromEncodeString(documentChange.getDocument().getString(Constants.KEY_MESSAGE_IMAGE));
+                        chatMessage.videoPath = documentChange.getDocument().getString(Constants.KEY_MESSAGE_VIDEO);
+                        chatMessage.filePath = documentChange.getDocument().getString(Constants.KEY_MESSAGE_FILE);
                         chatMessage.dateTime = getReadableDateTime(documentChange.getDocument().getDate(Constants.KEY_TIMESTAMP));
                         chatMessage.dateObject = documentChange.getDocument().getDate(Constants.KEY_TIMESTAMP);
-                        chatMessage.message_img_link=documentChange.getDocument().getString(Constants.KEY_MESSAGE_IMAGE_LINK);
-                        chatMessage.finame=documentChange.getDocument().getString(Constants.KEY_MESSAGE_FINAME);
+                        chatMessage.message_img_link = documentChange.getDocument().getString(Constants.KEY_MESSAGE_IMAGE_LINK);
+                        chatMessage.finame = documentChange.getDocument().getString(Constants.KEY_MESSAGE_FINAME);
                         chatMessages.add(chatMessage);
-                    }catch (Exception ex){
+                    } catch (Exception ex) {
 
                     }
 
                 }
             }
-            showMessage(chatMessages,count);
+            showMessage(chatMessages, count);
         }
         binding.progressBar.setVisibility(View.GONE);
         if (conversationId == null)
             checkConversation();
     });
 
-    private void showMessage(List<ChatMessage> chatMessages,int count) {
+    private void showMessage(List<ChatMessage> chatMessages, int count) {
         Collections.sort(chatMessages, (obj1, obj2) -> obj1.dateObject.compareTo(obj2.dateObject));
-        if(!checkGroupConversation)
-        {
+        if (!checkGroupConversation) {
             if (count == 0) {
                 chatAdapter.notifyDataSetChanged();
             } else {
                 chatAdapter.notifyItemRangeInserted(chatMessages.size(), chatMessages.size());
                 binding.chatRecyclerView.smoothScrollToPosition(chatMessages.size() - 1);
             }
-        }
-        else{
+        } else {
             if (count == 0) {
                 groupChatAdapter.notifyDataSetChanged();
             } else {
@@ -711,30 +711,30 @@ public class ChatActivity extends BaseActivity {
                         mConversation.getSenderAvatar() : mConversation.getReceiverAvatar();
 
         mReceiverBitmapAvatar = getBitmapFromEncodeString(mReceiverAvatar);
-        adminList  = (ArrayList<String>) getIntent().getSerializableExtra(Constants.KEY_LIST_GROUP_ADMIN);
-        memberList  = (ArrayList<String>) getIntent().getSerializableExtra(Constants.KEY_LIST_GROUP_MEMBER);
+        adminList = (ArrayList<String>) getIntent().getSerializableExtra(Constants.KEY_LIST_GROUP_ADMIN);
+        memberList = (ArrayList<String>) getIntent().getSerializableExtra(Constants.KEY_LIST_GROUP_MEMBER);
         binding.textName.setText(mReceiverName);
     }
 
     private void setListener() {
         binding.imageBack.setOnClickListener(v -> {
-            Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
             startActivity(intent);
         });
         binding.layoutSend.setOnClickListener(v -> sendMessage());
 
-        activityResultLauncher=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+        activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
             @Override
             public void onActivityResult(ActivityResult result) {
                 if (result == null ||
                         result.getData() == null ||
                         result.getData().getData() == null) return;
 
-                fileuri= result.getData().getData();
-                finame=getFileName(fileuri);
+                fileuri = result.getData().getData();
+                finame = getFileName(fileuri);
                 loading(true);
-                isUploadingFile=true;
-                SendFileToDatabase(fileuri,finame);
+                isUploadingFile = true;
+                SendFileToDatabase(fileuri, finame);
 
 //                binding.inputMessage.setText(finame);
             }
@@ -770,9 +770,10 @@ public class ChatActivity extends BaseActivity {
     private void updateConversation(String message) {
         DocumentReference documentReference =
                 database.collection(Constants.KEY_COLLECTION_CONVERSATIONS).document(conversationId);
-        if(checkGroupConversation(conversationId))
+
+        if (checkGroupConversation(conversationId))
             documentReference.update(Constants.KEY_SENDER_ID, mCurrentUser.getID()
-                    ,Constants.KEY_LAST_MESSAGE, message, Constants.KEY_TIMESTAMP, new Date());
+                    , Constants.KEY_LAST_MESSAGE, message, Constants.KEY_TIMESTAMP, new Date());
         else
             documentReference.update(Constants.KEY_LAST_MESSAGE, message, Constants.KEY_TIMESTAMP, new Date());
     }
