@@ -490,13 +490,14 @@ public class ChatActivity extends BaseActivity {
         if (!isReceiverAvailable) {
             try {
                 JSONArray tokens = new JSONArray();
-//                tokens.put(receiverUser.token);
+                tokens.put(receiverUser.getFcmToken());
 
                 JSONObject data = new JSONObject();
-//                data.put(Constants.KEY_DOCUMENT_REFERENCE_ID, mCurrentUser.getID());
-//                data.put(Constants.KEY_USERNAME, mCurrentUser.getUsername());
-//                //data.put(Constants.KEY_FCM_TOKEN, mCurrentUser.getToken());
+                data.put(Constants.KEY_DOCUMENT_REFERENCE_ID, mCurrentUser.getID());
+                data.put(Constants.KEY_USERNAME, mCurrentUser.getUsername());
+                data.put(Constants.KEY_FCM_TOKEN, mCurrentUser.getFcmToken());
                 data.put(Constants.KEY_MESSAGE, binding.inputMessage.getText().toString());
+
                 data.put(Constants.KEY_MESSAGE_IMAGE, encodedImage);
                 data.put(Constants.KEY_MESSAGE_IMAGE_LINK, imglink);
                 data.put(Constants.KEY_MESSAGE_IMAGE_FINAME, finame);
@@ -722,6 +723,7 @@ public class ChatActivity extends BaseActivity {
         //receiverUser = (User) getIntent().getSerializableExtra(Constants.KEY_USER);
 
         mConversation = (Conversation) getIntent().getSerializableExtra(Constants.KEY_COLLECTION_CONVERSATIONS);
+
 
         // Load receiver details
         mReceiverId = mConversation.getReceiverId() == null ? mConversation.getId() :
