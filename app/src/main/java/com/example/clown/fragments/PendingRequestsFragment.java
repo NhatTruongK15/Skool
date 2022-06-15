@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.clown.activities.ContactsActivity;
+import com.example.clown.activities.PendingProfileActivity;
 import com.example.clown.adapter.ReceivedRequestAdapter;
 import com.example.clown.databinding.FragmentPendingRequestsBinding;
 import com.example.clown.models.Conversation;
@@ -73,7 +74,10 @@ public class PendingRequestsFragment extends Fragment implements ReceivedRequest
     //region IMPLEMENT METHODS
     @Override
     public void onRequestItemClicked(User requester) {
-
+        Intent intent = new Intent(getContext(), PendingProfileActivity.class);
+        intent.putExtra(Constants.KEY_REMOTE_USER_DATA, requester);
+        startActivity(intent);
+        requireActivity().finish();
     }
     @Override
     public void onAcceptBtnClicked(User requester) {

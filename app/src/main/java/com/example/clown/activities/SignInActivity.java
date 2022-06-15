@@ -166,8 +166,6 @@ public class SignInActivity extends BaseActivity {
     //region CALLBACKS
     protected final OnCompleteListener<QuerySnapshot> mOnSignedInCompleted = task -> {
         if (task.isSuccessful() && task.getResult() != null && task.getResult().getDocuments().size() != 0) {
-            Log.e(TAG, "Signed in successfully!");
-
             // Get validated user
             User validatedUser = task.getResult().getDocuments().get(0).toObject(User.class);
             mPreferenceManager.putBoolean(Constants.KEY_IS_SIGNED_IN, true);
@@ -181,6 +179,7 @@ public class SignInActivity extends BaseActivity {
             startActivity(TAG, MainActivity.class, null);
             showToast(Constants.TOAST_SIGN_IN_SUCCESSFULLY);
 
+            Log.e(TAG, "Signed in successfully!");
             finish();
             return;
         }
