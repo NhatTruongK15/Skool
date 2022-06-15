@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.clown.R;
 import com.example.clown.adapter.ConversationAdapter;
 import com.example.clown.adapter.MediaAndFileAdapter;
+import com.example.clown.agora.AgoraService;
 import com.example.clown.databinding.ActivityMediaAndFileBinding;
 import com.example.clown.models.ChatMessage;
 import com.example.clown.models.MediaAndFile;
@@ -68,6 +69,14 @@ public class ActivityMediaAndFile extends BaseActivity {
         listenMessages();
         checkConversation();
         loadRecyclerView();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+//        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+//        startActivity(intent);
+//        finish();
     }
 
     private void loadRecyclerView() {

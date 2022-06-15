@@ -23,6 +23,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class MainActivity extends BaseActivity {
@@ -132,7 +134,7 @@ public class MainActivity extends BaseActivity {
             startActivity(TAG, NewGroupActivity.class, null);
         else
             startActivity(TAG, CommunityActivity.class, null);
-    }
+
 
     private void signOut() {
         showToast(Constants.TOAST_ON_SIGN_OUT);
@@ -175,8 +177,7 @@ public class MainActivity extends BaseActivity {
     }
 
     private void updateConversation(DocumentChange docChange, int oldIndex) {
-        Conversation modifiedConversation = docChange.getDocument().toObject(Conversation.class);
-        mBasicConversations.set(oldIndex, modifiedConversation);
+
     }
 
     //region CALLBACKS
@@ -188,6 +189,7 @@ public class MainActivity extends BaseActivity {
 
         if (value != null && !value.isEmpty())
             for (DocumentChange docChange : value.getDocumentChanges()) {
+
                 switch (docChange.getType()) {
                     case ADDED:
                         addConversation(docChange, docChange.getNewIndex());
@@ -196,10 +198,12 @@ public class MainActivity extends BaseActivity {
                         removeConversation(docChange.getOldIndex());
                         break;
                     case MODIFIED:
-                        updateConversation(docChange, docChange.getOldIndex());
+                        updateConversation( docChange, docChange.getOldIndex());
                         break;
                 }
             }
+        Collections.sort(mBasicConversations, (obj1, obj2) -> obj2.getTimeStamp().compareTo(obj1.getTimeStamp()));
+        Collections.sort(mGroupConversations, (obj1, obj2) -> obj2.getTimeStamp().compareTo(obj1.getTimeStamp()));
     };
     //endregion
 }

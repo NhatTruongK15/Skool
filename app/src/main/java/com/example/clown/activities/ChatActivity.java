@@ -129,8 +129,11 @@ public class ChatActivity extends BaseActivity {
 
         setListener();
         loadReceiverDetails();
+
         conversationId = mConversation.getId();
-        checkGroupConversation = true;
+        if (checkGroupConversation(conversationId))
+            checkGroupConversation = true;
+
         init();
 
 
