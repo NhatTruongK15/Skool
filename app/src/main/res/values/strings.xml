@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Clown</string>
+    <string name="app_name">Fuji</string>
     <string name="welcome_back">Welcome Back!</string>
     <string name="add_image">Add Image</string>
     <string name="sign_up">Sign Up</string>
@@ -16,7 +16,7 @@
     <string name="calls_opt">Calls</string>
 
     <!--Sign In Activity-->
-    <string name="by_order_of_the_peaky_blinder">By order of the peaky blinder</string>
+    <string name="by_order_of_the_peaky_blinder">By order of the Fuji</string>
     <string name="login_to_continue_hint">Login to continue</string>
     <string name="phone_number_or_email_hint">Phone Number or Email</string>
     <string name="password_hint">Password</string>
