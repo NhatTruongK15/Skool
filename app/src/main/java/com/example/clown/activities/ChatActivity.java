@@ -563,33 +563,37 @@ public class ChatActivity extends BaseActivity {
     }
 
     private void listenAvailabilityOfReceiver() {
-        database
-                .collection(Constants.KEY_COLLECTION_USERS)
-                .document(mReceiverId)
-                .addSnapshotListener(ChatActivity.this, (value, error) -> {
-                    if (error != null) {
-                        return;
-                    }
-                    if (value != null) {
-                        if (value.getBoolean(Constants.KEY_AVAILABILITY) != null) {
-                            boolean availability = Objects.requireNonNull(
-                                    value.getBoolean(Constants.KEY_AVAILABILITY)
-                            );
-                            isReceiverAvailable = availability;
+        if (!checkGroupConversation)
+            database
+                    .collection(Constants.KEY_COLLECTION_USERS)
+                    .document(mReceiverId)
+                    .addSnapshotListener(ChatActivity.this, (value, error) -> {
+                        if (error != null) {
+                            return;
                         }
-                        receiverUser.setFcmToken(value.getString(Constants.KEY_FCM_TOKEN));
-                        if (receiverUser.getAvatar() == null) {
-                            receiverUser.setAvatar(value.getString(Constants.KEY_AVATAR));
-                            chatAdapter.setReceiverProfileImage(mReceiverBitmapAvatar);
-                            chatAdapter.notifyItemRangeChanged(0, chatMessages.size());
+                        if (value != null) {
+                            if (value.getBoolean(Constants.KEY_AVAILABILITY) != null) {
+                                boolean availability = Objects.requireNonNull(
+                                        value.getBoolean(Constants.KEY_AVAILABILITY)
+                                );
+                                isReceiverAvailable = availability;
+                            }
+                            receiverUser.setFcmToken(value.getString(Constants.KEY_FCM_TOKEN));
+                            if (receiverUser.getAvatar() == null) {
+                                receiverUser.setAvatar(value.getString(Constants.KEY_AVATAR));
+                                chatAdapter.setReceiverProfileImage(mReceiverBitmapAvatar);
+                                chatAdapter.notifyItemRangeChanged(0, chatMessages.size());
+                            }
                         }
-                    }
-                    if (isReceiverAvailable) {
-                        binding.textAvailability.setVisibility(View.VISIBLE);
-                    } else {
-                        binding.textAvailability.setVisibility(View.GONE);
-                    }
-                });
+                        if (isReceiverAvailable) {
+                            binding.textAvailability.setVisibility(View.VISIBLE);
+                        } else {
+                            binding.textAvailability.setVisibility(View.GONE);
+                        }
+                    });
+        else{
+            isReceiverAvailable = false;
+        }
 
     }
 
@@ -742,12 +746,6 @@ public class ChatActivity extends BaseActivity {
         memberList = (ArrayList<String>) getIntent().getSerializableExtra(Constants.KEY_LIST_GROUP_MEMBER);
         binding.textName.setText(mReceiverName);
 
-        FirebaseFirestore
-                .getInstance()
-                .collection(Constants.KEY_COLLECTION_USERS)
-                .document(mReceiverId)
-                .get()
-                .addOnCompleteListener(mOnLoadsCompleted);
 
     }
 
