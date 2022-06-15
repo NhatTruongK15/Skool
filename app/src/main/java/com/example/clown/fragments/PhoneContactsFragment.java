@@ -49,9 +49,8 @@ public class PhoneContactsFragment extends Fragment implements SuggestedUserAdap
             for (DocumentSnapshot docSnap : task.getResult().getDocuments()) {
                 User user = docSnap.toObject(User.class);
                 mSuggestedUsersList.add(user);
+                mPhoneContactsAdapter.notifyItemInserted(mSuggestedUsersList.size() - 1);
             }
-
-        setUpRecyclerView();
     };
 
     protected final ActivityResultLauncher<String> mActivityResultLauncher =
@@ -73,38 +72,32 @@ public class PhoneContactsFragment extends Fragment implements SuggestedUserAdap
 
         Init();
 
-        return binding.getRoot();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
         mActivityResultLauncher.launch(Manifest.permission.READ_CONTACTS);
-        mSuggestedUsersList.clear();
+
+        return binding.getRoot();
     }
 
     private void filterPhoneContactsAppUsers() {
         if (mPhoneContactsList.isEmpty()) return;
 
-        FirebaseFirestore
-                .getInstance()
-                .collection(Constants.KEY_COLLECTION_USERS)
-                .whereIn(Constants.KEY_PHONE_NUMBER, mPhoneContactsList)
-                .get()
-                .addOnCompleteListener(mOnCompleted);
+        for (String phoneNumber : mPhoneContactsList) {
+            if (!phoneNumber.equals(mCurrentUser.getPhoneNumber())) FirebaseFirestore
+                    .getInstance()
+                    .collection(Constants.KEY_COLLECTION_USERS)
+                    .whereEqualTo(Constants.KEY_PHONE_NUMBER, phoneNumber)
+                    .get()
+                    .addOnCompleteListener(mOnCompleted);
+        }
     }
 
     private void Init() {
         mCurrentUser = (Objects.requireNonNull((ContactsActivity) getActivity())).getCurrentUser();
         mPhoneContactsList = new ArrayList<>();
         mSuggestedUsersList = new ArrayList<>();
-    }
-
-    private void setUpRecyclerView() {
-        Log.e(TAG, "Set up phone contacts RecyclerView");
 
         mPhoneContactsAdapter = new SuggestedUserAdapter(getContext(), mSuggestedUsersList, this);
         mPhoneContactsAdapter.setCurrentUser(mCurrentUser);
+
         binding.phoneContactsRecyclerView.setAdapter(mPhoneContactsAdapter);
     }
 

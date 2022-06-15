@@ -136,6 +136,7 @@ public class MainActivity extends BaseActivity implements ConversationAdapter.IC
     private void signOut() {
         showToast(Constants.TOAST_ON_SIGN_OUT);
 
+        mPreferenceManager.clear();
         mPreferenceManager.putBoolean(Constants.KEY_IS_SIGNED_IN, false);
 
         JobScheduler jobScheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
