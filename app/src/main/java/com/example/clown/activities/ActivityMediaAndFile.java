@@ -9,10 +9,12 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.clown.R;
+import com.example.clown.adapter.ConversationAdapter;
 import com.example.clown.adapter.MediaAndFileAdapter;
 import com.example.clown.databinding.ActivityMediaAndFileBinding;
 import com.example.clown.models.ChatMessage;
@@ -59,29 +61,31 @@ public class ActivityMediaAndFile extends BaseActivity {
         setContentView(R.layout.activity_media_and_file);
         binding = ActivityMediaAndFileBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
-        binding.imageBack.setOnClickListener(v-> {
-            Intent intent = new Intent(getApplicationContext(),MainActivity.class);
-            startActivity(intent);
-        });
-
+        binding.imageBack.setOnClickListener(v-> onBackPressed());
         mediaandfile=new ArrayList<>() ;
-
-
         init();
-
         loadReceiverDetails();
         listenMessages();
-
         checkConversation();
+        loadRecyclerView();
+    }
 
+    private void loadRecyclerView() {
         recyclerView=(RecyclerView) findViewById(R.id.rcvMediaAndFile);
-
         GridLayoutManager layoutManager=new GridLayoutManager(this,3);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(new MediaAndFileAdapter(this,mediaandfile));
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+            Intent intent = new Intent(this,MainActivity.class);
+            startActivity(intent);
+
+    }
+
     private void listenMessages() {
         if(checkGroupConversation(receivedUserId)) {
             database.collection(Constants.KEY_COLLECTION_CHAT)
