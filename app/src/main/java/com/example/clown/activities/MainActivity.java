@@ -116,6 +116,7 @@ public class MainActivity extends BaseActivity implements ConversationAdapter.IC
     }
 
     private void setListeners() {
+
         binding.llcLogout.setOnClickListener(v -> signOut());
         binding.imageMenu.setOnClickListener(v -> binding.drawerLayout.openDrawer(GravityCompat.START));
         binding.buttonContact.setOnClickListener(v -> startActivity(TAG, ContactsActivity.class, null));
@@ -186,7 +187,7 @@ public class MainActivity extends BaseActivity implements ConversationAdapter.IC
 
         if (isBasicConversation(modifiedConversation)) {
             // Basic conversation changed
-            oldIndex = oldIndex - mGroupConversations.size();
+            oldIndex = oldIndex - mGroupConversations.size() ;
             mBasicConversations.set(oldIndex, modifiedConversation);
             mBasicConversationAdapter.notifyItemChanged(oldIndex);
         } else {
