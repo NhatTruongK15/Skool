@@ -55,11 +55,9 @@ public class BaseActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         activityUnBind();
-
-        FirebaseFirestore.getInstance().collection(Constants.KEY_COLLECTION_USERS).document(mCurrentUser.getID())
+        if(mCurrentUser.getID() != null)
+            FirebaseFirestore.getInstance().collection(Constants.KEY_COLLECTION_USERS).document(mCurrentUser.getID())
                 .update(Constants.KEY_AVAILABILITY,false);
-
-
     }
 
     //region PRIVATES

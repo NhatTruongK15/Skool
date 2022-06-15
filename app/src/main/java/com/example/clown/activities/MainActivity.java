@@ -184,7 +184,7 @@ public class MainActivity extends BaseActivity implements ConversationAdapter.IC
 
         if (isBasicConversation(modifiedConversation)) {
             // Basic conversation changed
-            oldIndex = oldIndex - mGroupConversations.size();
+            oldIndex = oldIndex - mGroupConversations.size() - 1;
             mBasicConversations.set(oldIndex, modifiedConversation);
             mBasicConversationAdapter.notifyItemChanged(oldIndex);
         } else {
