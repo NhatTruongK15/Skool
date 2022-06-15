@@ -70,6 +70,7 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
@@ -107,7 +108,10 @@ public class ChatActivity extends BaseActivity {
     private String mReceiverId;
     private String mReceiverName;
     private String mReceiverAvatar;
+    private User receiverUser;
     private Bitmap mReceiverBitmapAvatar;
+
+    private User dupUser = new User();
 
     private ActivityChatBinding binding;
     private List<ChatMessage> chatMessages;
@@ -143,14 +147,14 @@ public class ChatActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        //listenAvailabilityOfReceiver();
+        listenAvailabilityOfReceiver();
     }
 
     private void init() {
-
+        dupUser.Clone(mCurrentUser);
         database = FirebaseFirestore.getInstance();
         chatMessages = new ArrayList<>();
-
+        receiverUser = new User();
         if (!checkGroupConversation) {
             chatAdapter = new ChatAdapter(chatMessages, mCurrentUser.getID(), mReceiverBitmapAvatar);
             binding.chatRecyclerView.setAdapter(chatAdapter);
@@ -485,13 +489,14 @@ public class ChatActivity extends BaseActivity {
         if (!isReceiverAvailable) {
             try {
                 JSONArray tokens = new JSONArray();
-//                tokens.put(receiverUser.token);
+                tokens.put(receiverUser.getFcmToken());
 
                 JSONObject data = new JSONObject();
-//                data.put(Constants.KEY_DOCUMENT_REFERENCE_ID, mCurrentUser.getID());
-//                data.put(Constants.KEY_USERNAME, mCurrentUser.getUsername());
-//                //data.put(Constants.KEY_FCM_TOKEN, mCurrentUser.getToken());
+                data.put(Constants.KEY_DOCUMENT_REFERENCE_ID, mCurrentUser.getID());
+                data.put(Constants.KEY_USERNAME, mCurrentUser.getUsername());
+                data.put(Constants.KEY_FCM_TOKEN, mCurrentUser.getFcmToken());
                 data.put(Constants.KEY_MESSAGE, binding.inputMessage.getText().toString());
+
                 data.put(Constants.KEY_MESSAGE_IMAGE, encodedImage);
                 data.put(Constants.KEY_MESSAGE_IMAGE_LINK, imglink);
                 data.put(Constants.KEY_MESSAGE_IMAGE_FINAME, finame);
@@ -502,7 +507,7 @@ public class ChatActivity extends BaseActivity {
 
                 JSONObject body = new JSONObject();
                 body.put(Constants.REMOTE_MSG_DATA, data);
-                //body.put(Constants.REMOTE_MSG_REGISTRATION_IDS, tokens);
+                body.put(Constants.REMOTE_MSG_REGISTRATION_IDS, tokens);
 
                 sendNotification(body.toString());
             } catch (Exception exception) {
@@ -566,15 +571,15 @@ public class ChatActivity extends BaseActivity {
                         return;
                     }
                     if (value != null) {
-                        if (value.getLong(Constants.KEY_AVAILABILITY) != null) {
-                            int availability = Objects.requireNonNull(
-                                    value.getLong(Constants.KEY_AVAILABILITY)
-                            ).intValue();
-                            isReceiverAvailable = availability == 1;
+                        if (value.getBoolean(Constants.KEY_AVAILABILITY) != null) {
+                            boolean availability = Objects.requireNonNull(
+                                    value.getBoolean(Constants.KEY_AVAILABILITY)
+                            );
+                            isReceiverAvailable = availability;
                         }
-                        //receiverUser.setToken(value.getString(Constants.KEY_FCM_TOKEN));
-                        if (mReceiverAvatar == null) {
-                            //receiverUser.setAvatar(value.getString(Constants.KEY_AVATAR));
+                        receiverUser.setFcmToken(value.getString(Constants.KEY_FCM_TOKEN));
+                        if (receiverUser.getAvatar() == null) {
+                            receiverUser.setAvatar(value.getString(Constants.KEY_AVATAR));
                             chatAdapter.setReceiverProfileImage(mReceiverBitmapAvatar);
                             chatAdapter.notifyItemRangeChanged(0, chatMessages.size());
                         }
@@ -694,11 +699,30 @@ public class ChatActivity extends BaseActivity {
         binding.chatRecyclerView.setVisibility(View.VISIBLE);
     }
 
+    private void getToken() {
+        FirebaseMessaging.getInstance().getToken().addOnSuccessListener(this::updateToken);
+    }
+
+    private void updateToken(String token) {
+        dupUser.setFcmToken(token);
+        mPreferenceManager.putUser(dupUser);
+        mCurrentUser = mPreferenceManager.getUser();
+
+        //preferenceManager.putString(Constants.KEY_FCM_TOKEN, token);
+        FirebaseFirestore database = FirebaseFirestore.getInstance();
+        DocumentReference documentReference =
+                database.collection(Constants.KEY_COLLECTION_USERS).document(
+                        mCurrentUser.getID()
+                );
+        documentReference.update(Constants.KEY_FCM_TOKEN, token)
+                .addOnFailureListener(e -> showToast("Failed"));
+    }
 
     private void loadReceiverDetails() {
         //receiverUser = (User) getIntent().getSerializableExtra(Constants.KEY_USER);
 
         mConversation = (Conversation) getIntent().getSerializableExtra(Constants.KEY_COLLECTION_CONVERSATIONS);
+
 
         // Load receiver details
         mReceiverId = mConversation.getReceiverId() == null ? mConversation.getId() :
@@ -717,7 +741,25 @@ public class ChatActivity extends BaseActivity {
         adminList = (ArrayList<String>) getIntent().getSerializableExtra(Constants.KEY_LIST_GROUP_ADMIN);
         memberList = (ArrayList<String>) getIntent().getSerializableExtra(Constants.KEY_LIST_GROUP_MEMBER);
         binding.textName.setText(mReceiverName);
+
+        FirebaseFirestore
+                .getInstance()
+                .collection(Constants.KEY_COLLECTION_USERS)
+                .document(mReceiverId)
+                .get()
+                .addOnCompleteListener(mOnLoadsCompleted);
+
     }
+
+    private final OnCompleteListener<DocumentSnapshot> mOnLoadsCompleted = (task -> {
+        if (task.isSuccessful()) {
+            User temp = task.getResult().toObject(User.class);
+            receiverUser.Clone(temp);
+            return;
+        } else
+            showToast(Objects.requireNonNull(task.getException()).getMessage());
+        Log.e("TAG", "Load user completed!");
+    });
 
     private void setListener() {
         binding.imageBack.setOnClickListener(v -> {
