@@ -144,10 +144,8 @@ public class UserListenerService extends JobService {
         Log.e(TAG, "UserListenerService cleaning up!");
 
         mPreferenceManager.unRegisterChangesListener(mPreferenceListener);
-        mPreferenceManager.clear();
 
         mListenerRegister.remove();
-
     }
 
     private void checkFriendsChanges(List<String> oldFriends, List<String> newFriends, int nType) {

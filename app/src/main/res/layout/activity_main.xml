@@ -253,37 +253,6 @@
                 </androidx.appcompat.widget.LinearLayoutCompat>
             </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/btnFeature"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="#17212b"
-                android:orientation="vertical">
-
-                <androidx.appcompat.widget.LinearLayoutCompat
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:foreground="?selectableItemBackground"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:paddingHorizontal="15dp"
-                    android:paddingVertical="10dp"
-                    android:paddingBottom="@dimen/_150sdp">
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_help" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="15dp"
-                        android:text="@string/features_opt"
-                        android:textColor="@color/white"
-                        android:textStyle="bold" />
-                </androidx.appcompat.widget.LinearLayoutCompat>
-            </LinearLayout>
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"

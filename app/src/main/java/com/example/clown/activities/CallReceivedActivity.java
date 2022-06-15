@@ -1,11 +1,15 @@
 package com.example.clown.activities;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Base64;
+import android.util.Log;
 
 import com.example.clown.R;
 import com.example.clown.databinding.ActivityCallReceivedBinding;
@@ -15,6 +19,14 @@ import com.google.firebase.firestore.FirebaseFirestore;
 public class CallReceivedActivity extends BaseActivity {
     private ActivityCallReceivedBinding binding;
     private MediaPlayer mRingTone;
+
+    private BroadcastReceiver mCallReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            startActivity(null, MainActivity.class, null);
+            finish();
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,11 +39,16 @@ public class CallReceivedActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         stopRinging();
+        unregisterReceiver(mCallReceiver);
     }
 
     private void Init() {
         mRingTone = startRinging();
         initUI();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(Constants.ACT_AGORA_REMOTE_INVITATION_FAILED);
+        intentFilter.addAction(Constants.ACT_AGORA_REMOTE_INVITATION_CANCELED);
+        registerReceiver(mCallReceiver, intentFilter);
     }
 
     private void initUI() {
