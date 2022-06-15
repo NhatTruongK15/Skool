@@ -184,7 +184,7 @@ public class MainActivity extends BaseActivity implements ConversationAdapter.IC
 
         if (isBasicConversation(modifiedConversation)) {
             // Basic conversation changed
-            oldIndex = oldIndex - mGroupConversations.size() - 1;
+            oldIndex = oldIndex - mGroupConversations.size() ;
             mBasicConversations.set(oldIndex, modifiedConversation);
             mBasicConversationAdapter.notifyItemChanged(oldIndex);
         } else {
@@ -222,8 +222,6 @@ public class MainActivity extends BaseActivity implements ConversationAdapter.IC
                         updateConversation(docChange, docChange.getOldIndex()); break;
                 }
             }
-        Collections.sort(mBasicConversations,(obj1,obj2) -> obj2.getTimeStamp().compareTo(obj1.getTimeStamp()));
-        Collections.sort(mGroupConversations,(obj1,obj2) -> obj2.getTimeStamp().compareTo(obj1.getTimeStamp()));
     };
 
     @Override
