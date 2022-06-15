@@ -24,6 +24,7 @@ import com.example.clown.adapter.SuggestedUserAdapter;
 import com.example.clown.databinding.FragmentPhoneContactsBinding;
 import com.example.clown.models.User;
 import com.example.clown.utilities.Constants;
+import com.example.clown.utilities.PreferenceManager;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -141,7 +142,7 @@ public class PhoneContactsFragment extends Fragment implements SuggestedUserAdap
     }
 
     @Override
-    public void onSuggestedUserClicked(User suggestedUser) { // requester nguoi nhan
+    public void onSentFriendRequest(User suggestedUser) { // requester nguoi nhan
         String senderID = mCurrentUser.getID();
         String receiverID = suggestedUser.getID();
 
@@ -152,14 +153,18 @@ public class PhoneContactsFragment extends Fragment implements SuggestedUserAdap
                 .document(suggestedUser.getID())
                 .update(Constants.KEY_RECEIVED_REQUESTS, suggestedUser.getReceivedRequests());
 
-        mCurrentUser.getSentRequests().add(receiverID);
+        User temp = new User();
+        temp.Clone(mCurrentUser);
+        temp.getSentRequests().add(receiverID);
+        PreferenceManager mPreferenceManager = new PreferenceManager(getActivity().getApplicationContext());
+        mPreferenceManager.putUser(temp);
         FirebaseFirestore
                 .getInstance()
                 .collection(Constants.KEY_COLLECTION_USERS)
                 .document(mCurrentUser.getID())
-                .update(Constants.KEY_SENT_REQUESTS, mCurrentUser.getSentRequests());
+                .update(Constants.KEY_SENT_REQUESTS, temp.getSentRequests());
 
-        removeRequest();
+        //removeRequest();
     }
 
     private void removeRequest() {

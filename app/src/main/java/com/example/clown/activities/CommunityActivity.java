@@ -12,6 +12,7 @@ import com.example.clown.adapter.SuggestedUserAdapter;
 import com.example.clown.databinding.ActivityCommunityBinding;
 import com.example.clown.models.User;
 import com.example.clown.utilities.Constants;
+import com.example.clown.utilities.PreferenceManager;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -62,6 +63,12 @@ public class CommunityActivity extends BaseActivity implements SuggestedUserAdap
         Initialize();
         
         setListeners();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        startActivity(null, MainActivity.class, null);
     }
 
     private void Initialize() {
@@ -201,7 +208,25 @@ public class CommunityActivity extends BaseActivity implements SuggestedUserAdap
     };
 
     @Override
-    public void onSuggestedUserClicked(User suggestedUser) {
+    public void onSentFriendRequest(User suggestedUser) {
+        String senderID = mCurrentUser.getID();
+        String receiverID = suggestedUser.getID();
 
+        suggestedUser.getReceivedRequests().add(senderID);
+        FirebaseFirestore
+                .getInstance()
+                .collection(Constants.KEY_COLLECTION_USERS)
+                .document(suggestedUser.getID())
+                .update(Constants.KEY_RECEIVED_REQUESTS, suggestedUser.getReceivedRequests());
+
+        User temp = new User();
+        temp.Clone(mCurrentUser);
+        temp.getSentRequests().add(receiverID);
+        mPreferenceManager.putUser(temp);
+        FirebaseFirestore
+                .getInstance()
+                .collection(Constants.KEY_COLLECTION_USERS)
+                .document(mCurrentUser.getID())
+                .update(Constants.KEY_SENT_REQUESTS, temp.getSentRequests());
     }
 }

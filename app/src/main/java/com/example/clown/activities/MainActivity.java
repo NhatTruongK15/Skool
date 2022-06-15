@@ -114,7 +114,7 @@ public class MainActivity extends BaseActivity {
         binding.buttonContact.setOnClickListener(v -> startActivity(TAG, ContactsActivity.class, null));
         binding.llcNewGroup.setOnClickListener(v -> startActivity(TAG, NewGroupActivity.class, null));
         binding.imageProfile.setOnClickListener(v -> startActivity(TAG, MyProfileActivity.class, null));
-        binding.btnFindFriend.setOnClickListener(v -> onFindFriendBtnClicked());
+        binding.btnFindFriend.setOnClickListener(v -> onFindFriendBtnClicked() );
     }
 
     private void onFindFriendBtnClicked() {
@@ -122,6 +122,7 @@ public class MainActivity extends BaseActivity {
             startActivity(TAG, NewGroupActivity.class, null);
         else
             startActivity(TAG, CommunityActivity.class, null);
+        finish();
     }
 
     private void signOut() {
@@ -142,12 +143,46 @@ public class MainActivity extends BaseActivity {
 
         if (isBasicConversation(newConversation)) {
             // Got a new friend! - New basic conversation
+            newIndex = newIndex - mGroupConversations.size();
             mBasicConversations.add(newConversation);
             mBasicConversationAdapter.notifyItemInserted(newIndex);
         } else {
             // Join a group! - New group conversation
+            newIndex = newIndex - mBasicConversations.size();
             mGroupConversations.add(newConversation);
             mGroupConversationAdapter.notifyItemInserted(newIndex);
+        }
+    }
+
+    private void removeConversation(DocumentChange docChange) {
+        Conversation removingConversation = docChange.getDocument().toObject(Conversation.class);
+
+        if (isBasicConversation(removingConversation)) {
+            // Remove a friend! - Remove basic conversation
+            int index = mBasicConversations.indexOf(removingConversation);
+            mBasicConversations.remove(removingConversation);
+            mBasicConversationAdapter.notifyItemRemoved(index);
+        } else {
+            // Leave a group! - Remove group conversation
+            int index = mGroupConversations.indexOf(removingConversation);
+            mGroupConversations.remove(removingConversation);
+            mGroupConversationAdapter.notifyItemRemoved(index);
+        }
+    }
+
+    private void updateConversation(DocumentChange docChange, int oldIndex) {
+        Conversation modifiedConversation = docChange.getDocument().toObject(Conversation.class);
+
+        if (isBasicConversation(modifiedConversation)) {
+            // Basic conversation changed
+            oldIndex = oldIndex - mGroupConversations.size();
+            mBasicConversations.set(oldIndex, modifiedConversation);
+            mBasicConversationAdapter.notifyItemChanged(oldIndex);
+        } else {
+            // Group conversation changed
+            oldIndex = oldIndex - mBasicConversations.size();
+            mGroupConversations.set(oldIndex, modifiedConversation);
+            mGroupConversationAdapter.notifyItemChanged(oldIndex);
         }
     }
 
@@ -158,15 +193,6 @@ public class MainActivity extends BaseActivity {
         } catch (Exception ex) {
             return true;
         }
-    }
-
-    private void removeConversation(int oldIndex) {
-        mBasicConversations.remove(oldIndex);
-    }
-
-    private void updateConversation(DocumentChange docChange, int oldIndex) {
-        Conversation modifiedConversation = docChange.getDocument().toObject(Conversation.class);
-        mBasicConversations.set(oldIndex, modifiedConversation);
     }
 
     //region CALLBACKS
@@ -183,7 +209,7 @@ public class MainActivity extends BaseActivity {
                         addConversation(docChange, docChange.getNewIndex()); break;
 
                     case REMOVED:
-                        removeConversation(docChange.getOldIndex()); break;
+                        removeConversation(docChange); break;
 
                     case MODIFIED:
                         updateConversation(docChange, docChange.getOldIndex()); break;

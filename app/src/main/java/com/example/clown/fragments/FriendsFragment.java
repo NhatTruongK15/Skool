@@ -185,7 +185,10 @@ public class FriendsFragment extends Fragment {
                 mFriends.add(i, friend);
                 mFriendAdapter.notifyItemInserted(i);
             }
-        } else showToast(Objects.requireNonNull(task.getException()).getMessage());
+        } else
+            showToast(Objects.requireNonNull(task.getException()).getMessage());
+
+        Log.e(TAG, "Load friends completed!");
     };
 
     protected final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
