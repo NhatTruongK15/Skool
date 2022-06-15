@@ -122,6 +122,7 @@ public class MainActivity extends BaseActivity implements ConversationAdapter.IC
         binding.llcNewGroup.setOnClickListener(v -> startActivity(TAG, NewGroupActivity.class, null));
         binding.btnSetting.setOnClickListener(v -> startActivity(TAG, MyProfileActivity.class, null));
         binding.btnFindFriend.setOnClickListener(v -> onFindFriendBtnClicked());
+        binding.btnInviteFriend.setOnClickListener(v -> onFindFriendBtnClicked());
         binding.llcLogout.setOnClickListener(v->signOut());
     }
 

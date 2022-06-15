@@ -5,7 +5,10 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -37,6 +40,14 @@ public class CallActivity extends BaseActivity {
     private boolean isConnected;
     private boolean isCameraEnable;
     private boolean isMute;
+
+    private BroadcastReceiver mCallReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            startActivity(null, MainActivity.class, null);
+            finish();
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +87,10 @@ public class CallActivity extends BaseActivity {
         initRtc();
         mRtcEngine.enableAudio();
         mRtcEngine.enableLocalAudio(true);
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(Constants.ACT_AGORA_LOCAL_INVITATION_FAILED);
+        intentFilter.addAction(Constants.ACT_AGORA_LOCAL_INVITATION_REFUSED);
+        registerReceiver(mCallReceiver, intentFilter);
     }
 
     private void initRtc() {

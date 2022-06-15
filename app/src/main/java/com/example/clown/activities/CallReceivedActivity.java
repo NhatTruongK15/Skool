@@ -46,7 +46,7 @@ public class CallReceivedActivity extends BaseActivity {
         mRingTone = startRinging();
         initUI();
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(Constants.ACT_AGORA_LOCAL_INVITATION_FAILED);
+        intentFilter.addAction(Constants.ACT_AGORA_REMOTE_INVITATION_FAILED);
         intentFilter.addAction(Constants.ACT_AGORA_REMOTE_INVITATION_CANCELED);
         registerReceiver(mCallReceiver, intentFilter);
     }
