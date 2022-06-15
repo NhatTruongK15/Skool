@@ -77,60 +77,6 @@ public class MediaAndFileAdapter extends RecyclerView.Adapter<MediaAndFileAdapte
     @Override
     public void onBindViewHolder(MediaAndFileAdapter.MediaAndFileViewHolder holder, int position) {
         holder.setData(mediaandfile.get(position));
-//        String vidPath=mediaandfile.get(position).getVidPath();
-//        String imgPath=mediaandfile.get(position).getImgPath();
-//        String filePath=mediaandfile.get(position).getFilePath();
-//        String finame=mediaandfile.get(position).getFiname();
-//
-//        if (imgPath != null) {
-//            holder.imgbtnItem.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    Context context = view.getContext();
-//                    Intent intent = new Intent(context, FileDisplayActivitiy.class);
-//                    intent.putExtra("imgPath", imgPath);
-//                    intent.putExtra("finame", finame);
-//                    intent.putExtra("fiPath", "");
-//                    intent.putExtra("vidPath", "");
-//                    context.startActivity(intent);
-//                }
-//            });
-//            return;
-//        }
-//        if(vidPath!=null){
-//            if (vidPath.compareTo("") != 0) {
-//                holder.imgbtnItem.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        Context context = v.getContext();
-//                        Intent intent = new Intent(context, FileDisplayActivitiy.class);
-//                        intent.putExtra("vidPath", vidPath);
-//                        intent.putExtra("finame", finame);
-//                        intent.putExtra("fiPath", "");
-//                        intent.putExtra("imgPath", "");
-//                        context.startActivity(intent);
-//                    }
-//                });
-//            }
-//        }
-//        if(filePath!=null){
-//            if (filePath.compareTo("") != 0) {
-//                holder.imgbtnItem.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        Context context = v.getContext();
-//                        Intent intent = new Intent(context, FileDisplayActivitiy.class);
-//                        intent.putExtra("fiPath", filePath);
-//                        intent.putExtra("finame", finame);
-//                        intent.putExtra("imgPath", "");
-//                        intent.putExtra("vidPath", "");
-//                        context.startActivity(intent);
-//                    }
-//                });
-//            }
-//
-//        }
-
     }
 
     /**
@@ -257,61 +203,12 @@ public class MediaAndFileAdapter extends RecyclerView.Adapter<MediaAndFileAdapte
 
             }
         }
-
         public String getThumbnailInDir(String dir) {
             String path = null;
-
             return path;
         }
 
         public void getVidThumbnailFromURL(String url) {
-//// Create a MediaMetaDataRetriever
-//            MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-//// Set video url as data source
-//            retriever.setDataSource(url, new HashMap<String, String>());
-//// Get frame at 2nd second as Bitmap image
-//            Bitmap source = retriever.getFrameAtTime(20000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC);
-//// Display the Bitmap image in an ImageView
-//            Bitmap rescalebitmap = scaleDown(source, 300, true);
-//            FileOutputStream outputstream = null;
-//            File file = Environment.getExternalStorageDirectory();
-//            File dir = new File(file.getAbsolutePath() + "//myThumbnails");
-//            dir.mkdir();
-//            String filename = String.format("%d.bmp", System.currentTimeMillis());
-//            File outFile = new File(dir, filename);
-//            try {
-//                outputstream = new FileOutputStream(outFile);
-//            } catch (Exception ex) {
-//
-//            }
-//            rescalebitmap.compress(Bitmap.CompressFormat.PNG, 100, outputstream);
-//            try {
-//                outputstream.flush();
-//            } catch (Exception ex) {
-//
-//            }
-//            try {
-//                outputstream.close();
-//            } catch (Exception ex) {
-//
-//            }
-
-//            BitmapPool bitmapPool = Glide.get(itemView.getContext()).getBitmapPool();
-//            int microSecond = 1000000;// 1th second as an example
-//            BitmapDrawable bitmapDrawable=new BitmapDrawable();
-//            Bitmap bitmap=bitmapDrawable.getBitmap();
-//            Glide.with(itemView.getContext())
-//                    .load(url)
-//                    .override(300,300)// Example
-//                    .into(binding.btnItem);
-
-
-//            Bitmap icon = BitmapFactory.decodeResource(itemView.getResources(),
-//                    R.mipmap.playinterfacevideoarrowbutton128w);
-//            Bitmap scale=resizeBitmap(icon);
-//            binding.btnItem.setImageBitmap(scale);
-
-
             BitmapDrawable bitmapDrawable=new BitmapDrawable();
             Bitmap bitmap=bitmapDrawable.getBitmap();
             Glide.with(itemView).load(url).into(binding.imgItem);
@@ -334,13 +231,6 @@ public class MediaAndFileAdapter extends RecyclerView.Adapter<MediaAndFileAdapte
         }
 
         public void getFileThumbnailFromURL(String text) {
-//            Bitmap icon = BitmapFactory.decodeResource(itemView.getResources(),
-//                    R.mipmap.documentfiledocpaper2562);
-//            Bitmap scale=resizeBitmap(icon);
-//            binding.imgItem.setImageBitmap(scale);
-
-//            Glide.with(itemView).load(url).into(binding.imgItem);
-
             binding.txtItem.setText(text);
         }
 
