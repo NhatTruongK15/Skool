@@ -207,6 +207,7 @@ public class ChatActivity extends BaseActivity {
                 result = "etc";
                 break;
             default:
+                result = "etc";
                 break;
         }
         return result;
